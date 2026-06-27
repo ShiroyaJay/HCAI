@@ -1,0 +1,396 @@
+/* Project 1 — styling tuned for non-technical / elderly users:
+   big text, generous spacing, high contrast, one obvious action. */
+
+.p1 {
+    font-size: 18px;
+    line-height: 1.55;
+    color: #1a1a1a;
+}
+
+.p1 .title {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.p1-lead {
+    font-size: 19px;
+    max-width: 640px;
+    margin: 24px auto;
+    text-align: center;
+}
+
+.p1-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+    margin: 36px 0 20px;
+}
+
+.p1-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 240px;
+    max-width: 100%;
+    height: auto;
+    padding: 16px 32px;
+    font-size: 20px;
+    line-height: 1.2;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: transform 0.05s ease, box-shadow 0.15s ease;
+}
+
+.p1-button:hover { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18); }
+.p1-button:active { transform: translateY(1px); }
+
+.p1-button-primary {
+    background: #1f6feb;
+    color: #ffffff;
+}
+
+.p1-button-secondary {
+    background: #ffffff;
+    color: #1f6feb;
+    border: 2px solid #1f6feb;
+}
+
+.p1-hint {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+}
+
+/* "Step 2 of 3" orientation pill — reassures the user where they are */
+.p1-step {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 18px;
+    padding: 6px 18px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #1f6feb;
+    background: #eaf1ff;
+    border-radius: 999px;
+}
+
+/* Upload / example cards on the welcome screen */
+.p1-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 28px;
+    border: 2px solid #e2e2e2;
+    border-radius: 14px;
+    background: #fafafa;
+    min-width: 360px;
+}
+
+.p1-card-title {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.p1-file {
+    font-size: 18px;
+}
+
+.p1-or {
+    font-size: 18px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* A kind, calm error message — never alarming red codes */
+.p1-error {
+    max-width: 640px;
+    margin: 0 auto 24px;
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 19px;
+    color: #7a4f01;
+    background: #fff6e0;
+    border: 2px solid #f0d488;
+    border-radius: 12px;
+}
+
+/* The information table on Step 2 */
+.p1-table-wrap {
+    overflow-x: auto;
+    margin: 24px auto;
+    max-width: 100%;
+}
+
+.p1-table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-size: 16px;
+}
+
+.p1-table th,
+.p1-table td {
+    padding: 10px 14px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.p1-table thead th {
+    background: #f0f4ff;
+    font-weight: 700;
+}
+
+.p1-table tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+/* Highlight the column the computer will guess */
+.p1-target-col {
+    background: #eaf6ec !important;
+    font-weight: 600;
+}
+
+.p1-note {
+    max-width: 640px;
+    margin: 8px auto 24px;
+    text-align: center;
+    font-size: 17px;
+    color: #333;
+}
+
+/* The data picture on Step 2 */
+.p1-picture {
+    margin: 28px auto;
+    text-align: center;
+}
+
+.p1-picture img {
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.p1-caption {
+    max-width: 640px;
+    margin: 14px auto 0;
+    font-size: 18px;
+    color: #555;
+    font-style: italic;
+}
+
+.p1-link {
+    font-size: 18px;
+    color: #1f6feb;
+    text-decoration: underline;
+}
+
+/* A "not ready yet" button — looks present but clearly inactive */
+.p1-button-disabled {
+    background: #c9c9c9;
+    color: #ffffff;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Step 3 — the "what to guess" dropdown */
+.p1-select {
+    font-size: 18px;
+    padding: 12px 16px;
+    border: 2px solid #cfcfcf;
+    border-radius: 10px;
+    min-width: 280px;
+    background: #fff;
+}
+
+/* Results screen */
+.p1-headline {
+    text-align: center;
+    font-size: 23px;
+    font-weight: 700;
+    margin: 18px auto 8px;
+    max-width: 680px;
+}
+
+.p1-quality {
+    text-align: center;
+    font-size: 19px;
+    margin: 0 auto 24px;
+}
+
+.p1-quality-great  { color: #1a7f37; }
+.p1-quality-good   { color: #1f6feb; }
+.p1-quality-okay   { color: #9a6700; }
+.p1-quality-tricky { color: #8a5300; }
+
+/* A simple, friendly "how well" bar instead of a confusion matrix */
+.p1-meter {
+    max-width: 520px;
+    height: 42px;
+    margin: 0 auto 28px;
+    background: #eee;
+    border-radius: 21px;
+    overflow: hidden;
+}
+
+.p1-meter-fill {
+    height: 100%;
+    min-width: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 21px;
+    transition: width 0.6s ease;
+}
+
+.p1-quality-great-bg  { background: #1a7f37; }
+.p1-quality-good-bg   { background: #1f6feb; }
+.p1-quality-okay-bg   { background: #d4a017; }
+.p1-quality-tricky-bg { background: #b5651d; }
+
+/* The optional technical details — hidden by default */
+.p1-more {
+    max-width: 640px;
+    margin: 0 auto 24px;
+    font-size: 17px;
+    color: #555;
+}
+
+.p1-more summary {
+    cursor: pointer;
+    color: #1f6feb;
+}
+
+/* The technical-details panel, boxed to match the recap below it */
+.p1-detailbox {
+    padding: 14px 20px;
+    background: #f5f8ff;
+    border: 1px solid #d7e3ff;
+    border-radius: 12px;
+}
+
+.p1-detailbox summary {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* A few real test guesses, so the score feels concrete and trustworthy */
+.p1-samples {
+    max-width: 560px;
+    margin: 24px auto;
+    text-align: center;
+}
+
+.p1-samples-title {
+    margin: 0 0 12px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #333;
+}
+
+.p1-sample-table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    font-size: 16px;
+}
+
+.p1-sample-table th,
+.p1-sample-table td {
+    padding: 8px 16px;
+    border: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.p1-sample-table thead th {
+    background: #f0f4ff;
+    font-weight: 700;
+}
+
+.p1-ok { color: #1a7f37; font-weight: 700; }
+.p1-no { color: #b42318; font-weight: 700; }
+
+.p1-sample-more td {
+    color: #888;
+    font-style: italic;
+    background: #fafafa;
+}
+
+/* The plain "what just happened" recap on the results screen */
+.p1-recap {
+    max-width: 640px;
+    margin: 28px auto 8px;
+    padding: 14px 20px;
+    background: #f5f8ff;
+    border: 1px solid #d7e3ff;
+    border-radius: 12px;
+}
+
+.p1-recap-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1f6feb;
+    cursor: pointer;
+}
+
+.p1-recap-steps {
+    margin: 12px 0 0;
+    padding-left: 22px;
+    font-size: 16px;
+    color: #333;
+    text-align: left;
+}
+
+.p1-recap-steps li {
+    margin: 8px 0;
+}
+
+/* Optional "have a say" controls on Step 2 — present but never in the way */
+.p1-options {
+    width: 100%;
+    text-align: left;
+    margin: 8px 0 0;
+}
+
+.p1-options-q {
+    margin: 16px 0 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+.p1-radio {
+    display: block;
+    font-size: 18px;
+    margin: 8px 0;
+    cursor: pointer;
+}
+
+.p1-radio input {
+    margin-right: 10px;
+}
+
+/* The plain-language "why it guessed" line on the results screen */
+.p1-explain {
+    max-width: 640px;
+    margin: 0 auto 18px;
+    padding: 14px 20px;
+    text-align: center;
+    font-size: 18px;
+    color: #14532d;
+    background: #eaf6ec;
+    border: 2px solid #bfe3c6;
+    border-radius: 12px;
+}

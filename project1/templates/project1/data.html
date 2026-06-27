@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'project1/style.css' %}?v=11">
+{% endblock %}
+
+{% block content %}
+
+<div class="box p1">
+    <div class="title-container">
+        <div class="title">Here's your information</div>
+    </div>
+
+    <div class="main-text">
+        <span class="p1-step">Step 1 of 3</span>
+        <p class="p1-lead">
+            Great — we loaded <strong>{{ n_rows }}</strong> examples, each with
+            <strong>{{ n_cols }}</strong> pieces of information.
+            Here are the first {{ showing }} so you can see what they look like.
+        </p>
+
+        <div class="p1-table-wrap">
+            <table class="p1-table">
+                <thead>
+                    <tr>
+                        {% for col in columns %}
+                            <th{% if forloop.last %} class="p1-target-col"{% endif %}>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            {% for cell in row %}
+                                <td{% if forloop.last %} class="p1-target-col"{% endif %}>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                    {% if more > 0 %}
+                        <tr class="p1-sample-more"><td colspan="{{ n_cols }}">… and {{ more }} more</td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="p1-note">
+            The last column, <strong>{{ target }}</strong>, is the thing the computer
+            will learn to guess. The other columns are the clues it learns from.
+        </p>
+
+        {% if plot_url %}
+            <div class="p1-picture">
+                <img src="{{ plot_url }}" alt="A picture of your information">
+                <p class="p1-caption">{{ plot_caption }}</p>
+            </div>
+        {% endif %}
+
+        {% if dist_url %}
+            <div class="p1-picture">
+                <img src="{{ dist_url }}" alt="How the thing to guess is spread out">
+                <p class="p1-caption">{{ dist_caption }}</p>
+            </div>
+        {% endif %}
+
+        <div class="p1-choices">
+            <a class="p1-button p1-button-primary" href="{% url 'project1:choose' %}">Next &nbsp;→</a>
+            <a class="p1-link" href="{% url 'project1:index' %}">Start over with a different file</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+{% endblock script %}

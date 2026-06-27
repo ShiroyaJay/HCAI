@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'project1/style.css' %}?v=11">
+{% endblock %}
+
+{% block content %}
+
+<div class="box p1">
+    <div class="title-container">
+        <div class="title">Let the computer learn to guess</div>
+    </div>
+
+    <div class="main-text">
+        <p class="p1-lead">
+            This helps the computer learn to make guesses from a table of information.
+            You give it some examples, and it learns the pattern. No experience needed —
+            we'll guide you one step at a time.
+        </p>
+
+        {% if error %}
+            <p class="p1-error">{{ error }}</p>
+        {% endif %}
+
+        <div class="p1-choices">
+
+            <form class="p1-card" action="{% url 'project1:upload' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <p class="p1-card-title">Use my own file</p>
+                <input class="p1-file" type="file" name="file" accept=".csv">
+                <button class="p1-button p1-button-primary" type="submit">Continue</button>
+            </form>
+
+            <div class="p1-or">or</div>
+
+            <form class="p1-card" action="{% url 'project1:example' %}" method="get">
+                <p class="p1-card-title">No file? No problem</p>
+                <button class="p1-button p1-button-secondary" type="submit">Show me with an example</button>
+            </form>
+
+        </div>
+
+        <p class="p1-hint">Not sure? Pick “Show me with an example” — it works right away.</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+{% endblock script %}

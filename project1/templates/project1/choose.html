@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'project1/style.css' %}?v=11">
+{% endblock %}
+
+{% block content %}
+
+<div class="box p1">
+    <div class="title-container">
+        <div class="title">What should the computer guess?</div>
+    </div>
+
+    <div class="main-text">
+        <span class="p1-step">Step 2 of 3</span>
+        <p class="p1-lead">
+            Pick the thing you'd like the computer to learn to guess.
+            We've already chosen the most likely one for you — if you're not sure,
+            just leave it as it is and press the big button.
+        </p>
+
+        <form class="p1-card" action="{% url 'project1:train' %}" method="post">
+            {% csrf_token %}
+            <label class="p1-card-title" for="target">The computer will guess:</label>
+            <select class="p1-select" name="target" id="target">
+                {% for col in columns %}
+                    <option value="{{ col }}" {% if col == default_target %}selected{% endif %}>{{ col }}</option>
+                {% endfor %}
+            </select>
+
+            <details class="p1-more p1-options">
+                <summary>Want a say in how it learns? (optional)</summary>
+
+                <p class="p1-options-q">What matters more to you?</p>
+                <label class="p1-radio"><input type="radio" name="prefer" value="accurate" checked>
+                    Be as <strong>right as possible</strong></label>
+                <label class="p1-radio"><input type="radio" name="prefer" value="explain">
+                    <strong>Explain its guesses</strong> — show me what it paid attention to</label>
+            </details>
+
+            <button class="p1-button p1-button-primary" type="submit">Teach the computer</button>
+        </form>
+
+        <p class="p1-hint">Not sure? Just press the button — we've chosen good settings for you.</p>
+
+        <div class="p1-choices">
+            <a class="p1-link" href="{% url 'project1:data' %}">← Go back and look at the information</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+{% endblock script %}

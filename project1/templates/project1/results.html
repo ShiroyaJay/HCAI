@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'project1/style.css' %}?v=11">
+{% endblock %}
+
+{% block content %}
+
+<div class="box p1">
+    <div class="title-container">
+        <div class="title">How did it do?</div>
+    </div>
+
+    <div class="main-text">
+        <span class="p1-step">Step 3 of 3</span>
+
+        {% if result.ok %}
+
+            <p class="p1-headline">{{ result.headline }}</p>
+            <p class="p1-quality p1-quality-{{ result.quality }}">{{ result.quality_line }}</p>
+
+            <div class="p1-meter" title="{{ result.percent }} out of 100">
+                <div class="p1-meter-fill p1-quality-{{ result.quality }}-bg"
+                     style="width: {{ result.percent }}%;">{{ result.percent }}%</div>
+            </div>
+
+            {% if result.explanation %}
+                <p class="p1-explain">💡 {{ result.explanation }}</p>
+            {% endif %}
+
+            {% if result.importance_url %}
+                <div class="p1-picture">
+                    <img src="{{ result.importance_url }}" alt="What the computer paid attention to">
+                    <p class="p1-caption">What the computer paid attention to, most first.</p>
+                </div>
+            {% endif %}
+
+            <p class="p1-note">
+                The computer learned from <strong>{{ result.n_train }}</strong> examples,
+                then we tested it on <strong>{{ result.n_test }}</strong> it had never seen —
+                to be fair, just like a real exam. It learned to guess
+                <strong>{{ result.target }}</strong>.
+            </p>
+
+            {% if result.samples %}
+                <div class="p1-samples">
+                    <p class="p1-samples-title">A few of its guesses on the {{ result.n_test }} hidden examples</p>
+                    <table class="p1-sample-table">
+                        <thead>
+                            <tr>
+                                <th>It guessed</th>
+                                <th>The real answer</th>
+                                {% if result.problem == 'category' %}<th>Right?</th>{% else %}<th>Off by</th>{% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in result.samples %}
+                                <tr>
+                                    <td>{{ s.guess }}</td>
+                                    <td>{{ s.actual }}</td>
+                                    {% if result.problem == 'category' %}
+                                        <td class="{% if s.correct %}p1-ok{% else %}p1-no{% endif %}">{% if s.correct %}✓{% else %}✗{% endif %}</td>
+                                    {% else %}
+                                        <td>{{ s.off }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            {% if result.n_test > result.samples|length %}
+                                <tr class="p1-sample-more"><td colspan="3">… and {{ result.n_test|add:"-4" }} more</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+            <div class="p1-choices">
+                <a class="p1-button p1-button-secondary" href="{% url 'project1:choose' %}">Try guessing something else</a>
+                <a class="p1-link" href="{% url 'project1:index' %}">Start over with a different file</a>
+            </div>
+
+            <details class="p1-more p1-detailbox">
+                <summary>Show me the technical details</summary>
+                <p>Winner: {{ result.model_name }} · best setting: {{ result.setting }} ·
+                   problem type: {{ result.problem }} · score: {{ result.percent }}%
+                   ({% if result.problem == 'category' %}accuracy{% else %}closeness, R²{% endif %}).</p>
+                {% if result.compared %}
+                    <p>Every method we tried (each over several settings) and the best
+                       score it reached:</p>
+                    <ul>
+                        {% for m in result.compared %}
+                            <li>{{ m.name }} (best: {{ m.setting }}) — {{ m.percent }}%{% if m.name == result.model_name %} ← chosen{% endif %}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </details>
+
+            <details class="p1-recap">
+                <summary class="p1-recap-title">What just happened, from start to finish</summary>
+                <ol class="p1-recap-steps">
+                    <li>You gave the computer <strong>{{ result.n_train|add:result.n_test }}</strong>
+                        examples to work with.</li>
+                    <li>It studied <strong>{{ result.n_train }}</strong> of them to learn a pattern
+                        for guessing <strong>{{ result.target }}</strong> from the other columns.</li>
+                    <li>We kept <strong>{{ result.n_test }}</strong> examples hidden, so we could test
+                        it fairly — like a surprise exam on questions it never studied.</li>
+                    {% if result.problem == 'category' %}
+                        <li>It guessed <strong>{{ result.target }}</strong> for those
+                            {{ result.n_test }} hidden examples, and we counted how many it got right.</li>
+                    {% else %}
+                        <li>It guessed <strong>{{ result.target }}</strong> for those
+                            {{ result.n_test }} hidden examples, and we measured how close its guesses were.</li>
+                    {% endif %}
+                    <li>That gives the score at the top: <strong>{{ result.headline }}</strong></li>
+                </ol>
+            </details>
+
+        {% else %}
+
+            <p class="p1-error">{{ result.reason }}</p>
+
+            <div class="p1-choices">
+                <a class="p1-button p1-button-secondary" href="{% url 'project1:choose' %}">Try guessing something else</a>
+                <a class="p1-link" href="{% url 'project1:index' %}">Start over with a different file</a>
+            </div>
+
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+{% endblock script %}
