@@ -55,7 +55,7 @@ The project **starts from the official course skeleton**: <https://github.com/pp
    /home/  ── launch page: group info + links to all projects
         │
         ├── /project1/   app 1  (Automated ML — supervised learning interface)
-        ├── /project2/   app 2  (topic TBD)
+        ├── /project2/   app 2  (Explainability — trees/logreg, counterfactuals, PDP/ALE)
         ├── /project3/   app 3  (topic TBD)
         ├── /project4/   app 4  (topic TBD)
         ├── /project5/   app 5  (topic TBD)
@@ -125,7 +125,7 @@ Each sub-project has its own official brief (PDF) and will get its own detailed 
 | # | App | Topic | Brief | Status |
 |---|-----|-------|-------|--------|
 | 1 | `project1` | Automated Machine Learning — supervised learning interface (upload CSV → visualize → train & evaluate sklearn models) | [`HCAI-project_01.pdf`](./HCAI-project_01.pdf) | 🟡 In progress |
-| 2 | `project2` | _TBD (brief not yet released)_ | — | ⬜ Not started |
+| 2 | `project2` | Explainability — interpretable models (decision tree / logistic regression with λ regularization), counterfactual explanations, and from-scratch PDP/ALE feature-effect plots on Palmer Penguins | [`project2/HCAI-project_02.pdf`](./project2/HCAI-project_02.pdf) | 🟢 Done |
 | 3 | `project3` | _TBD_ | — | ⬜ Not started |
 | 4 | `project4` | _TBD_ | — | ⬜ Not started |
 | 5 | `project5` | _TBD_ | — | ⬜ Not started |
