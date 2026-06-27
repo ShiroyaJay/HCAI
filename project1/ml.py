@@ -34,6 +34,19 @@ def detect_problem_type(target):
     return "number"
 
 
+def drop_id_column(df):
+    """Drop an obvious 'id' column so it isn't mistaken for a real clue.
+
+    The brief allows filtering out a row-identifier column. We only drop a
+    column literally named 'id' (any capitalisation), and never the last
+    column — that's always the thing to guess.
+    """
+    last = len(df.columns) - 1
+    keep = [c for i, c in enumerate(df.columns)
+            if not (str(c).strip().lower() == "id" and i != last)]
+    return df[keep]
+
+
 def numeric_feature_columns(df):
     """The clue columns (everything but the last) that hold numbers."""
     feature_cols = df.columns[:-1]

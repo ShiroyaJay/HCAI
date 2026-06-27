@@ -19,6 +19,12 @@ def index(request):
     return render(request, "project1/index.html")
 
 
+def _load_df(csv_text):
+    """Read the stored CSV and drop an obvious id column, so every step sees
+    the same clean table (no id in the picture, the dropdown, or the clues)."""
+    return ml.drop_id_column(pd.read_csv(io.StringIO(csv_text)))
+
+
 def _remember_table(request, csv_text, source):
     """Check the CSV makes sense and keep it for the next steps.
 
@@ -74,7 +80,7 @@ def data(request):
         # Nothing loaded yet — start at the beginning.
         return redirect("project1:index")
 
-    df = pd.read_csv(io.StringIO(csv_text))
+    df = _load_df(csv_text)
     columns = list(df.columns)
 
     # Draw the data picture. One file per session so users don't clash.
@@ -113,7 +119,7 @@ def choose(request):
     if not csv_text:
         return redirect("project1:index")
 
-    df = pd.read_csv(io.StringIO(csv_text))
+    df = _load_df(csv_text)
     columns = list(df.columns)
     return render(request, "project1/choose.html", {
         "columns": columns,
@@ -127,7 +133,7 @@ def train(request):
     if not csv_text:
         return redirect("project1:index")
 
-    df = pd.read_csv(io.StringIO(csv_text))
+    df = _load_df(csv_text)
     columns = list(df.columns)
 
     # The user's choices (all default to a sensible value — one click is enough).

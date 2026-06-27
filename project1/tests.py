@@ -39,7 +39,7 @@ class MlEngineTests(TestCase):
         result = ml.teach_computer(_category_df(), "group")
         self.assertTrue(result["ok"])
         self.assertEqual(result["problem"], "category")
-        self.assertIn("out of 10", result["headline"])
+        self.assertIn("out of", result["headline"])  # "right N out of M times"
         self.assertTrue(result["compared"])  # several methods were compared
 
     def test_teach_computer_number(self):
@@ -68,6 +68,18 @@ class MlEngineTests(TestCase):
         # You can't predict a *number* when the answers are words — handled, no crash.
         result = ml.teach_computer(_category_df(), "group", problem_override="number")
         self.assertEqual(result["problem"], "category")
+
+    def test_id_column_is_dropped(self):
+        df = _category_df()
+        df.insert(0, "id", range(1, len(df) + 1))
+        clean = ml.drop_id_column(df)
+        self.assertNotIn("id", clean.columns)
+        self.assertIn("group", clean.columns)  # the target is kept
+
+    def test_id_named_target_is_not_dropped(self):
+        # A last column literally named 'id' is the thing to guess — keep it.
+        df = pd.DataFrame({"x": [1, 2], "id": ["a", "b"]})
+        self.assertIn("id", ml.drop_id_column(df).columns)
 
     def test_no_numeric_features_is_handled(self):
         df = pd.DataFrame({"name": ["a", "b", "c", "d", "e"],
