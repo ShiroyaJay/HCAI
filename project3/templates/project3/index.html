@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'project3/style.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="box p3-box">
+    <div class="title-container"><span class="title">Project 3 — Active Learning for Learning-to-Defer</span></div>
+    <p class="main-text p3-intro">
+        AG News topic classification with a human-AI team: the system either predicts a
+        topic itself or defers to a (simulated) expert, and uses active learning to
+        discover where the expert is competent.
+        Want to play the expert yourself? Try the
+        <a href="{% url 'project3:interactive' %}">interactive mode</a>.
+    </p>
+
+    <div class="p3-actions">
+        {% if report_available %}
+        <a class="p3-download" href="{% url 'project3:report' %}">&#8595; Download the project report (PDF)</a>
+        {% else %}
+        <span class="p3-download p3-download-disabled">Report not generated yet</span>
+        {% endif %}
+    </div>
+
+    {% if not task1 and not task2 and not task3 and not task4 %}
+    <p class="p3-notice">
+        No experiment results found yet. Run
+        <code>python -m project3.experiments.run_all</code>
+        to download the dataset, run all experiments, and generate the report.
+    </p>
+    {% endif %}
+
+    {% if task1 %}
+    <section class="p3-region">
+        <h2 class="p3-region-title">Task 1 — Baseline classifier</h2>
+        <p class="p3-sub">TF-IDF (word 1-2&#8209;grams) + logistic regression, trained on all {{ task1.train_size }} labeled articles.</p>
+        <div class="p3-metrics">
+            <div class="p3-metric"><span class="p3-metric-num">{{ task1.test.accuracy|floatformat:4 }}</span>
+                <span class="p3-metric-cap">test accuracy</span></div>
+            <div class="p3-metric"><span class="p3-metric-num">{{ task1.val.accuracy|floatformat:4 }}</span>
+                <span class="p3-metric-cap">validation accuracy</span></div>
+        </div>
+        <table class="p3-table">
+            <tr><th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr>
+            {% for row in task1.test.per_class %}
+            <tr>
+                <td>{{ row.class }}</td>
+                <td>{{ row.precision|floatformat:3 }}</td>
+                <td>{{ row.recall|floatformat:3 }}</td>
+                <td>{{ row.f1|floatformat:3 }}</td>
+                <td>{{ row.support }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% if figures.task1_confusion %}
+        <div class="p3-picture"><img src="{{ figures.task1_confusion }}" alt="Confusion matrix"></div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if task2 %}
+    <section class="p3-region">
+        <h2 class="p3-region-title">Task 2 — Simulated experts</h2>
+        <p class="p3-sub">Imperfect experts whose competence is tied to regions of the input space.</p>
+        <table class="p3-table">
+            <tr><th>Expert</th><th>Test accuracy</th>
+                {% for row in task2.class_conditional.per_class %}<th>{{ row.class }}</th>{% endfor %}
+            </tr>
+            {% for name, exp in task2.items %}
+            <tr>
+                <td>{{ exp.description }}</td>
+                <td><strong>{{ exp.accuracy|floatformat:3 }}</strong></td>
+                {% for row in exp.per_class %}<td>{{ row.accuracy|floatformat:3 }}</td>{% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+        {% if figures.task2_expert_profile %}
+        <div class="p3-picture"><img src="{{ figures.task2_expert_profile }}" alt="Expert competence profiles"></div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if task3 %}
+    <section class="p3-region">
+        <h2 class="p3-region-title">Task 3 — Learning to defer</h2>
+        <p class="p3-sub">
+            A rejector g(x) estimates the expert's chance of being right; the system defers
+            when that beats the classifier's confidence (threshold &tau; = {{ task3.tau }},
+            tuned on validation). Expert: {{ task3.expert }}.
+        </p>
+        <div class="p3-metrics">
+            <div class="p3-metric"><span class="p3-metric-num">{{ task3.test.team_accuracy|floatformat:4 }}</span>
+                <span class="p3-metric-cap">team test accuracy</span></div>
+            <div class="p3-metric"><span class="p3-metric-num">{{ task3.test.baselines.classifier_alone|floatformat:4 }}</span>
+                <span class="p3-metric-cap">classifier alone</span></div>
+            <div class="p3-metric"><span class="p3-metric-num">{{ task3.test.coverage|floatformat:3 }}</span>
+                <span class="p3-metric-cap">coverage (kept by AI)</span></div>
+            <div class="p3-metric"><span class="p3-metric-num">{{ task3.test.baselines.oracle_deferral|floatformat:4 }}</span>
+                <span class="p3-metric-cap">oracle deferral (bound)</span></div>
+        </div>
+        <table class="p3-table">
+            <tr><th>Deferral quality (test)</th><th>Value</th></tr>
+            <tr><td>Accuracy on kept examples (classifier)</td><td>{{ task3.test.accuracy_kept|floatformat:4 }}</td></tr>
+            <tr><td>Accuracy on deferred examples (expert)</td><td>{{ task3.test.expert_accuracy_deferred|floatformat:4 }}</td></tr>
+            <tr><td>Deferral precision (deferrals that were needed)</td><td>{{ task3.test.deferral_precision|floatformat:3 }}</td></tr>
+            <tr><td>Deferral recall (needed deferrals made)</td><td>{{ task3.test.deferral_recall|floatformat:3 }}</td></tr>
+            <tr><td>Random deferral at the same rate</td><td>{{ task3.test.baselines.random_deferral_same_rate|floatformat:4 }}</td></tr>
+            <tr><td>Expert alone</td><td>{{ task3.test.baselines.expert_alone|floatformat:4 }}</td></tr>
+        </table>
+        {% if figures.task3_deferral %}
+        <div class="p3-picture"><img src="{{ figures.task3_deferral }}" alt="Deferral breakdown"></div>
+        {% endif %}
+        {% if figures.task3_coverage_accuracy %}
+        <div class="p3-picture"><img src="{{ figures.task3_coverage_accuracy }}" alt="Coverage-accuracy curve"></div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if task4 %}
+    <section class="p3-region">
+        <h2 class="p3-region-title">Task 4 — Active learning for expert competence discovery</h2>
+        <p class="p3-sub">
+            No expert labels upfront: the system queries the expert on chosen articles
+            (pool of {{ task4.pool_size }}) and refits the rejector after each batch.
+            Mean team accuracy on validation over {{ task4.seeds|length }} seeds.
+        </p>
+        {% if task4_summary %}
+        <table class="p3-table">
+            <tr><th>Strategy</th>
+                {% for b in task4_summary.budgets %}<th>{{ b }}</th>{% endfor %}
+            </tr>
+            {% for row in task4_summary.rows %}
+            <tr>
+                <td>{{ row.strategy }}</td>
+                {% for acc in row.accuracies %}<td>{{ acc|floatformat:4 }}</td>{% endfor %}
+            </tr>
+            {% endfor %}
+            <tr>
+                <td>Reference: classifier alone</td>
+                <td colspan="{{ task4_summary.budgets|length }}">{{ task4.references.classifier_alone_val|floatformat:4 }}</td>
+            </tr>
+            <tr>
+                <td>Reference: rejector trained on all 110k expert labels</td>
+                <td colspan="{{ task4_summary.budgets|length }}">{{ task4.references.full_info_team_accuracy_val|floatformat:4 }}</td>
+            </tr>
+        </table>
+        {% endif %}
+        {% if figures.task4_learning_curves %}
+        <div class="p3-picture"><img src="{{ figures.task4_learning_curves }}" alt="Active-learning curves"></div>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

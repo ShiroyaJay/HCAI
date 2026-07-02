@@ -1,0 +1,104 @@
+/* Project 3 — Learning-to-defer interface styles (.p3-* prefix). */
+
+.p3-box { max-width: 1040px; padding-left: 24px; padding-right: 24px; }
+
+.p3-intro { font-size: 18px; }
+
+.p3-notice {
+    margin: 18px 5%;
+    padding: 14px 18px;
+    background: rgba(255, 235, 196, 0.55);
+    border: 1px solid #ecd39a;
+    border-radius: 8px;
+    font-size: 16px;
+}
+.p3-notice code { background: rgba(0, 0, 0, 0.06); padding: 2px 6px; border-radius: 4px; }
+
+/* ---- actions / download ---- */
+.p3-actions { margin: 14px 5% 0; }
+.p3-download {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #275CB2;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+}
+.p3-download:hover { background: #1e4a90; }
+.p3-download-disabled { background: #c2cfe6; cursor: default; }
+
+/* ---- regions ---- */
+.p3-region { margin: 24px 5% 0; padding-top: 18px; border-top: 1px solid #e3e9f3; }
+.p3-region-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #275CB2; font-size: 24px; margin-bottom: 12px;
+}
+.p3-sub { color: #6b7a90; margin: -6px 0 14px; }
+
+/* ---- metrics ---- */
+.p3-metrics { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.p3-metric {
+    background: white; border: 1px solid #e3e9f3; border-radius: 8px;
+    padding: 12px 18px; min-width: 120px; text-align: center;
+}
+.p3-metric-num { display: block; font-size: 28px; font-weight: 700; color: #275CB2; }
+.p3-metric-cap { display: block; font-size: 13px; color: #6b7a90; margin-top: 4px; }
+
+/* ---- plots ---- */
+.p3-picture { text-align: center; margin: 12px 0; }
+.p3-picture img {
+    max-width: 100%; height: auto; border: 1px solid #e3e9f3; border-radius: 8px;
+}
+
+/* ---- interactive (be-the-expert) ---- */
+.p3-play { display: flex; gap: 28px; margin: 18px 5%; align-items: flex-start; flex-wrap: wrap; }
+.p3-question { flex: 2; min-width: 320px; }
+.p3-article {
+    margin: 12px 0;
+    padding: 16px 20px;
+    background: rgba(199, 218, 248, 0.35);
+    border-left: 4px solid #275CB2;
+    border-radius: 0 8px 8px 0;
+    font-size: 17px;
+    line-height: 1.5;
+}
+.p3-topic-form { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0; }
+.p3-topic-btn {
+    padding: 12px 22px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #275CB2;
+    background: white;
+    border: 2px solid #275CB2;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.p3-topic-btn:hover { background: #275CB2; color: white; }
+.p3-reset-btn {
+    margin-top: 10px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: #6b7a90;
+    background: none;
+    border: 1px solid #c2cfe6;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.p3-sidebar {
+    flex: 1;
+    min-width: 240px;
+    padding: 16px;
+    background: rgba(199, 218, 248, 0.2);
+    border-radius: 8px;
+}
+.p3-sidebar-title { color: #275CB2; font-size: 18px; margin-bottom: 10px; }
+.p3-metric-wide { display: block; margin-bottom: 10px; min-width: 0; }
+.p3-side-table { font-size: 13px; margin: 10px 0; }
+.p3-hint { font-size: 13px; color: #6b7a90; }
+
+/* ---- tables ---- */
+.p3-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.p3-table th, .p3-table td { padding: 8px 10px; border-bottom: 1px solid #e3e9f3; text-align: left; }
+.p3-table th { color: #275CB2; }

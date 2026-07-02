@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'project2/style.css' %}?v=2">
+{% endblock %}
+
+{% block content %}
+<div class="box p2-box">
+    <div class="title-container"><span class="title">Project 2 — Explainability</span></div>
+    <p class="main-text p2-intro">
+        Palmer Penguins: predict the <strong>species</strong> and explore how the model
+        works. Pick a model class and how strongly to reward simplicity (&lambda;); the
+        counterfactuals and feature-effect plots below all explain the selected model.
+    </p>
+
+    <!-- ===== Shared controls (model class + lambda) ===== -->
+    <form method="get" class="p2-controls" id="p2-controls">
+        <input type="hidden" name="cf_index" value="{{ cf_index }}">
+        <input type="hidden" name="cf_target" value="{{ cf_target }}">
+        <input type="hidden" name="feature" value="{{ feature }}">
+        <div class="p2-control">
+            <span class="p2-control-label">Model class</span>
+            <label class="p2-radio">
+                <input type="radio" name="model" value="tree"
+                       {% if model_type == 'tree' %}checked{% endif %}
+                       onchange="this.form.submit()"> Decision tree
+            </label>
+            <label class="p2-radio">
+                <input type="radio" name="model" value="logreg"
+                       {% if model_type == 'logreg' %}checked{% endif %}
+                       onchange="this.form.submit()"> Logistic regression
+            </label>
+        </div>
+
+        <div class="p2-control">
+            <label class="p2-control-label" for="lam">
+                Regularization &lambda; = <span id="lam-val">{{ lam }}</span>
+            </label>
+            <input type="range" name="lam" id="lam" min="{{ lambda_min }}"
+                   max="{{ lambda_max }}" step="{{ lambda_step }}" value="{{ lam }}"
+                   oninput="document.getElementById('lam-val').textContent = this.value"
+                   onchange="this.form.submit()">
+            <span class="p2-hint">selects argmax of acc<sub>test</sub> &minus; &lambda;&middot;&Omega;(f)</span>
+        </div>
+    </form>
+
+    <!-- ===== Region A: selected model ===== -->
+    <section class="p2-region">
+        <h2 class="p2-region-title">Selected model</h2>
+        <div class="p2-metrics">
+            <div class="p2-metric"><span class="p2-metric-num">{{ acc }}</span>
+                <span class="p2-metric-cap">test accuracy</span></div>
+            <div class="p2-metric"><span class="p2-metric-num">{{ omega }}</span>
+                <span class="p2-metric-cap">&Omega;(f) — {{ omega_label }}</span></div>
+            <div class="p2-metric"><span class="p2-metric-num">{{ objective }}</span>
+                <span class="p2-metric-cap">acc &minus; &lambda;&middot;&Omega;</span></div>
+        </div>
+        <div class="p2-picture">
+            <img src="{{ model_plot_url }}"
+                 alt="{% if model_type == 'tree' %}Decision tree diagram{% else %}Logistic regression coefficients{% endif %}">
+        </div>
+    </section>
+
+    <!-- ===== Region B: counterfactuals ===== -->
+    <section class="p2-region">
+        <h2 class="p2-region-title">Counterfactuals</h2>
+        <p class="p2-sub">
+            "What would need to change for this penguin to be classified as the target
+            species?" Generated from the selected model above.
+        </p>
+
+        <form method="get" class="p2-form">
+            <input type="hidden" name="model" value="{{ model_type }}">
+            <input type="hidden" name="lam" value="{{ lam }}">
+            <input type="hidden" name="feature" value="{{ feature }}">
+            <div class="p2-field">
+                <label for="cf_index">Example (row 0–{{ n_examples|add:"-1" }})</label>
+                <input type="number" id="cf_index" name="cf_index" min="0"
+                       max="{{ n_examples|add:'-1' }}" value="{{ cf_index }}"
+                       onchange="this.form.submit()">
+            </div>
+            <div class="p2-field">
+                <label for="cf_target">Target species</label>
+                <select id="cf_target" name="cf_target" onchange="this.form.submit()">
+                    {% for c in classes %}
+                        <option value="{{ c }}" {% if c == cf_target %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        <p class="p2-note">
+            Selected example: true species <strong>{{ cf_true }}</strong>,
+            model predicts <strong>{{ cf_pred }}</strong>.
+            {% if cf_target_is_pred %}<span class="p2-warn">Target equals the model's
+            current prediction — pick a different target to see meaningful
+            counterfactuals.</span>{% endif %}
+        </p>
+
+        <div style="overflow-x:auto;">
+        <table class="p2-table">
+            <thead>
+                <tr>
+                    <th>Row</th>
+                    {% for col in feature_names %}<th>{{ col }}</th>{% endfor %}
+                    <th>distance</th>
+                    <th>P({{ cf_target }})</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>original</strong></td>
+                    {% for cell in cf_original %}<td>{{ cell.value }}</td>{% endfor %}
+                    <td>—</td><td>—</td>
+                </tr>
+                {% for r in cf_rows %}
+                <tr>
+                    <td>cf&nbsp;{{ forloop.counter }}</td>
+                    {% for cell in r.cells %}
+                        <td class="{% if cell.changed %}p2-changed{% endif %}">{{ cell.value }}</td>
+                    {% endfor %}
+                    <td>{{ r.distance }}</td>
+                    <td>{{ r.prob }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="{{ feature_names|length|add:'3' }}" class="p2-warn">
+                    No counterfactuals found for this target — try another example or target.
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <p class="p2-note">Highlighted cells changed meaningfully from the original (&gt; 0.1&middot;MAD for numeric features).</p>
+    </section>
+
+    <!-- ===== Region C: feature effect plots ===== -->
+    <section class="p2-region">
+        <h2 class="p2-region-title">Feature Effect Plots</h2>
+        <p class="p2-sub">
+            How one numerical feature affects each species' predicted probability, for the
+            selected model. PDP and ALE are both computed from scratch. For logistic
+            regression ALE uses the <strong>exact</strong> partial derivative; for the
+            decision tree it uses <strong>discretization</strong> (binned differences).
+        </p>
+
+        <form method="get" class="p2-form">
+            <input type="hidden" name="model" value="{{ model_type }}">
+            <input type="hidden" name="lam" value="{{ lam }}">
+            <input type="hidden" name="cf_index" value="{{ cf_index }}">
+            <input type="hidden" name="cf_target" value="{{ cf_target }}">
+            <div class="p2-field">
+                <label for="feature">Numerical feature</label>
+                <select id="feature" name="feature" onchange="this.form.submit()">
+                    {% for f in numeric_features %}
+                        <option value="{{ f }}" {% if f == feature %}selected{% endif %}>{{ f }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        <div class="p2-plot-pair">
+            <div class="p2-picture">
+                <img src="{{ pdp_url }}" alt="Partial dependence plot for {{ feature }}">
+            </div>
+            <div class="p2-picture">
+                <img src="{{ ale_url }}" alt="ALE plot ({{ ale_method }}) for {{ feature }}">
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
