@@ -56,6 +56,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# Signed-cookie sessions: the project4 study flow keeps participant state
+# in the session, and serverless deployment has no persistent database.
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+
 ROOT_URLCONF = "pbl.urls"
 
 TEMPLATES = [
