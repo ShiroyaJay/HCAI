@@ -1,0 +1,252 @@
+{
+  "recovery": {
+    "budgets": [
+      60,
+      120,
+      180,
+      300,
+      420,
+      600
+    ],
+    "pairwise": [
+      0.5704,
+      0.7106,
+      0.7634,
+      0.8275,
+      0.8575,
+      0.888
+    ],
+    "ranking": [
+      0.555,
+      0.766,
+      0.8062,
+      0.8733,
+      0.898,
+      0.9283
+    ],
+    "pairwise_sd": [
+      0.262,
+      0.1849,
+      0.1514,
+      0.1352,
+      0.1106,
+      0.0783
+    ],
+    "ranking_sd": [
+      0.3075,
+      0.1834,
+      0.1486,
+      0.102,
+      0.0787,
+      0.0536
+    ],
+    "n_pairs": [
+      15,
+      30,
+      45,
+      75,
+      105,
+      150
+    ],
+    "n_sets": [
+      1,
+      3,
+      4,
+      7,
+      10,
+      15
+    ],
+    "diff_mean": [
+      -0.0155,
+      0.0554,
+      0.0429,
+      0.0458,
+      0.0405,
+      0.0403
+    ],
+    "diff_sd": [
+      0.3485,
+      0.2061,
+      0.1699,
+      0.1294,
+      0.1076,
+      0.078
+    ],
+    "dz": [
+      -0.044,
+      0.269,
+      0.252,
+      0.354,
+      0.376,
+      0.517
+    ],
+    "n_required": [
+      null,
+      110,
+      125,
+      64,
+      57,
+      31
+    ]
+  },
+  "sensitivity": {
+    "budget": 300,
+    "rows": [
+      {
+        "sec_per_rank_set": 30.0,
+        "n_sets": 10,
+        "pairwise": 0.8355,
+        "ranking": 0.9,
+        "diff_mean": 0.0645,
+        "diff_sd": 0.1155,
+        "dz": 0.558,
+        "n_required": 27
+      },
+      {
+        "sec_per_rank_set": 40.0,
+        "n_sets": 7,
+        "pairwise": 0.8234,
+        "ranking": 0.8548,
+        "diff_mean": 0.0314,
+        "diff_sd": 0.126,
+        "dz": 0.249,
+        "n_required": 128
+      },
+      {
+        "sec_per_rank_set": 60.0,
+        "n_sets": 5,
+        "pairwise": 0.8246,
+        "ranking": 0.8313,
+        "diff_mean": 0.0067,
+        "diff_sd": 0.1402,
+        "dz": 0.048,
+        "n_required": null
+      },
+      {
+        "sec_per_rank_set": 90.0,
+        "n_sets": 3,
+        "pairwise": 0.8171,
+        "ranking": 0.7568,
+        "diff_mean": -0.0602,
+        "diff_sd": 0.1712,
+        "dz": -0.352,
+        "n_required": 65
+      }
+    ]
+  },
+  "dimension": {
+    "widths": {
+      "narrow": 21,
+      "wide": 31,
+      "sparse": 71
+    },
+    "budget": 300,
+    "n_pairs": 75,
+    "n_sets": 7,
+    "extra_features": [
+      "genre_Animation",
+      "genre_Biography",
+      "genre_Music",
+      "genre_Musical",
+      "genre_War",
+      "genre_Western",
+      "genre_History",
+      "genre_Sport",
+      "genre_Documentary",
+      "genre_Film-Noir"
+    ],
+    "n_directors": 40,
+    "narrow": {
+      "d": 21,
+      "pairwise": 0.7708,
+      "ranking": 0.7965
+    },
+    "wide": {
+      "d": 31,
+      "pairwise": 0.7796,
+      "ranking": 0.8089
+    },
+    "sparse": {
+      "d": 71,
+      "pairwise": 0.7801,
+      "ranking": 0.8105
+    }
+  },
+  "separability": {
+    "dims": [
+      16,
+      21,
+      24,
+      30,
+      34
+    ],
+    "ns": [
+      40,
+      50,
+      60,
+      80
+    ],
+    "table": {
+      "16": [
+        0.0998,
+        0.0047,
+        0.0001,
+        0.0
+      ],
+      "21": [
+        0.6254,
+        0.1264,
+        0.0092,
+        0.0
+      ],
+      "24": [
+        0.9002,
+        0.3877,
+        0.0587,
+        0.0001
+      ],
+      "30": [
+        0.9995,
+        0.9238,
+        0.5,
+        0.0119
+      ],
+      "34": [
+        1.0,
+        0.9953,
+        0.8512,
+        0.0883
+      ]
+    }
+  },
+  "power": {
+    "effects": [
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.8
+    ],
+    "n": [
+      198,
+      89,
+      51,
+      33,
+      23,
+      14
+    ],
+    "alpha": 0.05,
+    "power": 0.8
+  },
+  "assumptions": {
+    "sec_per_pair": 4.0,
+    "sec_per_rank_set": 40.0,
+    "d": 21,
+    "n_movies": 4793,
+    "n_pool": 3507,
+    "sigma": 1.0,
+    "alpha": 0.05,
+    "power": 0.8
+  }
+}
