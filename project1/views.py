@@ -1,5 +1,7 @@
+import hashlib
 import io
 import os
+import time
 
 import pandas as pd
 from django.conf import settings
@@ -12,6 +14,17 @@ EXAMPLE_CSV = settings.BASE_DIR / "project1" / "data" / "iris.csv"
 
 # How many rows we show as a preview (we don't want to overwhelm anyone).
 PREVIEW_ROWS = 4
+
+
+def _session_id(request):
+    """A short, stable per-session id for naming generated plot files.
+
+    Under signed-cookie sessions the session key is the whole encoded payload,
+    which is far too long to put in a filename.
+    """
+    if not request.session.session_key:
+        request.session.save()
+    return hashlib.sha1(request.session.session_key.encode()).hexdigest()[:12]
 
 
 def index(request):
@@ -52,7 +65,9 @@ def upload(request):
             csv_text = request.FILES["file"].read().decode("utf-8")
         except Exception:
             return render(request, "project1/index.html", {
-                "error": "We couldn't open that file. Please choose a CSV file."
+                "error": ("We couldn't open that file. Please choose a .csv file "
+                          "— if your table is in Excel, use File → Save As → "
+                          "CSV, then try again.")
             })
 
         error = _remember_table(request, csv_text, "your file")
@@ -84,14 +99,13 @@ def data(request):
     columns = list(df.columns)
 
     # Draw the data picture. One file per session so users don't clash.
-    if not request.session.session_key:
-        request.session.save()
-    plot_name = f"project1_plot_{request.session.session_key}.png"
+    session_id = _session_id(request)
+    plot_name = f"project1_plot_{session_id}.png"
     drawn, problem, caption = ml.make_picture(
         df, os.path.join(settings.MEDIA_ROOT, plot_name))
 
     # A second picture: how the thing-to-guess is spread out.
-    dist_name = f"project1_dist_{request.session.session_key}.png"
+    dist_name = f"project1_dist_{session_id}.png"
     dist_drawn, dist_caption = ml.make_distribution_picture(
         df, os.path.join(settings.MEDIA_ROOT, dist_name))
 
@@ -104,9 +118,11 @@ def data(request):
         "showing": min(PREVIEW_ROWS, df.shape[0]),
         "more": max(df.shape[0] - PREVIEW_ROWS, 0),
         "target": columns[-1],
-        "plot_url": (settings.MEDIA_URL + plot_name) if drawn else None,
+        "plot_url": (f"{settings.MEDIA_URL}{plot_name}?t={int(time.time())}"
+                     if drawn else None),
         "plot_caption": caption,
-        "dist_url": (settings.MEDIA_URL + dist_name) if dist_drawn else None,
+        "dist_url": (f"{settings.MEDIA_URL}{dist_name}?t={int(time.time())}"
+                     if dist_drawn else None),
         "dist_caption": dist_caption,
         "problem": problem,
     }
@@ -152,12 +168,10 @@ def train(request):
 
     # In "explain" mode, draw which clues the computer paid attention to.
     if result.get("ok") and result.get("importances"):
-        if not request.session.session_key:
-            request.session.save()
-        imp_name = f"project1_importance_{request.session.session_key}.png"
+        imp_name = f"project1_importance_{_session_id(request)}.png"
         ml.draw_importances(
             result["importances"], os.path.join(settings.MEDIA_ROOT, imp_name))
-        result["importance_url"] = settings.MEDIA_URL + imp_name
+        result["importance_url"] = f"{settings.MEDIA_URL}{imp_name}?t={int(time.time())}"
 
     request.session["p1_result"] = result
     return redirect("project1:results")

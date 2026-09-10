@@ -30,6 +30,8 @@
                 {% csrf_token %}
                 <p class="p1-card-title">Use my own file</p>
                 <input class="p1-file" type="file" name="file" accept=".csv">
+                <p class="p1-file-hint">Needs to be a .csv file. In Excel, use
+                    File → Save As, then pick “CSV”.</p>
                 <button class="p1-button p1-button-primary" type="submit">Continue</button>
             </form>
 

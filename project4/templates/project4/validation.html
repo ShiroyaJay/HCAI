@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box">
+  <div class="title-container"><span class="title">How much would you want to watch these?</span></div>
+  <p class="p4-step-label">Step {{ step_no }} of {{ n_steps }}</p>
+  <p class="main-text">Rate each film from 1 (not at all) to 7 (very much). These are
+     used to check how well we learned your taste.</p>
+
+  <form action="{% url 'project4:study_submit' %}" method="post" class="p4-form">{% csrf_token %}
+    {% for m in items %}
+    <fieldset class="p4-rate">
+      <legend><strong>{{ m.title }}</strong> <span class="p4-movie-year">{{ m.year }}</span>
+        <span class="p4-movie-genres">{{ m.genres }}</span></legend>
+      <div class="p4-scale">
+        {% for n in "1234567" %}
+        <label class="p4-scale-pt"><input type="radio" name="m{{ m.index }}" value="{{ n }}"
+          {% if forloop.first %}required{% endif %}><span>{{ n }}</span></label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    {% endfor %}
+    <button class="p4-btn p4-btn-go" type="submit">Continue</button>
+  </form>
+</div>
+{% endblock %}

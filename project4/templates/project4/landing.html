@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box">
+  <div class="title-container"><span class="title">Project 4 — Preference Elicitation</span></div>
+  <p class="main-text p4-intro">
+    A movie recommender that learns your taste from a handful of choices, and a
+    user study comparing two ways of asking. The system estimates a preference
+    vector <em>w</em> over {{ n_features }} interpretable movie features using a
+    Plackett–Luce model; you stay in control of every input, and you can override
+    the result at the end.
+  </p>
+
+  <div class="p4-actions">
+    <a class="p4-btn p4-btn-primary" href="{% url 'project4:report' %}">&#8595; Download the report (PDF)</a>
+    {% if in_progress %}
+    <a class="p4-btn p4-btn-go" href="{% url 'project4:study' %}">Resume the study</a>
+    {% else %}
+    <form action="{% url 'project4:study_start' %}" method="post" class="p4-inline">{% csrf_token %}
+      <button class="p4-btn p4-btn-go" type="submit">Start the study &#8594;</button>
+    </form>
+    {% endif %}
+  </div>
+
+  {% if in_progress %}
+  <form action="{% url 'project4:study_start' %}" method="post" class="p4-restart">{% csrf_token %}
+    You have a session in progress.
+    <button class="p4-linkbtn" type="submit">Discard my answers and start over</button>
+  </form>
+  {% endif %}
+
+  <div class="p4-cards">
+    <div class="p4-card">
+      <h3>The two designs being compared</h3>
+      <p><strong>Design 1</strong> — you repeatedly choose which of two films you would
+         rather watch.</p>
+      <p><strong>Design 2</strong> — you are shown ten films and rank them, by picking
+         your favourite of those remaining, over and over.</p>
+      <p class="p4-note">Every participant does both, in counterbalanced order.</p>
+    </div>
+    <div class="p4-card">
+      <h3>What is under the hood</h3>
+      <p>{{ n_movies }} films from the IMDB 5000 dataset, {{ n_pool }} of them
+         well-known enough to show to participants.</p>
+      <p>Preferences are estimated by MAP under a Plackett–Luce likelihood — the
+         same estimator for both designs, so the comparison is not confounded.</p>
+      <p class="p4-note">The report covers the features (Task 1), the ranking model
+         (Task 2) and the full study protocol (Task 3).</p>
+    </div>
+  </div>
+
+  <p class="p4-note p4-foot">
+    Curious about the extension? The <a href="{% url 'project4:demo' %}">adaptive
+    question-selection demo</a> shows how much faster the model learns when the
+    questions are chosen to be informative rather than at random.
+  </p>
+</div>
+{% endblock %}

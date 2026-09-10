@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box p4-narrow">
+  <div class="title-container"><span class="title">
+    {% if step == 'break' %}Nice work — halfway{% else %}Next section{% endif %}
+  </span></div>
+  <p class="p4-step-label">Step {{ step_no }} of {{ n_steps }}</p>
+
+  {% if step == 'break' %}
+    <p class="main-text">Take a moment if you need one. The next section asks for your
+       preferences a different way.</p>
+  {% endif %}
+
+  {% if design == 'pairwise' %}
+    <div class="p4-explain">
+      <h3>Choosing between two films</h3>
+      <p>You will see two films at a time. Click the one you would
+         <strong>rather watch</strong> — not the one you think is better, and you do
+         not need to have seen either.</p>
+      <p>Keep going until the timer runs out. There are no right answers.</p>
+    </div>
+  {% elif design == 'ranking' %}
+    <div class="p4-explain">
+      <h3>Ranking ten films</h3>
+      <p>You will see ten films. Click the one you would <strong>most</strong> like to
+         watch; it moves to your ranked list and disappears from the pool. Repeat
+         until the pool is empty.</p>
+      <p>That builds a full ranking from most to least preferred, one pick at a time.</p>
+    </div>
+  {% endif %}
+
+  <p class="p4-note">You will do one practice task first — it is not recorded — and then
+     the section itself, which lasts up to 5 minutes. If the time runs out part-way
+     through a task, whatever you had already decided still counts.</p>
+  <form action="{% url 'project4:study_submit' %}" method="post">{% csrf_token %}
+    <button class="p4-btn p4-btn-go" type="submit">I'm ready</button>
+  </form>
+</div>
+{% endblock %}

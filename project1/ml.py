@@ -168,15 +168,18 @@ def _round_nicely(value):
     return f"{value:.2f}"
 
 
-def _best_over_methods(methods, X_train, y_train, X_test, y_test, scorer):
-    """Quietly try every method and every setting; keep the best on the test part.
+def _best_over_methods(methods, X_train, y_train, X_val, y_val, scorer):
+    """Quietly try every method and every setting; keep the best on the validation part.
 
+    The validation part is separate from the final test part, so choosing a
+    method/setting here never peeks at the data used to report the final score.
     Each method that can't run on this data (e.g. nearest-neighbours when there
     are too few examples) is simply skipped, so the app never crashes.
 
     Returns (best, compared):
       best     – (score, method_name, setting, fitted_model) for the overall winner.
-      compared – each method's own best score as a percent, for the details panel.
+      compared – each method's own best validation score as a percent, for the
+                 details panel.
     """
     best = None
     compared = []
@@ -185,7 +188,7 @@ def _best_over_methods(methods, X_train, y_train, X_test, y_test, scorer):
         for setting, model in variants:
             try:
                 model.fit(X_train, y_train)
-                score = scorer(y_test, model.predict(X_test))
+                score = scorer(y_val, model.predict(X_val))
             except Exception:
                 continue
             if method_best is None or score > method_best[0]:
@@ -288,6 +291,12 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
     # A number to guess only makes sense if the answers are actually numbers.
     if problem == "number" and not is_numeric_dtype(target):
         problem = "category"
+
+    # Rows where the answer itself is missing can't be learned from.
+    if target.isna().any():
+        df = df[target.notna()].reset_index(drop=True)
+        target = df[target_name]
+
     feature_cols = [c for c in df.columns
                     if c != target_name and is_numeric_dtype(df[c])]
 
@@ -302,33 +311,54 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
                 "reason": ("We need at least 5 examples to learn from. Please "
                            "add a few more rows, or use our example.")}
 
+    # Be upfront about which columns the computer could actually learn from —
+    # it can only use numbers, so any text columns are set aside.
+    ignored_cols = [str(c) for c in df.columns
+                    if c != target_name and c not in feature_cols]
+
     X = df[feature_cols]
 
     if problem == "category":
         y = target.astype("category").cat.codes
-        # Keep the class mix balanced across the split when we safely can.
+        # Keep the class mix balanced across each split when we safely can.
         stratify = y if y.value_counts().min() >= 2 and y.nunique() > 1 else None
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=0, stratify=stratify)
+        X_train, X_rest, y_train, y_rest = train_test_split(
+            X, y, test_size=0.4, random_state=0, stratify=stratify)
+        stratify_rest = (y_rest if stratify is not None
+                          and y_rest.value_counts().min() >= 2
+                          and y_rest.nunique() > 1 else None)
+        X_val, X_test, y_val, y_test = train_test_split(
+            X_rest, y_rest, test_size=0.5, random_state=0, stratify=stratify_rest)
 
-        # Always compare the full set of methods, so the details panel can show
-        # every algorithm and the accuracy it reached.
+        # Choose the method/setting on a validation split the model never
+        # trains on, so the final score (below) never peeks at test data.
         best_all, compared = _best_over_methods(
             _classification_methods(len(X_train)),
-            X_train, y_train, X_test, y_test, accuracy_score)
+            X_train, y_train, X_val, y_val, accuracy_score)
         if prefer == "explain":
             # The user asked for a readable model, so we keep the best shallow
             # tree even if another method scored higher (accuracy vs. clarity).
             best, _ = _best_over_methods(
                 _explain_methods("category"),
-                X_train, y_train, X_test, y_test, accuracy_score)
+                X_train, y_train, X_val, y_val, accuracy_score)
         else:
             best = best_all
-        best_score, model_name, setting, best_model = best
+
+        if best is None:
+            return {"ok": False,
+                    "reason": ("We couldn't teach the computer with this "
+                               "information. Try a different file, or use "
+                               "our example.")}
+
+        _, model_name, setting, best_model = best
         explanation = (_explain_tree(best_model, feature_cols, target_name)
                        if prefer == "explain" else None)
         importances = (_tree_importances(best_model, feature_cols)
                        if prefer == "explain" else None)
+
+        # The honest score: computed only on the held-out test part, which
+        # played no role in picking the method, the setting, or anything else.
+        best_score = accuracy_score(y_test, best_model.predict(X_test))
 
         # A few real guesses on the hidden test part, so the user can SEE it work.
         categories = list(target.astype("category").cat.categories)
@@ -341,6 +371,18 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
                 "correct": p == a,
             })
 
+        # An honest yardstick: how well "always guess the most common answer"
+        # would do on the same hidden examples, so the score has a comparison.
+        counts = y_test.value_counts()
+        majority_code = int(counts.idxmax())
+        majority_label = (str(categories[majority_code])
+                          if 0 <= majority_code < len(categories)
+                          else str(majority_code))
+        baseline_line = (f"For comparison: just always guessing "
+                         f"“{majority_label}” — the most common answer — would "
+                         f"be right {int(counts.max())} out of {len(y_test)} "
+                         f"times.")
+
         quality, quality_line = _quality(best_score)
         n_correct = round(best_score * len(y_test))
         return {
@@ -348,11 +390,15 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
             "problem": "category",
             "headline": (f"It guessed right {n_correct} out of {len(y_test)} times "
                          f"— that's {round(best_score * 100)}%."),
+            "baseline_line": baseline_line,
+            "features_used": [str(c) for c in feature_cols],
+            "features_ignored": ignored_cols,
             "detail": f"Tested on {len(y_test)} examples it had never seen before.",
             "quality": quality,
             "quality_line": quality_line,
             "percent": round(best_score * 100),
             "n_train": len(y_train),
+            "n_val": len(y_val),
             "n_test": len(y_test),
             "model_name": model_name,
             "setting": setting,
@@ -364,27 +410,40 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
 
     # A number to guess → regression.
     y = target
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=0)
+    X_train, X_rest, y_train, y_rest = train_test_split(
+        X, y, test_size=0.4, random_state=0)
+    X_val, X_test, y_val, y_test = train_test_split(
+        X_rest, y_rest, test_size=0.5, random_state=0)
 
-    # Always compare the full set of methods, so the details panel can show
-    # every algorithm and the score it reached.
+    # Choose the method/setting on a validation split the model never trains
+    # on, so the final score (below) never peeks at test data.
     best_all, compared = _best_over_methods(
         _regression_methods(len(X_train)),
-        X_train, y_train, X_test, y_test, r2_score)
+        X_train, y_train, X_val, y_val, r2_score)
     if prefer == "explain":
         best, _ = _best_over_methods(
             _explain_methods("number"),
-            X_train, y_train, X_test, y_test, r2_score)
+            X_train, y_train, X_val, y_val, r2_score)
     else:
         best = best_all
-    best_score, model_name, setting, best_model = best
-    test_preds = best_model.predict(X_test)
-    best_mae = mean_absolute_error(y_test, test_preds)
+
+    if best is None:
+        return {"ok": False,
+                "reason": ("We couldn't teach the computer with this "
+                           "information. Try a different file, or use "
+                           "our example.")}
+
+    _, model_name, setting, best_model = best
     explanation = (_explain_tree(best_model, feature_cols, target_name)
                    if prefer == "explain" else None)
     importances = (_tree_importances(best_model, feature_cols)
                    if prefer == "explain" else None)
+
+    # The honest score: computed only on the held-out test part, which played
+    # no role in picking the method, the setting, or anything else.
+    test_preds = best_model.predict(X_test)
+    best_score = r2_score(y_test, test_preds)
+    best_mae = mean_absolute_error(y_test, test_preds)
 
     # A few real guesses on the hidden test part, with how far off each was.
     samples = []
@@ -395,6 +454,12 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
             "off": _round_nicely(abs(float(pred_v) - float(actual_v))),
         })
 
+    # The honest yardstick for numbers: always guessing the average.
+    baseline_mae = mean_absolute_error(
+        y_test, [float(y_train.mean())] * len(y_test))
+    baseline_line = (f"For comparison: just always guessing the average would "
+                     f"be off by about {_round_nicely(baseline_mae)}.")
+
     closeness = max(best_score, 0.0)  # r² can go negative; floor at 0 for words
     quality, quality_line = _quality(closeness)
     return {
@@ -402,11 +467,15 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
         "problem": "number",
         "headline": (f"On average, the computer's guess was off by about "
                      f"{_round_nicely(best_mae)}."),
+        "baseline_line": baseline_line,
+        "features_used": [str(c) for c in feature_cols],
+        "features_ignored": ignored_cols,
         "detail": f"Tested on {len(y_test)} examples it had never seen before.",
         "quality": quality,
         "quality_line": quality_line,
         "percent": round(closeness * 100),
         "n_train": len(y_train),
+        "n_val": len(y_val),
         "n_test": len(y_test),
         "model_name": model_name,
         "setting": setting,

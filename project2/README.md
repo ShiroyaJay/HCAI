@@ -40,6 +40,13 @@ On this dataset the tree's test accuracy already peaks at 3 leaves, so the slide
 the 3-leaf tree for small λ and collapses to the 2-leaf tree only at large λ — a clean
 illustration that regularization prefers the *simplest model achieving the best accuracy*.
 
+**A caveat we state openly (also shown on the page):** the brief's selection criterion
+uses `acc_test`, so the test set participates in model selection and the displayed test
+accuracy is the selection criterion itself — a slightly optimistic figure, not an
+unbiased estimate of generalization. An unbiased protocol would select on a validation
+split and score the winner once on an untouched test set (as project1 does); we keep the
+brief's formula but flag the difference.
+
 ### Counterfactuals — noising categorical data (Task 4)
 We sample N points locally around x and keep those the model predicts as the target
 class, ranked by MAD-weighted L1 distance.
@@ -50,6 +57,11 @@ class, ranked by MAD-weighted L1 distance.
   category). The MAD-weighted L1 distance uses a 0/1 mismatch term for these features.
 * **Iterative fallback**: if fewer than k counterfactuals are found, N and the noise
   level (numeric variance and categorical flip probability) are increased and we resample.
+* **Actionability caveat**: sampled counterfactuals need not be actionable or on the data
+  manifold — e.g. a counterfactual that flips `year` ("had this penguin been measured in
+  2008…") describes the model's decision boundary, not an intervention anyone could make.
+  We keep such features so the table faithfully explains the *model*, but a deployment
+  aimed at recourse would hold immutable features fixed (cf. Wachter et al., 2017).
 
 ### PDP and ALE — exact vs. discretized derivatives (Task 5)
 Both are implemented from scratch (numpy only).

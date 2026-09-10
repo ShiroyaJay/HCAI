@@ -57,7 +57,7 @@ The project **starts from the official course skeleton**: <https://github.com/pp
         ├── /project1/   app 1  (Automated ML — supervised learning interface)
         ├── /project2/   app 2  (Explainability — trees/logreg, counterfactuals, PDP/ALE)
         ├── /project3/   app 3  (Learning-to-defer — active learning with a human expert)
-        ├── /project4/   app 4  (topic TBD)
+        ├── /project4/   app 4  (Preference elicitation — Plackett-Luce, user-study interface)
         ├── /project5/   app 5  (topic TBD)
         └── /admin/      Django admin
 ```
@@ -127,7 +127,7 @@ Each sub-project has its own official brief (PDF) and will get its own detailed 
 | 1 | `project1` | Automated Machine Learning — supervised learning interface (upload CSV → visualize → train & evaluate sklearn models) | [`HCAI-project_01.pdf`](./HCAI-project_01.pdf) | 🟡 In progress |
 | 2 | `project2` | Explainability — interpretable models (decision tree / logistic regression with λ regularization), counterfactual explanations, and from-scratch PDP/ALE feature-effect plots on Palmer Penguins | [`project2/HCAI-project_02.pdf`](./project2/HCAI-project_02.pdf) | 🟢 Done |
 | 3 | `project3` | Active Learning for Learning-to-Defer — AG News classifier that defers to a (simulated or human) expert, learns the expert's competence profile via active learning, and generates a downloadable PDF report from the experiment artifacts | [`project3/HCAI-project_03.pdf`](./project3/HCAI-project_03.pdf) | 🟢 Done |
-| 4 | `project4` | _TBD_ | — | ⬜ Not started |
+| 4 | `project4` | Preference elicitation — a movie recommender that learns a user's taste vector from a handful of choices (Plackett–Luce over 21 interpretable features), plus the full design and running interface for a user study comparing pairwise choice against ranking | [`project4/HCAI-project_04.pdf`](./project4/HCAI-project_04.pdf) | 🟢 Done |
 | 5 | `project5` | _TBD_ | — | ⬜ Not started |
 
 > Grading note from the course: *"The minimum expected is a working solution for the given tasks, but the more you do, the higher your grade."*

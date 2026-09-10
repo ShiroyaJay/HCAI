@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box p4-narrow">
+  <div class="title-container"><span class="title">{{ title }}</span></div>
+  <p class="p4-step-label">Step {{ step_no }} of {{ n_steps }}</p>
+  <p class="main-text">{{ intro }}</p>
+
+  {% if step == 'consent' %}
+  <div class="p4-consent">
+    <p>This study compares two ways of telling a recommender what films you like.
+       It takes about 15 minutes.</p>
+    <ul>
+      <li>You will choose between films, rank films, and rate a few films.</li>
+      <li>We record your choices and how long they took. We do not collect your
+          name, email, or any other identifying information.</li>
+      <li>Taking part is voluntary and you may stop at any time, without giving
+          a reason, by closing the tab.</li>
+      <li>Your responses stay in your browser session and are shown back to you
+          at the end, where you can download them.</li>
+    </ul>
+  </div>
+  {% endif %}
+
+  <form action="{% url 'project4:study_submit' %}" method="post" class="p4-form">{% csrf_token %}
+    {% for key, question, choices in questions %}
+    <fieldset class="p4-field">
+      <legend>{{ question }}</legend>
+      {% if choices %}
+        {% for choice in choices %}
+        <label class="p4-radio"><input type="radio" name="{{ key }}" value="{{ choice }}"
+          {% if forloop.first %}required{% endif %}> {{ choice }}</label>
+        {% endfor %}
+      {% else %}
+        <textarea name="{{ key }}" rows="3" class="p4-textarea"></textarea>
+      {% endif %}
+    </fieldset>
+    {% endfor %}
+
+    {% if step == 'consent' %}
+    <label class="p4-radio p4-consent-check">
+      <input type="checkbox" name="agree" value="yes" required>
+      I have read the above and agree to take part.
+    </label>
+    {% endif %}
+
+    <button class="p4-btn p4-btn-go" type="submit">Continue</button>
+  </form>
+</div>
+{% endblock %}

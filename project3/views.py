@@ -32,6 +32,29 @@ def _figure_url(name):
     return None
 
 
+def _operating_point(task3, requested):
+    """The human-chosen deferral rate, resolved to the nearest point on the
+    stored test coverage-accuracy curve. The auto-tuned system is kept as the
+    reference. Returns None until the task 3 artifacts exist."""
+    curve = (task3 or {}).get("coverage_accuracy_curve")
+    if not curve:
+        return None
+    auto_rate = 1.0 - task3["test"]["coverage"]
+    try:
+        rate = float(requested)
+    except (TypeError, ValueError):
+        rate = auto_rate
+    rate = max(0.0, min(1.0, rate))
+    point = min(curve, key=lambda p: abs(p["deferral_rate"] - rate))
+    return {
+        "rate": point["deferral_rate"],
+        "rate_percent": round(point["deferral_rate"] * 100),
+        "team_accuracy": point["team_accuracy"],
+        "auto_rate_percent": round(auto_rate * 100),
+        "auto_team_accuracy": task3["test"]["team_accuracy"],
+    }
+
+
 def _task4_summary(task4):
     """Mean team accuracy per strategy at each budget, for the results table."""
     if not task4:
@@ -50,11 +73,13 @@ def _task4_summary(task4):
 
 
 def index(request):
+    task3 = _load_metrics("task3")
     task4 = _load_metrics("task4")
     context = {
         "task1": _load_metrics("task1"),
         "task2": _load_metrics("task2"),
-        "task3": _load_metrics("task3"),
+        "task3": task3,
+        "task3_op": _operating_point(task3, request.GET.get("defer_rate")),
         "task4": task4,
         "task4_summary": _task4_summary(task4),
         "figures": {name: _figure_url(name) for name in [

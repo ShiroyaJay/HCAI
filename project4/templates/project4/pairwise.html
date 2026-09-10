@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box">
+  <div class="p4-blockbar">
+    <span class="p4-blockbar-q">Which would you rather watch?</span>
+    <span class="p4-blockbar-meta">
+      {% if practice %}Practice — this one is not recorded
+      {% else %}{{ done }} answered &middot; {{ remaining }}s left{% endif %}
+    </span>
+  </div>
+
+  <form action="{% url 'project4:study_submit' %}" method="post" class="p4-versus">{% csrf_token %}
+    {% for m in movies %}
+    <button class="p4-choice" type="submit" name="choice" value="{{ forloop.counter0 }}">
+      <span class="p4-movie-title">{{ m.title }}</span>
+      {% include "project4/_movie_card.html" %}
+      {% if m.director %}<span class="p4-movie-dir">dir. {{ m.director }}</span>{% endif %}
+    </button>
+    {% if forloop.first %}<div class="p4-vs">or</div>{% endif %}
+    {% endfor %}
+  </form>
+
+  <form action="{% url 'project4:study_submit' %}" method="post" class="p4-skipform">{% csrf_token %}
+    <button class="p4-skip" type="submit" name="skip" value="1">
+      {% if practice %}Skip the practice{% else %}Skip to the next section (demo only){% endif %}
+    </button>
+  </form>
+</div>
+{% endblock %}

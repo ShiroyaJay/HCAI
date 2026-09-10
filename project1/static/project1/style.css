@@ -110,6 +110,13 @@
     letter-spacing: 1px;
 }
 
+.p1-file-hint {
+    margin: 0;
+    font-size: 15px;
+    color: #666;
+    text-align: center;
+}
+
 /* A kind, calm error message — never alarming red codes */
 .p1-error {
     max-width: 640px;
@@ -258,8 +265,8 @@
 
 .p1-quality-great-bg  { background: #1a7f37; }
 .p1-quality-good-bg   { background: #1f6feb; }
-.p1-quality-okay-bg   { background: #d4a017; }
-.p1-quality-tricky-bg { background: #b5651d; }
+.p1-quality-okay-bg   { background: #8a6d00; }
+.p1-quality-tricky-bg { background: #8a4b13; }
 
 /* The optional technical details — hidden by default */
 .p1-more {
