@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box">
+  <div class="title-container"><span class="title">What we learned about your taste</span></div>
+  <p class="p4-step-label">Step {{ step_no }} of {{ n_steps }}</p>
+
+  <div class="p4-compare">
+    {% for r in results %}
+    <div class="p4-card">
+      <h3>{{ r.label }}</h3>
+      <p class="p4-note">{{ r.n_obs }} responses in {{ r.seconds }}s{% if r.spearman %} &middot;
+        agreement with your ratings (Spearman &rho;): <strong>{{ r.spearman }}</strong>{% endif %}</p>
+      <p><strong>Seems to like:</strong>
+        {% for it in r.likes %}{{ it.label }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</p>
+      <p><strong>Seems to avoid:</strong>
+        {% for it in r.dislikes %}{{ it.label }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if consistency %}
+  <p class="p4-note">You rated {{ consistency.n }} films twice without knowing it; your
+     ratings differed by {{ consistency.mean_gap }} points on average. That is the
+     ceiling any model could reach for you.</p>
+  {% endif %}
+
+  <h2 class="p4-region-title">Which list was which</h2>
+  <p class="main-text">On the previous screen you judged two lists blind. Here is where
+     each came from{% if recs_answers.better %} — you picked
+     <strong>{{ recs_answers.better }}</strong>{% endif %}.</p>
+  <div class="p4-recs p4-recs-even">
+    {% for l in lists %}
+    <div>
+      <h3>List {{ forloop.counter }} — {% if l.design == 'pairwise' %}choosing between two
+        films{% else %}ranking ten films{% endif %}</h3>
+      <ol class="p4-reclist">
+        {% for m in l.movies %}<li>{{ m.title }}
+          <span class="p4-movie-year">{{ m.year }}</span></li>{% endfor %}
+      </ol>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2 class="p4-region-title">You are in control</h2>
+  <p class="main-text">These are the weights the model inferred from everything you did.
+     Disagree with one? Change it and the recommendations update — the model proposes,
+     you decide. Every weight is editable, and your changes are saved with your data so
+     we can see where the model got you wrong.</p>
+
+  <form action="{% url 'project4:study_submit' %}" method="post" class="p4-sliders">{% csrf_token %}
+    {% for it in sliders %}
+    <label class="p4-slider">
+      <span class="p4-slider-label">{{ it.label }}</span>
+      <input type="range" name="{{ it.name }}" min="-3" max="3" step="0.1"
+             value="{{ it.weight|floatformat:1 }}" onchange="this.form.submit()">
+      <span class="p4-slider-val">{{ it.weight|floatformat:1 }}</span>
+    </label>
+    {% endfor %}
+
+    <details class="p4-details p4-more-sliders">
+      <summary>The remaining {{ more_sliders|length }} weights</summary>
+      {% for it in more_sliders %}
+      <label class="p4-slider">
+        <span class="p4-slider-label">{{ it.label }}</span>
+        <input type="range" name="{{ it.name }}" min="-3" max="3" step="0.1"
+               value="{{ it.weight|floatformat:1 }}" onchange="this.form.submit()">
+        <span class="p4-slider-val">{{ it.weight|floatformat:1 }}</span>
+      </label>
+      {% endfor %}
+    </details>
+
+    <div class="p4-actions">
+      <button class="p4-btn" type="submit">Update recommendations</button>
+      {% if overridden %}
+      <button class="p4-btn p4-btn-quiet" type="submit" name="reset" value="1">
+        Undo my changes ({{ overridden|length }})</button>
+      {% endif %}
+    </div>
+  </form>
+
+  <div class="p4-recs">
+    <div>
+      <h3>Recommended for you</h3>
+      <ol class="p4-reclist">
+        {% for m in top %}<li><strong>{{ m.title }}</strong>
+          <span class="p4-movie-year">{{ m.year }}</span>
+          <span class="p4-movie-genres">{{ m.genres }}</span></li>{% endfor %}
+      </ol>
+    </div>
+    <div>
+      <h3>Probably not for you</h3>
+      <ol class="p4-reclist p4-reclist-neg">
+        {% for m in bottom %}<li>{{ m.title }}
+          <span class="p4-movie-year">{{ m.year }}</span>
+          <span class="p4-movie-genres">{{ m.genres }}</span></li>{% endfor %}
+      </ol>
+    </div>
+  </div>
+
+  <form action="{% url 'project4:study_submit' %}" method="post">{% csrf_token %}
+    <button class="p4-btn p4-btn-go" type="submit" name="next" value="1">Finish</button>
+  </form>
+</div>
+{% endblock %}

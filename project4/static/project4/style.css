@@ -1,0 +1,135 @@
+/* Project 4 — Preference elicitation study interface (.p4-* prefix). */
+
+.p4-box { max-width: 1040px; padding-left: 24px; padding-right: 24px; }
+.p4-narrow { max-width: 720px; }
+.p4-intro { font-size: 18px; }
+.p4-note { color: #5a6472; font-size: 14px; }
+.p4-foot { margin: 18px 5%; }
+.p4-step-label { margin: 0 5%; color: #7a8494; font-size: 13px; letter-spacing: .04em;
+    text-transform: uppercase; }
+
+/* The shared global stylesheet styles bare <button> with a fixed height:45px,
+   width:30%, display:table and color:white. Every button in this app opts out
+   of all of that here first, then gets its own look below. Same specificity as
+   the component rules, so it must stay above them. */
+.p4-btn, .p4-pick, .p4-choice, .p4-skip, .p4-linkbtn {
+    width: auto; height: auto; opacity: 1; margin: 0; color: inherit;
+    background: none; border: none; border-radius: 0; font: inherit;
+    display: inline-block; box-sizing: border-box;
+    -webkit-appearance: none; appearance: none;
+}
+
+/* ---- buttons / actions ---- */
+.p4-actions { margin: 18px 5%; display: flex; gap: 12px; flex-wrap: wrap; align-items: stretch; }
+.p4-inline { display: flex; margin: 0; }
+/* Shared by <a> and <button>; the reset above is what keeps the two the same
+   height, since the global rule would otherwise force buttons to 45px. */
+.p4-btn { display: inline-block; padding: 11px 20px; border-radius: 8px;
+    border: 1px solid transparent; font-size: 16px; line-height: 1.25;
+    font-weight: 500; text-decoration: none; text-align: center; cursor: pointer; }
+.p4-btn-primary { background: #275CB2; color: #fff; }
+.p4-btn-go { background: #1d7a4c; color: #fff; }
+.p4-btn-quiet { background: #fff; color: #33405a; border-color: #c2ccd9; }
+.p4-btn-quiet:hover { background: #f5f8fc; border-color: #94a3b8; }
+.p4-btn:hover { filter: brightness(1.08); }
+
+/* ---- landing cards ---- */
+.p4-restart { margin: -6px 5% 0; color: #7a8494; font-size: 14px; }
+.p4-linkbtn { padding: 0; font-size: 14px; color: #9b2c2c;
+    text-decoration: underline; cursor: pointer; }
+.p4-linkbtn:hover { color: #7a2222; }
+
+.p4-cards, .p4-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 18px 5%; }
+.p4-card { background: #f7f9fc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; }
+.p4-card h3 { margin-top: 0; }
+.p4-explain { margin: 16px 5%; background: #f7f9fc; border: 1px solid #e2e8f0;
+    border-radius: 10px; padding: 16px 20px; }
+.p4-explain h3 { margin-top: 0; }
+
+/* ---- forms ---- */
+.p4-form { margin: 18px 5%; }
+.p4-field { border: none; padding: 0; margin: 0 0 22px; }
+.p4-field legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+.p4-radio { display: block; margin: 5px 0; font-size: 15px; cursor: pointer; }
+.p4-textarea { width: 100%; font-family: inherit; font-size: 15px; padding: 8px;
+    border: 1px solid #cbd5e1; border-radius: 6px; }
+.p4-consent { margin: 12px 5%; }
+.p4-consent-check { margin: 18px 0; font-weight: 600; }
+.p4-inline-form { display: flex; gap: 20px; align-items: center; }
+.p4-inline-form select, .p4-inline-form input { margin-left: 8px; padding: 6px;
+    font-family: inherit; font-size: 15px; }
+
+/* ---- elicitation blocks ---- */
+.p4-blockbar { margin: 6px 5% 0; display: flex; justify-content: space-between;
+    align-items: baseline; flex-wrap: wrap; gap: 8px; }
+.p4-blockbar-q { font-size: 21px; font-weight: 600; }
+.p4-blockbar-meta { color: #7a8494; font-size: 14px; }
+
+.p4-versus { margin: 16px 5%; display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: 14px; align-items: stretch; }
+.p4-vs { align-self: center; color: #98a2b3; font-size: 15px; }
+.p4-choice { display: block; width: 100%; text-align: left; background: #fff;
+    border: 2px solid #d8e0ea; border-radius: 12px; padding: 20px; cursor: pointer;
+    white-space: normal; transition: border-color .12s; }
+.p4-choice:hover { border-color: #275CB2; background: #f6f9ff; }
+
+.p4-ranklayout { margin: 16px 5%; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.p4-pool { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-content: start; }
+.p4-pick { display: block; width: 100%; text-align: left; background: #fff;
+    border: 2px solid #d8e0ea; border-radius: 10px; padding: 12px 14px; cursor: pointer;
+    white-space: normal; transition: border-color .12s; }
+.p4-pick:hover { border-color: #1d7a4c; background: #f4fbf7; }
+.p4-ranked { background: #f7f9fc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 18px; }
+.p4-ranked h3 { margin-top: 0; }
+.p4-ranked-list { margin: 0; padding-left: 20px; font-size: 14px; }
+.p4-ranked-list li { margin-bottom: 6px; }
+
+.p4-movie-title { display: block; font-size: 17px; font-weight: 600; margin-bottom: 4px;
+    line-height: 1.3; }
+.p4-movie-meta { display: block; font-size: 13px; color: #5a6472; line-height: 1.6; }
+.p4-movie-meta > span + span::before { content: "\00b7"; margin: 0 7px; color: #b6c0cd; }
+.p4-movie-year { color: #7a8494; }
+.p4-movie-genres { color: #275CB2; }
+.p4-movie-dir { display: block; margin-top: 8px; font-size: 13px; color: #7a8494; }
+
+.p4-skipform { margin: 4px 5% 0; }
+.p4-skip { color: #98a2b3; font-size: 13px; cursor: pointer;
+    text-decoration: underline; padding: 0; }
+
+/* ---- validation ---- */
+.p4-rate { border: none; padding: 0 0 12px; margin: 0 0 12px; border-bottom: 1px solid #eef1f5; }
+.p4-rate legend { padding: 0; margin-bottom: 8px; }
+.p4-scale { display: flex; gap: 14px; }
+.p4-scale-pt { display: flex; flex-direction: column; align-items: center; font-size: 13px;
+    color: #5a6472; cursor: pointer; }
+
+/* ---- reveal ---- */
+.p4-region-title { margin: 26px 5% 0; }
+.p4-sliders { margin: 14px 5%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; }
+.p4-slider { display: grid; grid-template-columns: 1fr 130px 34px; align-items: center; gap: 10px;
+    font-size: 14px; }
+.p4-slider-label { color: #1f2933; }
+.p4-slider-val { color: #7a8494; font-variant-numeric: tabular-nums; }
+.p4-more-sliders { grid-column: 1 / -1; margin: 4px 0 0; }
+.p4-more-sliders summary { color: #5a6472; cursor: pointer; font-size: 14px; padding: 4px 0; }
+.p4-more-sliders .p4-slider { grid-template-columns: 1fr 130px 34px; }
+.p4-recs { margin: 18px 5%; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.p4-recs-even { grid-template-columns: 1fr 1fr; }
+.p4-reclist { padding-left: 22px; }
+.p4-reclist li { margin-bottom: 8px; }
+.p4-reclist-neg { color: #7a8494; }
+
+/* ---- debrief / demo ---- */
+.p4-details { margin: 18px 5%; }
+.p4-pre { background: #f7f9fc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;
+    font-size: 12px; max-height: 320px; overflow: auto; }
+.p4-table { margin: 16px 5%; border-collapse: collapse; font-size: 14px; }
+.p4-table th, .p4-table td { border-bottom: 1px solid #e2e8f0; padding: 6px 18px 6px 0; text-align: left; }
+.p4-table th { color: #5a6472; font-weight: 600; }
+
+@media (max-width: 820px) {
+    .p4-cards, .p4-compare, .p4-versus, .p4-ranklayout, .p4-pool, .p4-sliders, .p4-recs,
+    .p4-recs-even {
+        grid-template-columns: 1fr; }
+    .p4-vs { text-align: center; }
+}

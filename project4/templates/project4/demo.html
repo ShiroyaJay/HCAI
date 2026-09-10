@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box">
+  <div class="title-container"><span class="title">Extension — choosing better questions</span></div>
+  <p class="main-text">The study asks questions <em>uniformly at random</em>, which keeps
+     the two interfaces comparable. But we can do better: pick the pair that is both
+     uncertain under the current posterior <em>and</em> close to a coin flip for this
+     user. Below, a synthetic user with a known preference vector answers
+     {{ n }} questions under each rule.</p>
+
+  <form method="get" class="p4-form p4-inline-form">
+    <label>Selection rule
+      <select name="mode" onchange="this.form.submit()">
+        {% for value, label in modes %}
+        <option value="{{ value }}" {% if value == mode %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Questions
+      <input type="number" name="n" min="5" max="60" value="{{ n }}" onchange="this.form.submit()">
+    </label>
+  </form>
+
+  <table class="p4-table">
+    <thead><tr><th>Questions asked</th><th>Similarity to true taste (cosine)</th>
+      <th>Posterior uncertainty</th></tr></thead>
+    <tbody>
+      {% for row in trace %}
+      <tr><td>{{ row.n }}</td><td>{{ row.cosine }}</td><td>{{ row.uncertainty }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p class="p4-note">Adaptive selection reaches a given accuracy in noticeably fewer
+     questions. It is deliberately kept out of the study path: changing what is asked
+     at the same time as how it is asked would confound the comparison.</p>
+</div>
+{% endblock %}

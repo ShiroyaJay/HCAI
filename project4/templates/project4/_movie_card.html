@@ -1,0 +1,10 @@
+{% comment %}
+Rendered inside <button>, whose content model is phrasing content only:
+use spans here, never a div, or the metadata escapes the button box.
+{% endcomment %}
+<span class="p4-movie-meta">
+  <span>{{ m.year }}</span>
+  <span class="p4-movie-genres">{{ m.genres }}</span>
+  <span>{{ m.duration }} min</span>
+  {% if m.rating %}<span>{{ m.rating }}</span>{% endif %}
+</span>

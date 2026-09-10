@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box">
+  <div class="title-container"><span class="title">Two sets of suggestions</span></div>
+  <p class="p4-step-label">Step {{ step_no }} of {{ n_steps }}</p>
+  <p class="main-text">Each list below was built from one of the two sections you just
+     completed — but we are not telling you which is which yet. Judge them purely on
+     whether you would want to watch these films.</p>
+
+  <div class="p4-recs p4-recs-even">
+    {% for l in lists %}
+    <div>
+      <h3>List {{ forloop.counter }}</h3>
+      <ol class="p4-reclist">
+        {% for m in l.movies %}<li><strong>{{ m.title }}</strong>
+          <span class="p4-movie-year">{{ m.year }}</span>
+          <span class="p4-movie-genres">{{ m.genres }}</span></li>{% endfor %}
+      </ol>
+    </div>
+    {% endfor %}
+  </div>
+
+  <form action="{% url 'project4:study_submit' %}" method="post" class="p4-form">{% csrf_token %}
+    {% for key, question, choices in questions %}
+    <fieldset class="p4-field">
+      <legend>{{ question }}</legend>
+      {% for choice in choices %}
+      <label class="p4-radio"><input type="radio" name="{{ key }}" value="{{ choice }}"
+        {% if forloop.first %}required{% endif %}> {{ choice }}</label>
+      {% endfor %}
+    </fieldset>
+    {% endfor %}
+    <button class="p4-btn p4-btn-go" type="submit">Continue</button>
+  </form>
+</div>
+{% endblock %}

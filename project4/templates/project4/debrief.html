@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block content %}
+<div class="box p4-box p4-narrow">
+  <div class="title-container"><span class="title">Thank you — you're done</span></div>
+
+  <div class="p4-explain">
+    <h3>What this study was about</h3>
+    <p>You used two different ways of telling a recommender what you like: repeated
+       pairwise choices, and ranking ten films at a time. Both feed the same
+       Plackett–Luce preference model, so the only thing that differed was
+       <em>how you were asked</em>.</p>
+    <p>The real question is which method captures more of your taste per minute of
+       your time — a ranking gives more information per task, but takes far longer
+       than a single click. The ratings you gave near the end were held out to
+       score both.</p>
+    <p class="p4-note">No study is actually being run here: this is the interface and
+       protocol for one, built for the HCAI course. Your answers are held in a cookie in
+       your own browser — they are sent to the server with each page so the model can be
+       fitted, but nothing is written to any database and nothing is kept once you close
+       the tab.</p>
+  </div>
+
+  <div class="p4-actions">
+    <a class="p4-btn p4-btn-primary" href="{% url 'project4:export_json' %}">&#8595; Download my responses (JSON)</a>
+    <a class="p4-btn p4-btn-quiet" href="{% url 'project4:index' %}">Back to the project page</a>
+  </div>
+
+  <details class="p4-details">
+    <summary>See the raw data you produced</summary>
+    <pre class="p4-pre">{{ export }}</pre>
+  </details>
+</div>
+{% endblock %}
