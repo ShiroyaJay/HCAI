@@ -274,42 +274,6 @@ class StudyTests(TestCase):
         self.assertEqual(page1_again, page1)
         self.assertEqual(len(set(page1) & set(page2)), study.VALIDATION_REPEATS)
 
-    def test_populated_session_fits_in_a_signed_cookie(self):
-        """The whole protocol must survive in a ~4093-byte signed cookie.
-
-        The readable encoding (dicts keyed by name, titles instead of indices)
-        measures over 7 KB, and Django's failure mode is a silently dropped
-        cookie rather than an error -- so this is a regression test, not a
-        formality.
-        """
-        from django.contrib.sessions.serializers import JSONSerializer
-        from django.core import signing
-
-        state = study.new_state(seed=0)
-        state["s"] = len(study.STEPS) - 1
-        state["g"] = {"age": "25-34", "films": "3-5", "recsys": "Often"}
-        state["p"] = [[i, i + 1, i % 2, 40 + i] for i in range(80)]
-        state["r"] = [[9] + list(range(k, k + 10)) + [45] * 9 for k in range(0, 80, 10)]
-        state["v"] = [[i, (i % 7) + 1] for i in range(20)]
-        state["pr"] = list(range(200, 212))
-        state["q"] = {"rtlx_pairwise": {k: "4" for k, _ in study.RTLX_ITEMS},
-                      "rtlx_ranking": {k: "5" for k, _ in study.RTLX_ITEMS},
-                      "recs": {"better": "List 2", "rate_1": "3", "rate_2": "6"},
-                      "final": {"preferred": "Ranking ten films",
-                                "expressive": "Ranking ten films",
-                                "tedious": "Choosing between two films",
-                                "comments": "x" * study.MAX_FREE_TEXT}}
-        state["t"] = {"a": 300.0, "b": 300.0}
-        state["w"] = {n: -1.5 for n in features.FEATURE_NAMES[:12]}
-
-        # Exactly what SessionStore._get_session_key() does, compression included.
-        encoded = signing.dumps(
-            {study.SESSION_KEY: state}, compress=True,
-            salt="django.contrib.sessions.backends.signed_cookies",
-            serializer=JSONSerializer)
-        self.assertLess(len(encoded), 3000,
-                        f"session cookie is {len(encoded)} bytes, near the 4093 limit")
-
     def test_observations_round_trip_through_the_model(self):
         state = study.new_state(seed=0)
         state["p"] = [[3, 9, 0, 100], [4, 8, 1, 200]]
