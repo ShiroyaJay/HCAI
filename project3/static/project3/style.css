@@ -63,10 +63,16 @@
     border-radius: 0 8px 8px 0;
     font-size: 17px;
     line-height: 1.5;
+    height: 150px;
+    overflow-y: auto;
 }
-.p3-topic-form { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0; }
-.p3-topic-btn {
-    padding: 12px 22px;
+/* A fixed article height means the button row below never moves, however
+   long the article text is. */
+.p3-actions-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0; }
+.p3-actions-form { display: contents; }
+.p3-action-btn {
+    width: 140px;
+    padding: 12px 10px;
     font-size: 16px;
     font-weight: 700;
     color: #275CB2;
@@ -74,18 +80,21 @@
     border: 2px solid #275CB2;
     border-radius: 8px;
     cursor: pointer;
+    text-align: center;
 }
-.p3-topic-btn:hover { background: #275CB2; color: white; }
+.p3-action-btn:hover { background: #275CB2; color: white; }
+.p3-skip-btn { color: #6b7a90; border-color: #c2cfe6; }
+.p3-skip-btn:hover { background: #6b7a90; border-color: #6b7a90; color: white; }
+.p3-finish-btn { color: #b23d27; border-color: #b23d27; }
+.p3-finish-btn:hover { background: #b23d27; color: white; }
+/* Shape/size come from .p3-action-btn; only its own color scheme stays. */
 .p3-reset-btn {
     margin-top: 10px;
-    padding: 6px 14px;
-    font-size: 13px;
     color: #6b7a90;
     background: none;
-    border: 1px solid #c2cfe6;
-    border-radius: 6px;
-    cursor: pointer;
+    border-color: #c2cfe6;
 }
+.p3-reset-btn:hover { background: #6b7a90; border-color: #6b7a90; color: white; }
 .p3-sidebar {
     flex: 1;
     min-width: 240px;

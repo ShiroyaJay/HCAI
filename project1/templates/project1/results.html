@@ -43,7 +43,7 @@
 
             <p class="p1-note">
                 The computer learned from <strong>{{ result.n_train }}</strong> examples,
-                then we tested it on <strong>{{ result.n_test }}</strong> it had never seen —
+                then we tested it on <strong>{{ result.n_test }}</strong> it had never seen,
                 to be fair, just like a real exam. It learned to guess
                 <strong>{{ result.target }}</strong>
                 {% if result.features_used %}
@@ -100,7 +100,7 @@
                    ({% if result.problem == 'category' %}accuracy{% else %}closeness, R²{% endif %}).</p>
                 <p>The method and setting were chosen using a separate practice
                    set of {{ result.n_val }} examples, then scored for real on
-                   {{ result.n_test }} completely untouched examples — so the
+                   {{ result.n_test }} completely untouched examples, so the
                    score above isn't just the number that happened to win.</p>
                 {% if result.compared %}
                     <p>Every method we tried (each over several settings) and its
@@ -121,7 +121,7 @@
                     <li>It studied <strong>{{ result.n_train }}</strong> of them to learn a pattern
                         for guessing <strong>{{ result.target }}</strong> from the other columns.</li>
                     <li>We kept <strong>{{ result.n_test }}</strong> examples hidden, so we could test
-                        it fairly — like a surprise exam on questions it never studied.</li>
+                        it fairly, like a surprise exam on questions it never studied.</li>
                     {% if result.problem == 'category' %}
                         <li>It guessed <strong>{{ result.target }}</strong> for those
                             {{ result.n_test }} hidden examples, and we counted how many it got right.</li>

@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=8">{% endblock %}
 {% block content %}
 <div class="box p4-box p4-narrow">
-  <div class="title-container"><span class="title">Thank you — you're done</span></div>
+  <div class="title-container"><span class="title">Thank you - you're done</span></div>
 
   <div class="p4-explain">
     <h3>What this study was about</h3>
@@ -12,13 +12,12 @@
        Plackett–Luce preference model, so the only thing that differed was
        <em>how you were asked</em>.</p>
     <p>The real question is which method captures more of your taste per minute of
-       your time — a ranking gives more information per task, but takes far longer
+       your time: a ranking gives more information per task, but takes far longer
        than a single click. The ratings you gave near the end were held out to
        score both.</p>
     <p class="p4-note">No study is actually being run here: this is the interface and
        protocol for one. Your answers live in a server-side session for as long as this
-       browser session lasts, are shown back to you above, and are not stored anywhere
-       else.</p>
+       browser session lasts, and are not stored anywhere else.</p>
   </div>
 
   <div class="p4-actions">
@@ -26,9 +25,10 @@
     <a class="p4-btn p4-btn-quiet" href="{% url 'project4:index' %}">Back to the project page</a>
   </div>
 
-  <details class="p4-details">
-    <summary>See the raw data you produced</summary>
-    <pre class="p4-pre">{{ export }}</pre>
-  </details>
+  {% if can_go_back %}
+  <form action="{% url 'project4:study_submit' %}" method="post" class="p4-inline">{% csrf_token %}
+    <button class="p4-btn p4-btn-quiet" type="submit" name="back" value="1" formnovalidate>Back</button>
+  </form>
+  {% endif %}
 </div>
 {% endblock %}

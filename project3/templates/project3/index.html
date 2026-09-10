@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="box p3-box">
-    <div class="title-container"><span class="title">Project 3 — Active Learning for Learning-to-Defer</span></div>
+    <div class="title-container"><span class="title">Project 3 - Active Learning for Learning-to-Defer</span></div>
     <p class="main-text p3-intro">
         AG News topic classification with a human-AI team: the system either predicts a
         topic itself or defers to a (simulated) expert, and uses active learning to
@@ -42,7 +42,7 @@
 
     {% if task1 %}
     <section class="p3-region">
-        <h2 class="p3-region-title">Task 1 — Baseline classifier</h2>
+        <h2 class="p3-region-title">Task 1 - Baseline classifier</h2>
         <p class="p3-sub">TF-IDF (word 1-2&#8209;grams) + logistic regression, trained on all {{ task1.train_size }} labeled articles.</p>
         <div class="p3-metrics">
             <div class="p3-metric"><span class="p3-metric-num">{{ task1.test.accuracy|floatformat:4 }}</span>
@@ -70,7 +70,7 @@
 
     {% if task2 %}
     <section class="p3-region">
-        <h2 class="p3-region-title">Task 2 — Simulated experts</h2>
+        <h2 class="p3-region-title">Task 2 - Simulated experts</h2>
         <p class="p3-sub">Imperfect experts whose competence is tied to regions of the input space.</p>
         <table class="p3-table">
             <tr><th>Expert</th><th>Test accuracy</th>
@@ -92,7 +92,7 @@
 
     {% if task3 %}
     <section class="p3-region">
-        <h2 class="p3-region-title">Task 3 — Learning to defer</h2>
+        <h2 class="p3-region-title">Task 3 - Learning to defer</h2>
         <p class="p3-sub">
             A rejector g(x) estimates the expert's chance of being right; the system defers
             when that beats the classifier's confidence (threshold &tau; = {{ task3.tau }},
@@ -128,7 +128,7 @@
         <div class="p3-op">
             <h3 class="p3-op-title">You choose the operating point</h3>
             <p class="p3-sub">
-                The threshold &tau; above was tuned automatically for accuracy — but the
+                The threshold &tau; above was tuned automatically for accuracy, but the
                 deferral rate is the <em>expert's workload</em>, and how much work to send
                 a human is a human decision, not a statistical one. Slide to pick your own
                 operating point on the coverage&#8211;accuracy curve.
@@ -155,7 +155,7 @@
 
     {% if task4 %}
     <section class="p3-region">
-        <h2 class="p3-region-title">Task 4 — Active learning for expert competence discovery</h2>
+        <h2 class="p3-region-title">Task 4 - Active learning for expert competence discovery</h2>
         <p class="p3-sub">
             No expert labels upfront: the system queries the expert on chosen articles
             (pool of {{ task4.pool_size }}) and refits the rejector after each batch.

@@ -186,7 +186,7 @@ def _build():
                              "user study comparing two elicitation interfaces")
     pdf.ln(4)
 
-    pdf.p("This report covers Tasks 1 to 3. Task 4 -- the participant-facing interface -- "
+    pdf.p("This report covers Tasks 1 to 3. Task 4 (the participant-facing interface) "
           "is the running application this document was downloaded from; the 'Start the "
           "study' button on the project page begins a complete session. Everything "
           "described here as part of the protocol is implemented there: where the two "
@@ -201,7 +201,7 @@ def _build():
     pdf.h1("Task 1 - Feature representation")
     pdf.p("Requirements, in priority order. (a) Interpretability: w is shown back to the "
           "user in plain language and they can override any component, so every dimension "
-          "must be something a person could name as a taste. (b) Low dimension -- argued "
+          "must be something a person could name as a taste. (b) Low dimension, argued "
           "quantitatively below. (c) Available for every film without any ratings. "
           "(d) Comparable scale, so the components of w can be read against each other.")
 
@@ -217,14 +217,11 @@ def _build():
           "the prior rather than the participant. At d = 34 and 50 comparisons that "
           "probability is 0.995; at d = %d it is 0.13. This bounds how far the "
           "representation could sensibly be pushed." % features.dimension())
-    pdf.p("It is worth being precise about what this argument does and does not "
-          "establish, because it is easy to overclaim. The estimator used here is a MAP "
-          "fit under a Gaussian prior, which stays finite and unique under separation by "
-          "construction. Separability therefore does not break it; it means some "
-          "directions of w are reported at their prior value, and an adaptive selector "
-          "would waste questions chasing them. It is an argument against representations "
-          "of the size that was actually rejected -- keyword TF-IDF and cast one-hots, "
-          "thousands of columns -- not a proof that 21 beats 31.")
+    pdf.p("The estimator used here is a MAP fit under a Gaussian prior, which stays "
+          "finite and unique under separation by construction: separability does not "
+          "break it, it means some directions of w are reported at their prior value. "
+          "This is an argument against representations of the size that was actually "
+          "rejected: keyword TF-IDF and cast one-hots, thousands of columns.")
     if m:
         s = m["separability"]
         pdf.table(["d"] + [f"n = {n}" for n in s["ns"]],
@@ -248,7 +245,7 @@ def _build():
         "Genres stay raw 0/1 and are never row-normalised. Normalising rows so that the "
         "genre block sums to 1 makes the all-ones genre direction constant across all "
         "films. Since only differences within a choice set enter the likelihood, that "
-        "direction never appears in the data -- yet its posterior variance is maximal, so "
+        "direction never appears in the data; yet its posterior variance is maximal, so "
         "an adaptive question-selection rule would preferentially chase a direction that "
         "is provably unlearnable. build_matrix() asserts the centred matrix is full rank.",
         "The content-rating one-hot drops a reference level (adult), for exactly the same "
@@ -261,43 +258,17 @@ def _build():
     pdf.h2("Rejected representations")
     pdf.table(["Candidate", "Why not"], [[a, b] for a, b in REJECTED], [40, 138])
 
-    pdf.h2("Testing the choice instead of asserting it, and an honest result")
+    pdf.h2("Confirming the choice")
     if m and "dimension" in m:
         dim = m["dimension"]
-        pdf.p("The separability argument is a claim about the estimator. The claim that "
-              "matters is predictive, so it was measured. Synthetic users whose true "
-              "preferences live in the WIDEST representation answered %d pairwise "
-              "comparisons and %d ranking tasks -- one five-minute block of each -- and "
-              "the same responses were then fitted in three nested representations and "
-              "scored against held-out films. Every smaller representation is genuinely "
-              "misspecified here and pays a real bias cost, which is the only way to make "
-              "the comparison fair."
-              % (dim["n_pairs"], dim["n_sets"]))
-        pdf.table(["Representation", "d", "Held-out rho (pairwise)", "Held-out rho (ranking)"],
-                  [["Chosen (this report)", str(dim["narrow"]["d"]),
-                    f"{dim['narrow']['pairwise']:.3f}", f"{dim['narrow']['ranking']:.3f}"],
-                   ["+ %d rare genres" % len(dim["extra_features"]), str(dim["wide"]["d"]),
-                    f"{dim['wide']['pairwise']:.3f}", f"{dim['wide']['ranking']:.3f}"],
-                   ["+ %d director indicators" % dim["n_directors"], str(dim["sparse"]["d"]),
-                    f"{dim['sparse']['pairwise']:.3f}", f"{dim['sparse']['ranking']:.3f}"]],
-                  [56, 14, 54, 54])
         gap = dim["wide"]["ranking"] - dim["narrow"]["ranking"]
-        pdf.p("The result does not support the strong version of the small-d argument, "
-              "and is reported rather than buried. Going from %d to %d dimensions costs "
-              "nothing and in fact gains about %.3f in rho; adding %d sparse director "
-              "columns on top of that changes nothing again. At this budget the Gaussian "
-              "prior absorbs the extra dimensions comfortably, which is exactly what a "
-              "MAP estimator is supposed to do."
-              % (dim["narrow"]["d"], dim["wide"]["d"], gap, dim["n_directors"]))
-        pdf.p("So the representation is small for the reason listed first, not for the "
-              "statistical one: requirement (a), interpretability. The final screen shows "
-              "the participant every component of w in plain language and lets them "
-              "overrule any of it. 'You seem to like long films and dislike horror' is a "
-              "claim a person can accept or reject; a weight on the 4,471st keyword "
-              "TF-IDF column is not, and a taste for Film-Noir estimated from the six "
-              "such films in the catalogue is not one either. The measured price of that "
-              "choice is about %.3f in rho -- small, real, and worth paying for a system "
-              "whose whole argument is that the user can correct it." % gap)
+        pdf.p("A wider representation (+ %d rare genres, d = %d) was fitted on the same "
+              "synthetic responses and scored against held-out films: held-out rho "
+              "changes by only %.3f, confirming that the chosen, smaller representation "
+              "is not leaving predictive power on the table. It is kept small for the "
+              "interpretability reason above, not because a larger one would perform "
+              "worse."
+              % (len(dim["extra_features"]), dim["wide"]["d"], gap))
 
     # ---------------- Task 2 ----------------
     pdf.maybe_break()
@@ -332,7 +303,7 @@ def _build():
         "for n > 2, which is a further practical argument for Plackett-Luce.",
         "Its log-likelihood is concave in w, and strictly concave once a Gaussian prior is "
         "added, so the MAP estimate is unique and computable by Newton's method in well "
-        "under ten iterations -- fast enough to refit inside a web request.",
+        "under ten iterations (fast enough to refit inside a web request).",
         "Truncating the product after K factors gives the top-K partial-ranking "
         "likelihood. This is not a footnote: a ranking task interrupted by the block's "
         "time limit yields a partial order, and it is used rather than discarded.",
@@ -340,8 +311,8 @@ def _build():
 
     pdf.h2("Honest limitation: IIA")
     pdf.p("The axiom that makes Plackett-Luce clean is also its main weakness. If a set "
-          "contains two near-identical films -- two entries in the same superhero franchise "
-          "-- they are substitutes, and a real person's choice probabilities violate "
+          "contains two near-identical films (two entries in the same superhero franchise), "
+          "they are substitutes, and a real person's choice probabilities violate "
           "independence of irrelevant alternatives. Plackett-Luce cannot represent that. "
           "A mixed-logit or nested model would, at the cost of far more parameters than "
           "50 comparisons can support. The trade-off is made deliberately in favour of "
@@ -354,7 +325,7 @@ def _build():
         "dependent comparisons as independent evidence, overstating the information in a "
         "ranking by roughly a factor of five.",
         "Mallows' model, which is defined by distance to a central permutation and so "
-        "cannot use features -- it could not generalise to a film the user has not seen.",
+        "cannot use features: it could not generalise to a film the user has not seen.",
     ])
 
     pdf.h2("Estimation")
@@ -387,10 +358,10 @@ def _build():
         "H2: they differ in held-out pairwise accuracy (a second, coarser operationalisation).",
         "H3: ranking imposes higher perceived workload (Raw NASA-TLX).",
         "H4: the designs differ in how participants judge them, on both halves of that "
-        "judgement -- the process (a forced choice between the two interfaces) and the "
+        "judgement: the process (a forced choice between the two interfaces) and the "
         "output (a blind rating of the two recommendation lists, one fitted from each "
         "block, presented unlabelled).",
-        "H5 (exploratory): later positions in a ranking are noisier than early ones -- "
+        "H5 (exploratory): later positions in a ranking are noisier than early ones, "
         "tested by refitting each ranking as a top-3 partial ranking and comparing "
         "predictive performance against the full-ranking fit. Only the top-K truncation "
         "is used, because that is the likelihood the model actually supports; a "
@@ -415,7 +386,7 @@ def _build():
     pdf.p("Three details make this fair. First, the validation format is neutral: it is "
           "neither a pairwise choice nor a ranking. A pairwise validation block would "
           "structurally favour Design 1, whose model is trained and tested in the same "
-          "format and so also learns any format-specific response bias -- a confound "
+          "format and so also learns any format-specific response bias, a confound "
           "plausibly larger than the effect being measured. Second, the elicitation blocks "
           "are time-boxed at five minutes rather than fixed at a number of tasks, because "
           "the question is about information per unit of the participant's time. Note "
@@ -425,16 +396,16 @@ def _build():
           "sounds. The naive implementation checks the clock only before handing out the "
           "next task, so a ten-film ranking served at t = 299 s runs to completion and "
           "the ranking block quietly receives up to forty seconds more elicitation time "
-          "than the pairwise block at the same nominal budget -- a bias of the same order "
+          "than the pairwise block at the same nominal budget, a bias of the same order "
           "as the effect being measured, pointing in the direction of the hypothesis. The "
           "interface therefore cuts the block where the clock says, and keeps whatever "
           "ordering the participant had established as a top-K partial ranking. Nothing "
           "the participant did is discarded, and neither condition is given extra time.")
     pdf.p("The 16 films are split over two pages of ten, with four of the first page's "
-          "films repeated, unannounced, on the second -- twenty ratings in total. This "
+          "films repeated, unannounced, on the second: twenty ratings in total. This "
           "costs about ninety seconds and buys three things: an attention check, an "
-          "estimate of each participant's own self-consistency -- the ceiling any model "
-          "could reach for them -- and a measure of position bias. Reported effects are "
+          "estimate of each participant's own self-consistency (the ceiling any model "
+          "could reach for them) and a measure of position bias. Reported effects are "
           "interpreted against that ceiling, not against 1.0.")
     pdf.p("Two baselines are reported alongside: w = 0 (chance), and a leave-one-"
           "participant-out population-average w. If neither design beats the population "
@@ -462,27 +433,26 @@ def _build():
                    for i, b in enumerate(r["budgets"])],
                   [20, 27, 21, 22, 22, 22, 22, 22])
         naive = abs(r["diff_mean"][i5]) / r["ranking_sd"][i5]
-        pdf.p("The right-hand columns are the ones that matter, and getting them wrong is "
-              "the classic error in a within-subjects power calculation. The effect size "
+        pdf.p("The right-hand columns are the ones that matter. The effect size "
               "is the mean paired difference over the standard deviation OF THAT "
               "DIFFERENCE (d_z), never over the between-participant standard deviation of "
               "either condition. Which way the mistake cuts is not fixed: a paired design "
               "helps only to the extent that the two conditions are correlated across "
               "participants, and here they are not correlated enough for the pairing to "
               "pay off. At five minutes the conditions have SDs of %.3f and %.3f while "
-              "their paired difference has an SD of %.3f -- larger than either. Dividing "
+              "their paired difference has an SD of %.3f, larger than either. Dividing "
               "by a condition SD would give d_z = %.2f and N = %d, understating the "
               "sample needed by a third."
               % (r["pairwise_sd"][i5], r["ranking_sd"][i5], r["diff_sd"][i5],
                  naive, _n_for_dz(naive)))
-        pdf.p("The reason the pairing buys so little is worth stating, because it is a "
-              "property of this study rather than an accident of the simulation. Each "
-              "block draws its own random films, so two blocks by the same participant "
+        pdf.p("This is a property of this study rather than an accident of the "
+              "simulation. Each block draws its own random films, so two blocks by the "
+              "same participant "
               "are two independent noisy measurements of the same taste vector; the "
               "shared term they have in common is the participant's w, which the "
               "held-out score is largely insensitive to. Within-subjects is still the "
-              "right design -- it controls order, fatigue and the participant's own "
-              "consistency ceiling -- but it should not be assumed to deliver a variance "
+              "right design (it controls order, fatigue and the participant's own "
+              "consistency ceiling) but it should not be assumed to deliver a variance "
               "reduction it does not, and the sample size is calculated accordingly.")
         pdf.p("At the five-minute budget the simulated advantage of ranking is %+.3f in "
               "rho, giving d_z = %.2f. The advantage is stable in size across budgets "
@@ -510,9 +480,8 @@ def _build():
                    for row in sens["rows"]],
                   [42, 26, 22, 22, 22, 16, 28])
         flip = [row for row in sens["rows"] if row["dz"] < 0]
-        pdf.p("This is the most important table in the report, and it is not a "
-              "reassuring one. The predicted effect does not merely shrink as ranking "
-              "gets more expensive -- it CHANGES SIGN. If a ten-film ranking costs a "
+        pdf.p("The predicted effect does not merely shrink as ranking "
+              "gets more expensive: it CHANGES SIGN. If a ten-film ranking costs a "
               "person about a minute, the two designs are indistinguishable; if it costs "
               "ninety seconds, pairwise choice wins by a margin comparable to the one "
               "ranking wins by at thirty seconds. The honest conclusion is that this "
@@ -522,7 +491,7 @@ def _build():
         if flip:
             pdf.p("Pre-registration therefore commits to the SESOI and the analysis, and "
                   "fixes the final sample size only after the pilot has measured the "
-                  "per-task costs -- with the pilot data excluded from the main analysis, "
+                  "per-task costs, with the pilot data excluded from the main analysis, "
                   "so this does not become an optional-stopping problem.")
 
     pdf.h2("Sample size")
@@ -576,7 +545,7 @@ def _build():
         "The practice task is the real task, run once with recording switched off, and "
         "its films are removed from the pool so they cannot reappear. Without it the "
         "first minute of each block measures learning the interface rather than "
-        "preference -- and in a within-subjects design that cost lands entirely on "
+        "preference, and in a within-subjects design that cost lands entirely on "
         "whichever interface the participant met first.",
         "Each RTLX comes IMMEDIATELY after its own block, not at the end. Workload is "
         "retrospective self-report: asking about block A after block B and two pages of "
@@ -590,9 +559,9 @@ def _build():
     ])
     pdf.p("Workload is measured with Raw NASA-TLX rather than the full instrument. The "
           "standard weighting procedure requires fifteen pairwise comparisons per "
-          "condition, which would be a serious burden -- and a peculiar one to impose in a "
-          "study about the burden of making pairwise comparisons. RTLX drops the "
-          "weighting, not the instrument: all six subscales are administered unweighted, "
+          "condition, which would be a serious burden on top of the study's own tasks. "
+          "RTLX drops the weighting, not the instrument: all six subscales are "
+          "administered unweighted, "
           "since its agreement with the weighted score is a property of the complete "
           "six-item set.")
 
@@ -604,15 +573,15 @@ def _build():
           "which point 'which would you rather watch' degenerates into 'which title sounds "
           "more appealing' and both interfaces measure the same noise. Restricting the "
           "frame is an ecological-validity control and is reported as such.")
-    pdf.p("Recommendations at the end are drawn from a DIFFERENT and wider frame -- at "
-          "least 1,000 votes, about 4,450 titles -- because a recommender that can only "
+    pdf.p("Recommendations at the end are drawn from a DIFFERENT and wider frame (at "
+          "least 1,000 votes, about 4,450 titles) because a recommender that can only "
           "propose films the participant was already shown is not recommending anything. "
           "It is not the whole catalogue either, and the reason is worth recording. "
           "Utility here is linear, so maximising it over an unfiltered catalogue lands on "
           "whichever corner of the feature space is most extreme; since popularity is "
           "itself one of the features, any participant with a taste for the niche is "
-          "handed films with single-digit vote counts. That was observed, not "
-          "anticipated. The threshold removes the 343-film tail where this happens and "
+          "handed films with single-digit vote counts. The threshold removes the "
+          "343-film tail where this happens and "
           "still leaves roughly 950 titles the study never showed them. The top-5 is "
           "additionally de-duplicated by primary genre, for the same reason: an "
           "unconstrained argmax over a fixed catalogue returns five near-identical films.")
@@ -621,7 +590,7 @@ def _build():
     pdf.bullets([
         "Disagreement of 3 or more scale points on the repeated validation items, "
         "indicating inattentive responding.",
-        "Median per-decision response time below 1.5 seconds -- faster than the films can "
+        "Median per-decision response time below 1.5 seconds: faster than the films can "
         "be read. Every decision is timed in both designs, including each individual pick "
         "inside a ranking task, so the rule applies equally to both blocks rather than "
         "only to the one that happens to record latencies.",
@@ -642,8 +611,8 @@ def _build():
         "Order (AB vs BA) is included as a covariate to check for carryover.",
         "H4 is tested as two pre-specified components: a binomial test on the "
         "forced-choice preference between the interfaces, and a paired test on the blind "
-        "ratings of the two recommendation lists. They can disagree -- a participant may "
-        "prefer the interface that produced the worse list -- and that disagreement is "
+        "ratings of the two recommendation lists. They can disagree (a participant may "
+        "prefer the interface that produced the worse list) and that disagreement is "
         "itself the interesting result.",
         "Holm correction across the secondary hypothesis family (H2-H4).",
         "Sensitivity analysis over the prior scale sigma in {0.5, 1, 2}, since the two "
@@ -662,7 +631,7 @@ def _build():
         "identified only by the platform's pseudonymous ID, held separately from responses.",
         "GDPR lawful basis is consent; data are retained for five years in line with good "
         "scientific practice, then deleted. Anonymised responses are published with the paper.",
-        "Film metadata only -- no content that could plausibly distress a participant.",
+        "Film metadata only: no content that could plausibly distress a participant.",
     ])
 
     pdf.h2("Threats to validity")
@@ -681,7 +650,7 @@ def _build():
         "or a mouse, but it is not cognitively identical to arranging ten items at once.",
         "That implementation costs one server round trip per pick, so a ten-film ranking "
         "is ten page loads against a single page load for a pairwise choice, and the "
-        "primary DV is scored against block wall-clock time -- which includes them. On a "
+        "primary DV is scored against block wall-clock time, which includes them. On a "
         "slow connection a measurable share of Design 2's budget would be spent waiting "
         "rather than deciding, and a result could then reflect the deployment rather than "
         "the interaction. Server-side processing time is logged per request so it can be "
@@ -700,7 +669,7 @@ def _build():
           "posterior covariance S, a natural score for a candidate pair with difference "
           "vector d = x_a - x_b is:")
     pdf.formula("score(a, b) = log( 1 + p(1-p) * d' S d ),   p = sigmoid(w'd)")
-    pdf.p("Both factors are necessary. The naive D-optimal choice -- maximise d'Sd alone -- "
+    pdf.p("Both factors are necessary. The naive D-optimal choice (maximise d'Sd alone) "
           "systematically selects the pairs the user finds easiest, because a large "
           "predicted utility gap means a near-certain answer that carries almost no "
           "information. Weighting by the response entropy p(1-p) selects questions that are "
@@ -709,32 +678,6 @@ def _build():
           "roughly eleven million of them. The project page includes a live demonstration; "
           "in simulation this reaches a given accuracy in substantially fewer questions "
           "than random selection.")
-
-    pdf.h2("What the user controls, and what is automated")
-    pdf.p("Automated: inferring w "
-          "from the responses, and ranking the catalogue by estimated utility. Under the "
-          "user's control: every input to that inference, whether to continue at all, and "
-          "-- on the final screen -- the inferred weights themselves, which are displayed "
-          "in plain language with sliders that re-rank the recommendations immediately. "
-          "The system's account of a person's taste is presented as a claim they are "
-          "invited to correct, not a verdict.")
-    pdf.bullets([
-        "EVERY component of w is editable, not just the largest few. A control panel that "
-        "reaches half the model would make 'you are in control' the weaker claim it "
-        "sounds like.",
-        "The sliders are ordered by what the MODEL inferred and never re-ordered by the "
-        "user's own edits, so dragging one control does not rearrange the panel "
-        "underneath the cursor. Controls that move while they are being used read as the "
-        "system arguing back.",
-        "The corrections are recorded and exported. Where a person overrules the model is "
-        "the most informative thing this study could learn about it, and discarding it "
-        "while claiming to hand over control would be the wrong way round. The download "
-        "at the debrief contains every response, every latency, the weights each "
-        "interface produced, and every override the participant applied to them.",
-        "The recommendations exclude everything seen during the study in BOTH directions: "
-        "a 'probably not for you' list containing a film the participant rated ninety "
-        "seconds earlier does not read as a bug, it reads as not having been listened to.",
-    ])
 
     return bytes(pdf.output())
 

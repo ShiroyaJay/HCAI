@@ -65,7 +65,7 @@ def _cached_assets(models_dir):
 
 
 def new_state():
-    return {"queried": [], "labels": []}
+    return {"queried": [], "labels": [], "skipped": [], "finished": False}
 
 
 def _fit_g(assets, state):
@@ -85,8 +85,8 @@ def _fit_g(assets, state):
 def next_query(models_dir, state):
     """Deterministic pick of the next article to show (None when pool is done)."""
     assets = _cached_assets(models_dir)
-    queried = set(state["queried"])
-    candidates = np.array([i for i in range(len(assets["pool_df"])) if i not in queried])
+    excluded = set(state["queried"]) | set(state.get("skipped", []))
+    candidates = np.array([i for i in range(len(assets["pool_df"])) if i not in excluded])
     if len(candidates) == 0:
         return None
 
@@ -108,6 +108,21 @@ def record_label(state, idx, label):
     if idx not in state["queried"]:
         state["queried"].append(int(idx))
         state["labels"].append(int(label))
+    return state
+
+
+def record_skip(state, idx):
+    """Leave an article unlabeled but take it out of the query pool."""
+    idx = int(idx)
+    skipped = state.setdefault("skipped", [])
+    if idx not in state["queried"] and idx not in skipped:
+        skipped.append(idx)
+    return state
+
+
+def record_finish(state):
+    """The user chose to stop; live_metrics() already reflects their answers."""
+    state["finished"] = True
     return state
 
 

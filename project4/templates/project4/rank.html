@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=8">{% endblock %}
 {% block content %}
 <div class="box p4-box">
   <div class="p4-blockbar">
     <span class="p4-blockbar-q">Pick the one you would most like to watch</span>
     <span class="p4-blockbar-meta">
-      {% if practice %}Practice — this one is not recorded
-      {% else %}{{ done }} sets ranked &middot; {{ remaining }}s left{% endif %}
+      {% if practice %}
+      <span class="p4-badge p4-badge-practice">Practice — not recorded</span>
+      {% else %}
+      <span class="p4-badge p4-badge-count">{{ done }} sets ranked</span> &middot; {{ remaining }}s left
+      {% endif %}
     </span>
   </div>
 
@@ -33,13 +36,20 @@
       {% if not practice %}
       <p class="p4-note">If the time runs out part-way through a set, the order you
          had already established still counts.</p>
+      {% if picked %}
+      <form action="{% url 'project4:study_submit' %}" method="post" class="p4-stopform">{% csrf_token %}
+        <button class="p4-btn p4-btn-quiet" type="submit" name="stop_ranking" value="1">
+          Stop here — start a new set
+        </button>
+      </form>
+      {% endif %}
       {% endif %}
     </aside>
   </div>
 
   <form action="{% url 'project4:study_submit' %}" method="post" class="p4-skipform">{% csrf_token %}
-    <button class="p4-skip" type="submit" name="skip" value="1">
-      {% if practice %}Skip the practice{% else %}Skip to the next section (demo only){% endif %}
+    <button class="p4-badge p4-badge-practice p4-badge-btn" type="submit" name="skip" value="1">
+      {% if practice %}Skip the practice{% else %}Stop and go to next step{% endif %}
     </button>
   </form>
 </div>

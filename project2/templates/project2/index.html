@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="box p2-box">
-    <div class="title-container"><span class="title">Project 2 — Explainability</span></div>
+    <div class="title-container"><span class="title">Project 2 - Explainability</span></div>
     <p class="main-text p2-intro">
         Palmer Penguins: predict the <strong>species</strong> and explore how the model
         works. Pick a model class and how strongly to reward simplicity (&lambda;); the
@@ -61,8 +61,8 @@
                  alt="{% if model_type == 'tree' %}Decision tree diagram{% else %}Logistic regression coefficients{% endif %}">
         </div>
         <p class="p2-note">
-            Honesty note: as the task defines it, &lambda; selects the maximizer of
-            acc<sub>test</sub> &minus; &lambda;&middot;&Omega;(f) — so the test accuracy shown
+            Note: as the task defines it, &lambda; selects the maximizer of
+            acc<sub>test</sub> &minus; &lambda;&middot;&Omega;(f), so the test accuracy shown
             is the selection criterion itself. Because the test set took part in the
             selection, this number is slightly optimistic, not an unbiased estimate of
             performance on new penguins.
@@ -101,7 +101,7 @@
             Selected example: true species <strong>{{ cf_true }}</strong>,
             model predicts <strong>{{ cf_pred }}</strong>.
             {% if cf_target_is_pred %}<span class="p2-warn">Target equals the model's
-            current prediction — pick a different target to see meaningful
+            current prediction; pick a different target to see meaningful
             counterfactuals.</span>{% endif %}
         </p>
 
@@ -132,7 +132,7 @@
                 </tr>
                 {% empty %}
                 <tr><td colspan="{{ feature_names|length|add:'3' }}" class="p2-warn">
-                    No counterfactuals found for this target — try another example or target.
+                    No counterfactuals found for this target; try another example or target.
                 </td></tr>
                 {% endfor %}
             </tbody>

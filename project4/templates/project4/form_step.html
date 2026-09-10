@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=9">{% endblock %}
 {% block content %}
 <div class="box p4-box p4-narrow">
   <div class="title-container"><span class="title">{{ title }}</span></div>
@@ -24,16 +24,16 @@
   {% endif %}
 
   <form action="{% url 'project4:study_submit' %}" method="post" class="p4-form">{% csrf_token %}
-    {% for key, question, choices in questions %}
+    {% for key, question, choices, prior in questions %}
     <fieldset class="p4-field">
       <legend>{{ question }}</legend>
       {% if choices %}
-        {% for choice in choices %}
+        {% for choice, checked in choices %}
         <label class="p4-radio"><input type="radio" name="{{ key }}" value="{{ choice }}"
-          {% if forloop.first %}required{% endif %}> {{ choice }}</label>
+          {% if forloop.first %}required{% endif %}{% if checked %} checked{% endif %}> {{ choice }}</label>
         {% endfor %}
       {% else %}
-        <textarea name="{{ key }}" rows="3" class="p4-textarea"></textarea>
+        <textarea name="{{ key }}" rows="3" class="p4-textarea">{{ prior }}</textarea>
       {% endif %}
     </fieldset>
     {% endfor %}
@@ -45,6 +45,9 @@
     </label>
     {% endif %}
 
+    {% if can_go_back %}
+    <button class="p4-btn p4-btn-quiet" type="submit" name="back" value="1" formnovalidate>Back</button>
+    {% endif %}
     <button class="p4-btn p4-btn-go" type="submit">Continue</button>
   </form>
 </div>

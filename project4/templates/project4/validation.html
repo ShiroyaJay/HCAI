@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=9">{% endblock %}
 {% block content %}
 <div class="box p4-box">
   <div class="title-container"><span class="title">How much would you want to watch these?</span></div>
@@ -16,7 +16,7 @@
       <div class="p4-scale">
         {% for n in "1234567" %}
         <label class="p4-scale-pt"><input type="radio" name="m{{ m.index }}" value="{{ n }}"
-          {% if forloop.first %}required{% endif %}><span>{{ n }}</span></label>
+          {% if forloop.first %}required{% endif %}{% if forloop.counter == m.prior %} checked{% endif %}><span>{{ n }}</span></label>
         {% endfor %}
       </div>
     </fieldset>

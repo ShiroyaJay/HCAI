@@ -5,8 +5,6 @@ Participant state lives entirely in the session, so no request writes to disk.
 Every step is POST-redirect-GET, so refreshing never double-records.
 """
 
-import json
-
 import numpy as np
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
@@ -65,15 +63,19 @@ def study_step(request):
 
     st = study.step(state)
     ctx = {"state": state, "step": st, "step_no": state["s"] + 1,
-           "n_steps": len(study.STEPS), "design": study.current_design(state)}
+           "n_steps": len(study.STEPS), "design": study.current_design(state),
+           "can_go_back": study.can_go_back(state)}
 
     if st in ("consent", "demographics", "final"):
-        ctx["questions"] = study.QUESTIONS.get(st, [])
+        answers = state["g"] if st == "demographics" else state["q"].get(st, {})
+        ctx["questions"] = _with_answers(study.QUESTIONS.get(st, []), answers)
         ctx["title"], ctx["intro"] = _form_copy(st)
         return render(request, "project4/form_step.html", ctx)
 
     if st in ("rtlx_a", "rtlx_b"):
-        ctx["questions"] = [(k, q, study.RTLX_SCALE) for k, q in study.RTLX_ITEMS]
+        answers = state["q"].get(f"rtlx_{ctx['design']}", {})
+        ctx["questions"] = _with_answers(
+            [(k, q, study.RTLX_SCALE) for k, q in study.RTLX_ITEMS], answers)
         ctx["title"] = "How did that section feel?"
         ctx["intro"] = ("Thinking about the section you have just finished, in which you "
                         + ("chose between two films" if ctx["design"] == study.PAIRWISE
@@ -91,7 +93,11 @@ def study_step(request):
 
     if st in ("validation_1", "validation_2"):
         page1, page2 = study.validation_items(state)
-        ctx["items"] = data.movies(page1 if st == "validation_1" else page2)
+        prior = study.prior_validation_ratings(state, st)
+        items = data.movies(page1 if st == "validation_1" else page2)
+        for m in items:
+            m["prior"] = prior.get(m["index"])
+        ctx["items"] = items
         ctx["scale"] = study.LIKERT_7
         return render(request, "project4/validation.html", ctx)
 
@@ -101,7 +107,6 @@ def study_step(request):
     if st == "reveal":
         return _reveal(request, state, ctx)
 
-    ctx["export"] = json.dumps(study.export(state), indent=2)
     return render(request, "project4/debrief.html", ctx)
 
 
@@ -111,6 +116,21 @@ def _form_copy(st):
         "demographics": ("A few questions about you", "This helps us describe who took part."),
         "final": ("Comparing the two methods", "You have now used both. A few final questions."),
     }[st]
+
+
+def _with_answers(questions, answers):
+    """Pair each question's choices with whether that was already answered.
+
+    A step revisited via Back should show what the participant chose, not a
+    blank form -- so form_step.html renders `checked`/prefilled from this
+    instead of resubmitting looking like the answers were wiped.
+    """
+    out = []
+    for key, question, choices in questions:
+        prior = answers.get(key, "")
+        opts = [(c, c == prior) for c in choices] if choices else None
+        out.append((key, question, opts, prior))
+    return out
 
 
 def _task_page(request, state, ctx, practice):
@@ -289,6 +309,12 @@ def study_submit(request):
     st = study.step(state)
     post = request.POST
 
+    if post.get("back"):
+        if study.can_go_back(state):
+            study.go_back(state)
+        _save(request, state)
+        return redirect("project4:study")
+
     if st == "consent":
         # The `required` attribute on the checkbox is a browser hint, not a
         # gate. Consent is the one thing that must be checked server-side.
@@ -317,14 +343,27 @@ def study_submit(request):
         if post.get("skip"):
             study.finish_block(state, slot)
         elif study.current_design(state) == study.PAIRWISE:
-            choice = post.get("choice")
-            if choice in ("0", "1") and state.get("cur"):
-                study.record_pairwise(state, choice)
+            if post.get("skip_pair"):
+                study.skip_pair(state)
+            else:
+                choice = post.get("choice")
+                if choice in ("0", "1") and state.get("cur"):
+                    study.record_pairwise(state, choice)
+        elif post.get("stop_ranking") and state.get("picked"):
+            study.stop_ranking(state)
         else:
             _rank_click(state, post, record=True)
 
     elif st in ("validation_1", "validation_2"):
         page1, page2 = study.validation_items(state)
+        # Resubmitting this page (reached via Back) replaces its ratings rather
+        # than appending a second copy: `v` is trimmed back to how it stood
+        # before this page's last submit, first.
+        vlen = state.setdefault("vlen", {})
+        prev_len = vlen.get(st)
+        if prev_len is not None:
+            state["v"] = state["v"][:prev_len]
+        vlen[st] = len(state["v"])
         for idx in (page1 if st == "validation_1" else page2):
             value = post.get(f"m{idx}", "")
             if value.isdigit() and 1 <= int(value) <= len(study.LIKERT_7):
@@ -399,7 +438,9 @@ def export_json(request):
     state = _state(request)
     if state is None:
         return redirect("project4:index")
-    return JsonResponse(study.export(state), json_dumps_params={"indent": 2})
+    return JsonResponse(study.export(state), json_dumps_params={"indent": 2},
+                        headers={"Content-Disposition":
+                                 'attachment; filename="project4_responses.json"'})
 
 
 # --------------------------------------------------------------------------

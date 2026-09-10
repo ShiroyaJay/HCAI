@@ -124,7 +124,11 @@ def new_state(seed=None):
         "p": [],                      # pairwise: [a, b, chosen, ds]
         "r": [],                      # rankings: [n_ranked] + order(10) + pick ds
         "v": [],                      # validation: [movie_index, rating]
+        "vlen": {},                   # len(v) before each validation page's last submit,
+                                       # so resubmitting (via Back) replaces it instead of
+                                       # stacking a second copy of the same items on top
         "pr": [],                     # movies burned on practice tasks
+        "sk": [],                     # movies burned on skipped pairwise tasks
         "q": {},                      # questionnaires
         "t": {},                      # block wall-clock seconds
         "bs": None,                   # current block start (epoch seconds)
@@ -142,6 +146,34 @@ def step(state):
 
 def advance(state):
     state["s"] = min(state["s"] + 1, len(STEPS) - 1)
+    state["bs"] = None
+    state["cur"] = None
+    state["ct"] = None
+    state["picked"] = []
+    state["pd"] = []
+    return state
+
+
+# Steps a participant may step back FROM. block_*, practice_* and reveal are
+# excluded: the blocks are time-boxed, and reveal is excluded specifically so
+# recs' blind list comparison can't be redone after already having seen, on
+# reveal, which list came from which design -- that would un-blind it after
+# the fact. rtlx_*/validation_* aren't in the list either (reached only as a
+# Back *target*, from break/final), but resubmitting them is made idempotent
+# below rather than blocked, so that doesn't limit which steps get a button.
+SAFE_STEPS = frozenset({
+    "consent", "demographics", "intro_a", "break", "intro_b",
+    "final", "recs", "debrief",
+})
+
+
+def can_go_back(state):
+    i = state["s"]
+    return i > 0 and STEPS[i] in SAFE_STEPS
+
+
+def go_back(state):
+    state["s"] = max(0, state["s"] - 1)
     state["bs"] = None
     state["cur"] = None
     state["ct"] = None
@@ -193,6 +225,7 @@ def seen(state, include_validation=True):
     consistency check would never fire.
     """
     out = set(state.get("pr") or [])
+    out.update(state.get("sk") or [])
     for a, b, _c, _ds in state["p"]:
         out.add(a); out.add(b)
     for rec in state["r"]:
@@ -264,6 +297,29 @@ def clear_task(state):
     return state
 
 
+def skip_pair(state):
+    """Decline the pair on screen without recording a choice.
+
+    Forced choice between two unseen or disliked films is a real burden; this
+    is the escape hatch. The pair is burned -- excluded from later draws --
+    so declining doesn't just hand the same pair straight back.
+    """
+    state["sk"] = (state.get("sk") or []) + [int(i) for i in (state.get("cur") or [])]
+    return clear_task(state)
+
+
+def stop_ranking(state):
+    """Record the order established so far for the current set as a partial
+    ranking, then let a fresh set be drawn.
+
+    Same top-K partial-ranking path the block-time cutoff uses in
+    finish_block -- offered here as something the participant can choose for
+    themselves, per set, instead of only the clock enforcing it.
+    """
+    return record_ranking(state, list(state["picked"]), list(state["pd"]),
+                          n_ranked=len(state["picked"]))
+
+
 def record_pairwise(state, chosen):
     """Store [movie_a, movie_b, chosen, deciseconds].
 
@@ -320,6 +376,19 @@ def validation_items(state):
     page2 = unique[VALIDATION_PAGE:] + repeats
     _rng(state, "shuffle").shuffle(page2)
     return page1, page2
+
+
+def prior_validation_ratings(state, st):
+    """This page's most recently submitted ratings, keyed by movie index.
+
+    Only meaningful for a page reached via Back (from `final`): before that
+    page's first submission, `vlen` has no entry for it and this is empty, so
+    a first-time visit renders blank as before.
+    """
+    start = (state.get("vlen") or {}).get(st)
+    if start is None:
+        return {}
+    return {idx: rating for idx, rating in state["v"][start:]}
 
 
 def recs_first_slot(state):

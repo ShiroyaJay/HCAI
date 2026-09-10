@@ -12,7 +12,7 @@
    width:30%, display:table and color:white. Every button in this app opts out
    of all of that here first, then gets its own look below. Same specificity as
    the component rules, so it must stay above them. */
-.p4-btn, .p4-pick, .p4-choice, .p4-skip, .p4-linkbtn {
+.p4-btn, .p4-pick, .p4-choice, .p4-skip, .p4-linkbtn, .p4-badge-btn {
     width: auto; height: auto; opacity: 1; margin: 0; color: inherit;
     background: none; border: none; border-radius: 0; font: inherit;
     display: inline-block; box-sizing: border-box;
@@ -64,6 +64,11 @@
     align-items: baseline; flex-wrap: wrap; gap: 8px; }
 .p4-blockbar-q { font-size: 21px; font-weight: 600; }
 .p4-blockbar-meta { color: #7a8494; font-size: 14px; }
+.p4-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-weight: 600; }
+.p4-badge-practice { background: #fdf0dc; color: #9a5b00; }
+.p4-badge-count { background: #e3f3e9; color: #1d7a4c; }
+.p4-badge-btn { cursor: pointer; }
+.p4-badge-btn:hover { filter: brightness(0.96); }
 
 .p4-versus { margin: 16px 5%; display: grid; grid-template-columns: 1fr auto 1fr;
     gap: 14px; align-items: stretch; }
@@ -83,6 +88,7 @@
 .p4-ranked h3 { margin-top: 0; }
 .p4-ranked-list { margin: 0; padding-left: 20px; font-size: 14px; }
 .p4-ranked-list li { margin-bottom: 6px; }
+.p4-stopform { margin-top: 12px; }
 
 .p4-movie-title { display: block; font-size: 17px; font-weight: 600; margin-bottom: 4px;
     line-height: 1.3; }
@@ -121,8 +127,6 @@
 
 /* ---- debrief / demo ---- */
 .p4-details { margin: 18px 5%; }
-.p4-pre { background: #f7f9fc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px;
-    font-size: 12px; max-height: 320px; overflow: auto; }
 .p4-table { margin: 16px 5%; border-collapse: collapse; font-size: 14px; }
 .p4-table th, .p4-table td { border-bottom: 1px solid #e2e8f0; padding: 6px 18px 6px 0; text-align: left; }
 .p4-table th { color: #5a6472; font-weight: 600; }

@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="box p3-box">
-    <div class="title-container"><span class="title">Project 3 — Be the Expert</span></div>
+    <div class="title-container"><span class="title">Project 3 - Be the Expert</span></div>
 
     {% if not ready %}
     <p class="p3-notice">
@@ -26,19 +26,32 @@
             {% if article %}
             <h2 class="p3-region-title">Which topic is this article about?</h2>
             <blockquote class="p3-article">{{ article.text }}</blockquote>
-            <form method="post" action="{% url 'project3:interactive_label' %}" class="p3-topic-form">
-                {% csrf_token %}
-                <input type="hidden" name="article_index" value="{{ article.index }}">
-                {% for name in class_names %}
-                <button type="submit" name="label" value="{{ forloop.counter0 }}" class="p3-topic-btn">{{ name }}</button>
-                {% endfor %}
-            </form>
+            <div class="p3-actions-row">
+                <form method="post" action="{% url 'project3:interactive_label' %}" class="p3-actions-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="article_index" value="{{ article.index }}">
+                    {% for name in class_names %}
+                    <button type="submit" name="label" value="{{ forloop.counter0 }}" class="p3-action-btn">{{ name }}</button>
+                    {% endfor %}
+                </form>
+                <form method="post" action="{% url 'project3:interactive_skip' %}" class="p3-actions-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="article_index" value="{{ article.index }}">
+                    <button type="submit" class="p3-action-btn p3-skip-btn">Skip</button>
+                </form>
+                <form method="post" action="{% url 'project3:interactive_finish' %}" class="p3-actions-form">
+                    {% csrf_token %}
+                    <button type="submit" class="p3-action-btn p3-finish-btn">Finish</button>
+                </form>
+            </div>
+            {% elif finished %}
+            <p class="p3-notice">You ended the session; your results are in the sidebar. Click "Start over" to play again.</p>
             {% else %}
-            <p class="p3-notice">You have labeled every article in the pool — thanks!</p>
+            <p class="p3-notice">You have labeled every article in the pool. Thanks!</p>
             {% endif %}
             <form method="post" action="{% url 'project3:interactive_start' %}">
                 {% csrf_token %}
-                <button type="submit" class="p3-reset-btn">Start over</button>
+                <button type="submit" class="p3-action-btn p3-reset-btn">Start over</button>
             </form>
         </div>
 

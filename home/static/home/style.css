@@ -28,3 +28,10 @@
 .centered-text {
     text-align: center;
 }
+
+/* The shared .box only has bottom padding (other pages supply their own top
+   space via a title block); this page dropped its title, so give the box
+   top padding here instead of leaving the content flush against the edge. */
+.box {
+    padding-top: 24px;
+}

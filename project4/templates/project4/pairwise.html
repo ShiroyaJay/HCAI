@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=8">{% endblock %}
 {% block content %}
 <div class="box p4-box">
   <div class="p4-blockbar">
     <span class="p4-blockbar-q">Which would you rather watch?</span>
     <span class="p4-blockbar-meta">
-      {% if practice %}Practice — this one is not recorded
-      {% else %}{{ done }} answered &middot; {{ remaining }}s left{% endif %}
+      {% if practice %}
+      <span class="p4-badge p4-badge-practice">Practice — not recorded</span>
+      {% else %}
+      <span class="p4-badge p4-badge-count">{{ done }} answered</span> &middot; {{ remaining }}s left
+      {% endif %}
     </span>
   </div>
 
@@ -22,9 +25,15 @@
     {% endfor %}
   </form>
 
+  {% if not practice %}
   <form action="{% url 'project4:study_submit' %}" method="post" class="p4-skipform">{% csrf_token %}
-    <button class="p4-skip" type="submit" name="skip" value="1">
-      {% if practice %}Skip the practice{% else %}Skip to the next section (demo only){% endif %}
+    <button class="p4-skip" type="submit" name="skip_pair" value="1">Skip the pair</button>
+  </form>
+  {% endif %}
+
+  <form action="{% url 'project4:study_submit' %}" method="post" class="p4-skipform">{% csrf_token %}
+    <button class="p4-badge p4-badge-practice p4-badge-btn" type="submit" name="skip" value="1">
+      {% if practice %}Skip the practice{% else %}Stop and go to next step{% endif %}
     </button>
   </form>
 </div>

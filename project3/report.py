@@ -121,7 +121,7 @@ def build_report(metrics_dir, figures_dir, out_path):
 
     # ---------- setup ----------
     pdf.add_page()
-    pdf.h1("1  Experimental setup")
+    pdf.h1("Experimental setup")
     pdf.p(
         "All experiments use the AG News dataset (fancyzhx/ag_news): 120,000 training "
         "and 7,600 test news articles, evenly distributed over four topics (World, "
@@ -142,7 +142,7 @@ def build_report(metrics_dir, figures_dir, out_path):
 
     # ---------- task 1 ----------
     t = m1["test"]
-    pdf.h1("2  Task 1: Baseline classifier")
+    pdf.h1("Task 1: Baseline classifier")
     pdf.h2("Design")
     pdf.p(
         "The baseline is a linear classifier over sparse TF-IDF features: word 1-2 "
@@ -175,7 +175,7 @@ def build_report(metrics_dir, figures_dir, out_path):
     cc = m2["class_conditional"]
     lc = m2["length_conditional"]
     pdf.add_page()
-    pdf.h1("3  Task 2: Simulated experts")
+    pdf.h1("Task 2: Simulated experts")
     pdf.h2("Design")
     pdf.p(
         "Both experts are imperfect by construction and competent only in a region of "
@@ -223,7 +223,7 @@ def build_report(metrics_dir, figures_dir, out_path):
     t3 = m3["test"]
     b = t3["baselines"]
     pdf.add_page()
-    pdf.h1("4  Task 3: Learning to defer")
+    pdf.h1("Task 3: Learning to defer")
     pdf.h2("Method")
     pdf.p(
         "With expert labels available for the whole training set, the system learns "
@@ -297,7 +297,7 @@ def build_report(metrics_dir, figures_dir, out_path):
         return sum(r[i]["team_accuracy"] for r in runs) / len(runs)
 
     pdf.add_page()
-    pdf.h1("5  Task 4: Active learning for expert competence discovery")
+    pdf.h1("Task 4: Active learning for expert competence discovery")
     pdf.h2("Setting and strategies")
     pdf.p(
         "Now no expert labels exist up front. The classifier stays fixed (it already "
@@ -361,7 +361,7 @@ def build_report(metrics_dir, figures_dir, out_path):
 
     # ---------- task 5 + limitations ----------
     pdf.add_page()
-    pdf.h1("6  Task 5: Interactive mode (optional)")
+    pdf.h1("Task 5: Interactive mode (optional)")
     pdf.p(
         "The project interface includes a 'Be the expert' mode implementing the "
         "optional Task 5. The Task 4 loop runs with a person instead of the simulated "
@@ -373,7 +373,7 @@ def build_report(metrics_dir, figures_dir, out_path):
         "the expert. Because the queried articles come from the labeled training "
         "set, the user's answers can be scored against gold labels immediately."
     )
-    pdf.h1("7  Limitations")
+    pdf.h1("Limitations")
     pdf.p(
         "The experts are simulations with conveniently simple competence structure; "
         "as Task 4 showed, that structure makes competence discovery easy and "

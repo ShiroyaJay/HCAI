@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=6">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'project4/style.css' %}?v=9">{% endblock %}
 {% block content %}
 <div class="box p4-box">
   <div class="title-container"><span class="title">Two sets of suggestions</span></div>
   <p class="p4-step-label">Step {{ step_no }} of {{ n_steps }}</p>
   <p class="main-text">Each list below was built from one of the two sections you just
-     completed — but we are not telling you which is which yet. Judge them purely on
+     completed, but we are not telling you which is which yet. Judge them purely on
      whether you would want to watch these films.</p>
 
   <div class="p4-recs p4-recs-even">
@@ -32,6 +32,9 @@
       {% endfor %}
     </fieldset>
     {% endfor %}
+    {% if can_go_back %}
+    <button class="p4-btn p4-btn-quiet" type="submit" name="back" value="1" formnovalidate>Back</button>
+    {% endif %}
     <button class="p4-btn p4-btn-go" type="submit">Continue</button>
   </form>
 </div>

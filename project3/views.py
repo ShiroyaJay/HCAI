@@ -130,10 +130,12 @@ def interactive(request):
 
     state = request.session.get(SESSION_KEY) or loop.new_state()
     request.session[SESSION_KEY] = state
-    idx = loop.next_query(MODELS_DIR, state)
+    finished = state.get("finished", False)
+    idx = None if finished else loop.next_query(MODELS_DIR, state)
     context = {
         "ready": True,
         "article": loop.article(MODELS_DIR, idx) if idx is not None else None,
+        "finished": finished,
         "class_names": data.CLASS_NAMES,
         "metrics": loop.live_metrics(MODELS_DIR, state),
     }
@@ -160,4 +162,26 @@ def interactive_label(request):
             return redirect("project3:interactive")
         if 0 <= label < 4:
             request.session[SESSION_KEY] = loop.record_label(state, idx, label)
+    return redirect("project3:interactive")
+
+
+def interactive_skip(request):
+    from . import interactive as loop
+
+    if request.method == "POST" and loop.available(MODELS_DIR):
+        state = request.session.get(SESSION_KEY) or loop.new_state()
+        try:
+            idx = int(request.POST["article_index"])
+        except (KeyError, ValueError):
+            return redirect("project3:interactive")
+        request.session[SESSION_KEY] = loop.record_skip(state, idx)
+    return redirect("project3:interactive")
+
+
+def interactive_finish(request):
+    from . import interactive as loop
+
+    if request.method == "POST":
+        state = request.session.get(SESSION_KEY) or loop.new_state()
+        request.session[SESSION_KEY] = loop.record_finish(state)
     return redirect("project3:interactive")
