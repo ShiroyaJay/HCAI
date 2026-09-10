@@ -183,9 +183,12 @@ media/project1_plot_*.png
 media/*
 !media/.gitkeep
 
-# Project 3 downloaded dataset and generated experiment artifacts
+# Project 3 downloaded dataset and generated experiment artifacts.
+# report.pdf and metrics/ are vendored on purpose (see run_all.py) so the
+# report button and dashboard numbers work on a fresh clone without a rerun.
 project3/data/
-project3/artifacts/
+project3/artifacts/models/
+project3/artifacts/figures/
 
 # Local AI assistant instructions
 CLAUDE.md
