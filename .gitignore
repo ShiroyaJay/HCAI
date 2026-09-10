@@ -183,15 +183,20 @@ media/project1_plot_*.png
 media/*
 !media/.gitkeep
 
-# collectstatic output (STATIC_ROOT), build output not source
-assets/
+# collectstatic output (STATIC_ROOT), build output not source.
+# Anchored: a bare "assets/" would also match project4/assets/, which is source.
+/assets/
 
 # Project 3 downloaded dataset and generated experiment artifacts.
-# report.pdf and metrics/ are vendored on purpose (see run_all.py) so the
-# report button and dashboard numbers work on a fresh clone without a rerun.
+# report.pdf, metrics/ and figures/ are vendored on purpose (see run_all.py) so
+# the report button, the dashboard numbers AND its plots all work without a
+# rerun. figures/ is a deterministic function of metrics/:
+#   python -m project3.experiments.run_all --stages figures
+# regenerates all five byte-identically, offline, in under a second.
+# data/ and models/ stay out: a 30 MB download and a 39 MB pickle.
 project3/data/
 project3/artifacts/models/
-project3/artifacts/figures/
 
-# Local AI assistant instructions
-CLAUDE.md
+# Course-provided briefs and my own planning notes: working material,
+# not part of the submission.
+documentation/
