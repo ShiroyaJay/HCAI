@@ -93,7 +93,7 @@ Follow the course skeleton conventions exactly (same as `home`/`demos`):
 - `project1/templates/project1/*.html` — one template per step, each `{% extends 'base.html' %}`.
 - `project1/static/project1/style.css` — project-specific styling for the big/calm/readable look (the accessibility lives here).
 - Register `'project1'` in `INSTALLED_APPS`, add `path('project1/', include('project1.urls'))` to `pbl/urls.py`, and add `{"name": "Project 1", "url_name": "project1:index"}` to the home page's projects list (Task 2).
-- **Plots:** locally, save to `media/` like the demo. ⚠️ For Vercel later this breaks (read-only disk) — plan to switch to in-memory base64 images or Chart.js. Build it the simple way first.
+- **Plots:** save to `media/` like the demo.
 
 ---
 

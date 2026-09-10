@@ -18,11 +18,7 @@ One single **Django website** that bundles all sub-projects (5 small projects) b
 - **Official submission:** The project is sent to the professors **as a Git repository**.
 - Group work allowed (up to 5 students); expectations scale with group size.
 
-**My additional goal:**
-
-- **Deploy to Vercel** so the whole project is also accessible via **one public link** — the professor (or anyone) can open the URL and use every sub-project live, without cloning and running anything.
-
-In short: **5 small HCAI apps → 1 Django project → Git repo (official submission) + Vercel link (live access).**
+In short: **5 small HCAI apps → 1 Django project → Git repo (official submission).**
 
 ---
 
@@ -106,12 +102,7 @@ HCAI/
 │   ├── views.py
 │   ├── models.py           # Django models if needed (e.g. algorithms/variables)
 │   └── PLAN.md             # this project's own goal, plan, and tasks
-├── project2/ … project5/   # same layout, added as each brief is released
-│
-│   # ── deployment (my Vercel goal) ──
-├── requirements.txt
-├── vercel.json             # Vercel build & routing config
-└── api/index.py            # Serverless WSGI entry point wrapping Django
+└── project2/ … project5/   # same layout, added as each brief is released
 ```
 
 > **Whole-project vs. sub-projects:** this README only covers the overall structure and goals. Each sub-project gets its **own plan** (goal, tasks, design decisions) inside its app folder when its brief is released — those plans don't live here.
@@ -143,7 +134,6 @@ Each sub-project has its own official brief (PDF) and will get its own detailed 
 | Frontend | Django templates + global/per-app CSS | Skeleton convention |
 | Plots | matplotlib → `media/` images, or Chart.js | The two options named in the brief |
 | Versioning | **Git** | Official submission format |
-| Deployment | **Vercel** (Python serverless + WhiteNoise for static) | My single-public-link goal |
 
 ---
 
@@ -158,14 +148,6 @@ Each sub-project has its own official brief (PDF) and will get its own detailed 
 **Phase 1..5 — One sub-project at a time** (each gets its own plan)
 - [ ] Project 1: Automated ML interface — plan in `project1/PLAN.md` when work starts
 - [ ] Projects 2–5: as each brief is released
-
-**Phase 6 — Deployment & handoff**
-- [ ] Adapt the project for Vercel (`api/index.py`, `vercel.json`, WhiteNoise, env-driven settings)
-- [ ] Solve the `media/` problem on Vercel (serverless filesystem is read-only — render plots in-memory/base64 or via Chart.js instead of writing files)
-- [ ] Final check of the live link end-to-end
-- [ ] Submit: Git repository (official) + Vercel URL (live access)
-
-> **Deployment caveats to keep in mind while building:** Vercel functions have a size limit (~250 MB) and short timeouts — keep models light and training fast; avoid writing to disk at request time (affects the matplotlib-to-media pattern); SQLite won't persist — prefer stateless apps or session-based state, external Postgres only if truly needed.
 
 ---
 
