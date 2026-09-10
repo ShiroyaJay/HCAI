@@ -183,5 +183,9 @@ media/project1_plot_*.png
 media/*
 !media/.gitkeep
 
+# Project 3 downloaded dataset and generated experiment artifacts
+project3/data/
+project3/artifacts/
+
 # Local AI assistant instructions
 CLAUDE.md

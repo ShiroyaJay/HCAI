@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'project3/style.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+<div class="box p3-box">
+    <div class="title-container"><span class="title">Project 3 — Be the Expert</span></div>
+
+    {% if not ready %}
+    <p class="p3-notice">
+        The interactive mode needs the dataset and the trained classifier. Run
+        <code>python -m project3.experiments.run_all --stages data,task1</code> first.
+    </p>
+    {% else %}
+    <p class="main-text p3-intro">
+        You are the human expert. The system shows you the news articles it is most
+        unsure about, learns <em>your</em> competence profile from your answers, and
+        estimates how good the resulting human-AI team would be.
+    </p>
+
+    <div class="p3-play">
+        <div class="p3-question">
+            {% if article %}
+            <h2 class="p3-region-title">Which topic is this article about?</h2>
+            <blockquote class="p3-article">{{ article.text }}</blockquote>
+            <form method="post" action="{% url 'project3:interactive_label' %}" class="p3-topic-form">
+                {% csrf_token %}
+                <input type="hidden" name="article_index" value="{{ article.index }}">
+                {% for name in class_names %}
+                <button type="submit" name="label" value="{{ forloop.counter0 }}" class="p3-topic-btn">{{ name }}</button>
+                {% endfor %}
+            </form>
+            {% else %}
+            <p class="p3-notice">You have labeled every article in the pool — thanks!</p>
+            {% endif %}
+            <form method="post" action="{% url 'project3:interactive_start' %}">
+                {% csrf_token %}
+                <button type="submit" class="p3-reset-btn">Start over</button>
+            </form>
+        </div>
+
+        <aside class="p3-sidebar">
+            <h3 class="p3-sidebar-title">Live session stats</h3>
+            <div class="p3-metric p3-metric-wide">
+                <span class="p3-metric-num">{{ metrics.n_queries }}</span>
+                <span class="p3-metric-cap">articles labeled (of {{ metrics.pool_size }})</span>
+            </div>
+            {% if metrics.user_accuracy is not None and metrics.n_queries > 0 %}
+            <div class="p3-metric p3-metric-wide">
+                <span class="p3-metric-num">{{ metrics.user_accuracy|floatformat:2 }}</span>
+                <span class="p3-metric-cap">your accuracy vs. the true labels</span>
+            </div>
+            <table class="p3-table p3-side-table">
+                <tr><th>Topic</th><th>Your accuracy</th><th>Seen</th></tr>
+                {% for row in metrics.per_class %}
+                <tr>
+                    <td>{{ row.class }}</td>
+                    <td>{% if row.accuracy is not None %}{{ row.accuracy|floatformat:2 }}{% else %}—{% endif %}</td>
+                    <td>{{ row.n }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            {% if metrics.estimated_team_accuracy %}
+            <div class="p3-metric p3-metric-wide">
+                <span class="p3-metric-num">{{ metrics.estimated_team_accuracy|floatformat:3 }}</span>
+                <span class="p3-metric-cap">estimated team accuracy*
+                    (classifier alone: {{ metrics.classifier_alone|floatformat:3 }},
+                    deferring {{ metrics.deferral_rate|floatformat:2 }} to you)</span>
+            </div>
+            <p class="p3-hint">*On a held-out slice; the deferred share uses the learned model
+                of your competence, so it is an estimate.</p>
+            {% elif metrics.n_queries < metrics.warmup %}
+            <p class="p3-hint">Team estimates appear after {{ metrics.warmup }} warm-up
+                answers.</p>
+            {% endif %}
+        </aside>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
