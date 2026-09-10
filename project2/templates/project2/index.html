@@ -60,6 +60,13 @@
             <img src="{{ model_plot_url }}"
                  alt="{% if model_type == 'tree' %}Decision tree diagram{% else %}Logistic regression coefficients{% endif %}">
         </div>
+        <p class="p2-note">
+            Honesty note: as the task defines it, &lambda; selects the maximizer of
+            acc<sub>test</sub> &minus; &lambda;&middot;&Omega;(f) — so the test accuracy shown
+            is the selection criterion itself. Because the test set took part in the
+            selection, this number is slightly optimistic, not an unbiased estimate of
+            performance on new penguins.
+        </p>
     </section>
 
     <!-- ===== Region B: counterfactuals ===== -->
