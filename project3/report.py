@@ -179,7 +179,7 @@ def build_report(metrics_dir, figures_dir, out_path):
     pdf.h2("Design")
     pdf.p(
         "Both experts are imperfect by construction and competent only in a region of "
-        "the input space, as required. They are deterministic: each answer is derived "
+        "the input space. They are deterministic: each answer is derived "
         "from a hash of the article's row key, so querying the same article twice "
         "always returns the same answer - important because Tasks 3, 4 and 5 must see "
         "one consistent expert. When an expert errs, it prefers a plausible confusion "

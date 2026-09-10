@@ -36,8 +36,7 @@ def _row_cells(row, feature_order, changed):
 def _ensure_session(request):
     if not request.session.session_key:
         request.session.save()
-    # Under signed-cookie sessions the key is the whole encoded payload, which
-    # is far too long for a filename, so hash it to a short stable id.
+    # Hash the session key to a short, stable id suitable for a filename.
     return hashlib.sha1(request.session.session_key.encode()).hexdigest()[:12]
 
 

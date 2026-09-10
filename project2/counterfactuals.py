@@ -4,7 +4,7 @@ For a chosen example ``x`` and a desired class:
 
   1. Sample N points locally around ``x``. Numeric features get Gaussian noise scaled
      by the feature's MAD; categorical/binary features are occasionally resampled to a
-     different category (the brief's "how do you noise categorical data?" requirement).
+     different category (Gaussian noise is meaningless for a category).
   2. Keep the samples the model now predicts as the desired class.
   3. Rank them by MAD-weighted L1 distance to ``x`` (numeric: |Δ|/MAD; categorical:
      0/1 mismatch) and return the best k.

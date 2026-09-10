@@ -1,8 +1,8 @@
 """The machine-learning engine for Project 1.
 
-Kept separate from the views so the web layer stays simple and this part
-can be read/graded on its own. Nothing here talks to the user directly —
-the views translate these results into plain language.
+Kept separate from the views so the web layer stays simple. Nothing here
+talks to the user directly — the views translate these results into plain
+language.
 """
 
 import matplotlib

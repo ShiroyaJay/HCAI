@@ -6,9 +6,9 @@ This repository holds my coursework for **Human-Centric Artificial Intelligence*
 
 ---
 
-## 🎯 Final Goal
+## Final Goal
 
-One single **Django website** that bundles all sub-projects (5 small projects) behind a shared **launch page** (`home` app). Each sub-project is a Django app inside this one project, reachable from links on the home page.
+One single **Django website** that bundles all sub-projects (4 small projects) behind a shared **launch page** (`home` app). Each sub-project is a Django app inside this one project, reachable from links on the home page.
 
 **Requirements (from the course):**
 
@@ -18,7 +18,7 @@ One single **Django website** that bundles all sub-projects (5 small projects) b
 - **Official submission:** The project is sent to the professors **as a Git repository**.
 - Group work allowed (up to 5 students); expectations scale with group size.
 
-In short: **5 small HCAI apps → 1 Django project → Git repo (official submission).**
+In short: **4 small HCAI apps → 1 Django project → Git repo (official submission).**
 
 ---
 
@@ -39,13 +39,13 @@ A recurring design question across all projects (straight from the course): **wh
 
 ---
 
-## 🏗️ Architecture (defined by the course skeleton)
+## Architecture (defined by the course skeleton)
 
 The project **starts from the official course skeleton**: <https://github.com/ppaamm/HCAI-PBL>. It already provides the Django project, the `home` launch app, and a `demos` app with reference examples (file upload, showing matplotlib plots via the media directory).
 
 ```
                   ┌────────────────────────────────────┐
-   User/Professor │  One Django project (HCAI-PBL)     │
+      User        │  One Django project (HCAI-PBL)     │
         │         └────────────────┬───────────────────┘
         ▼                          │
    /home/  ── launch page: group info + links to all projects
@@ -54,7 +54,7 @@ The project **starts from the official course skeleton**: <https://github.com/pp
         ├── /project2/   app 2  (Explainability — trees/logreg, counterfactuals, PDP/ALE)
         ├── /project3/   app 3  (Learning-to-defer — active learning with a human expert)
         ├── /project4/   app 4  (Preference elicitation — Plackett-Luce, user-study interface)
-        ├── /project5/   app 5  (topic TBD)
+        ├── /demos/      course skeleton examples (file upload, matplotlib via media)
         └── /admin/      Django admin
 ```
 
@@ -76,13 +76,11 @@ The project **starts from the official course skeleton**: <https://github.com/pp
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 HCAI/
 ├── README.md               # Overview of the whole subject project (this file)
-├── CLAUDE.md               # Working guidelines for AI-assisted development
-├── HCAI-project_01.pdf     # Official brief for Project 1
 │
 │   # ── from the course skeleton (HCAI-PBL) ──
 ├── manage.py               # Django CLI entry point
@@ -100,32 +98,28 @@ HCAI/
 │   ├── templates/project1/ # course-mandated template path
 │   ├── urls.py             # namespaced: app_name = 'project1'
 │   ├── views.py
-│   ├── models.py           # Django models if needed (e.g. algorithms/variables)
-│   └── PLAN.md             # this project's own goal, plan, and tasks
-└── project2/ … project5/   # same layout, added as each brief is released
+│   └── models.py           # Django models if needed (e.g. algorithms/variables)
+└── project2/ … project4/   # same layout, one per sub-project
 ```
 
-> **Whole-project vs. sub-projects:** this README only covers the overall structure and goals. Each sub-project gets its **own plan** (goal, tasks, design decisions) inside its app folder when its brief is released — those plans don't live here.
+> **Whole-project vs. sub-projects:** this README covers the overall structure and how to run everything. What each sub-project does, and why it was built that way, is documented inside the app itself — projects 3 and 4 each ship a written PDF report reachable from their own page.
 
 ---
 
-## 📚 Sub-Projects
+## Sub-Projects
 
-Each sub-project has its own official brief (PDF) and will get its own detailed plan when work on it starts.
+Each sub-project implements one of the course briefs.
 
-| # | App | Topic | Brief | Status |
-|---|-----|-------|-------|--------|
-| 1 | `project1` | Automated Machine Learning — supervised learning interface (upload CSV → visualize → train & evaluate sklearn models) | [`HCAI-project_01.pdf`](./HCAI-project_01.pdf) | 🟡 In progress |
-| 2 | `project2` | Explainability — interpretable models (decision tree / logistic regression with λ regularization), counterfactual explanations, and from-scratch PDP/ALE feature-effect plots on Palmer Penguins | [`project2/HCAI-project_02.pdf`](./project2/HCAI-project_02.pdf) | 🟢 Done |
-| 3 | `project3` | Active Learning for Learning-to-Defer — AG News classifier that defers to a (simulated or human) expert, learns the expert's competence profile via active learning, and generates a downloadable PDF report from the experiment artifacts | [`project3/HCAI-project_03.pdf`](./project3/HCAI-project_03.pdf) | 🟢 Done |
-| 4 | `project4` | Preference elicitation — a movie recommender that learns a user's taste vector from a handful of choices (Plackett–Luce over 21 interpretable features), plus the full design and running interface for a user study comparing pairwise choice against ranking | [`project4/HCAI-project_04.pdf`](./project4/HCAI-project_04.pdf) | 🟢 Done |
-| 5 | `project5` | _TBD_ | — | ⬜ Not started |
-
-> Grading note from the course: *"The minimum expected is a working solution for the given tasks, but the more you do, the higher your grade."*
+| # | App | Topic |
+|---|-----|-------|
+| 1 | `project1` | Automated Machine Learning — supervised learning interface (upload CSV → visualize → train & evaluate sklearn models) |
+| 2 | `project2` | Explainability — interpretable models (decision tree / logistic regression with λ regularization), counterfactual explanations, and from-scratch PDP/ALE feature-effect plots on Palmer Penguins |
+| 3 | `project3` | Active Learning for Learning-to-Defer — AG News classifier that defers to a (simulated or human) expert, learns the expert's competence profile via active learning, and generates a downloadable PDF report from the experiment artifacts |
+| 4 | `project4` | Preference elicitation — a movie recommender that learns a user's taste vector from a handful of choices (Plackett–Luce over 21 interpretable features), plus the full design and running interface for a user study comparing pairwise choice against ranking |
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Choice | Why |
 |-------|--------|-----|
@@ -137,28 +131,38 @@ Each sub-project has its own official brief (PDF) and will get its own detailed 
 
 ---
 
-## 🗺️ Roadmap (whole project)
+## Running Locally
 
-**Phase 0 — Setup**
-- [x] Clone the official skeleton (`HCAI-PBL`) into this repo and get `python manage.py runserver` working
-- [x] Set up venv + `requirements.txt` (Django 4.2 LTS for Python 3.9); root `/` redirects to the `/home/` launch page
-- [ ] Task 1: replace the placeholder students with the real group members' names + matriculation numbers (edit `home/views.py`, from Python — not the HTML)
-- [ ] Initialize Git history properly (this is the submission artifact)
-
-**Phase 1..5 — One sub-project at a time** (each gets its own plan)
-- [ ] Project 1: Automated ML interface — plan in `project1/PLAN.md` when work starts
-- [ ] Projects 2–5: as each brief is released
-
----
-
-## 💻 Running Locally
+Needs **Python 3.9+**. From the repo root (the directory holding `manage.py`):
 
 ```bash
-# from the repo root (where manage.py lives)
-source venv/bin/activate          # first time: python3 -m venv venv && pip install -r requirements.txt
-python manage.py migrate          # first time only
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate            # required, not optional — projects 1, 3 and 4
+                                    # use sessions and will 500 without it
 python manage.py runserver
 # → http://127.0.0.1:8000/  (root redirects to the /home/ launch page)
+```
+
+All four datasets are vendored, so nothing is downloaded at request time.
+
+### Project 3 — optional extras
+
+The dashboard, its plots and the PDF report all work with no extra steps. Two
+things are deliberately **not** committed, because of their size:
+
+| Not committed | Size | Consequence |
+|---|---|---|
+| `project3/data/` (AG News) | ~30 MB | needed only to re-run the experiments |
+| `project3/artifacts/models/` | 39 MB | the interactive "be the expert" mode is unavailable |
+
+To restore either, run the offline experiment pipeline (needs network, and takes
+a while — it trains on 110,000 documents):
+
+```bash
+python -m project3.experiments.run_all              # everything
+python -m project3.experiments.run_all --stages figures   # just redraw the plots, offline, ~1s
 ```
 
 ---
@@ -167,4 +171,3 @@ python manage.py runserver
 
 **Jay Shiroya** — TUHH, Semester 2
 Subject: Human-Centric Artificial Intelligence
-# HCAI

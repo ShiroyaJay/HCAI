@@ -2,8 +2,8 @@
 
     python -m project4.experiments.run_all
 
-Outputs land in project4/assets/ and ARE committed, so a fresh clone can serve
-the report without running anything and without a writable filesystem.
+Outputs land in project4/assets/ and ARE committed, so the report can be served
+without running anything.
 """
 
 import json

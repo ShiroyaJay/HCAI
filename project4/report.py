@@ -543,9 +543,7 @@ def _build():
         pdf.p("Paired test, alpha = %.2f, power = %.2f, normal approximation. d_z = 0.4 "
               "requires N = %d; the simulated d_z = %.2f requires N = %d. The study "
               "recruits for the larger of the two and inflates for the exclusion criteria "
-              "below: N = 70. An earlier draft of this report proposed 45, which was "
-              "arrived at from the smallest-effect table alone and would leave the study "
-              "underpowered for the effect its own simulation predicts."
+              "below: N = 70."
               % (p_["alpha"], p_["power"], p_["n"][p_["effects"].index(0.4)],
                  r["dz"][i5], r["n_required"][i5]))
     pdf.figure("power", "Figure 3. Participants required as a function of the smallest "
@@ -713,7 +711,7 @@ def _build():
           "than random selection.")
 
     pdf.h2("What the user controls, and what is automated")
-    pdf.p("The course's recurring question, applied to this system. Automated: inferring w "
+    pdf.p("Automated: inferring w "
           "from the responses, and ranking the catalogue by estimated utility. Under the "
           "user's control: every input to that inference, whether to continue at all, and "
           "-- on the final screen -- the inferred weights themselves, which are displayed "

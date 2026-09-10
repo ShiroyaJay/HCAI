@@ -54,9 +54,9 @@ def ale_exact_logreg(pipe, df, feature, classes):
     Unlike the PDP, ALE averages the local effect over the *conditional* distribution:
     within each feature bin we average the analytic derivative over the points that
     actually fall in that bin, multiply by the bin width, and accumulate. This is what
-    makes ALE differ from a centered PDP when features are correlated, while still
-    answering the brief's "which model has an exact derivative?" with logistic
-    regression (the softmax is differentiable in closed form).
+    makes ALE differ from a centered PDP when features are correlated. Logistic
+    regression admits an exact derivative because the softmax is differentiable in
+    closed form.
     """
     pre = pipe.named_steps["pre"]
     clf = pipe.named_steps["clf"]

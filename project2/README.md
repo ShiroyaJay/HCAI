@@ -19,7 +19,7 @@ The dataset is vendored as a CSV (rows with missing values dropped → 333 pengu
 extra dependency is needed beyond the project's existing `scikit-learn / pandas /
 matplotlib / numpy`.
 
-## Conceptual notes (answers to the brief's questions)
+## Design notes
 
 ### Regularization and model selection (Tasks 1–3)
 We optimize at the *model-selection* level: among models of varying complexity we pick

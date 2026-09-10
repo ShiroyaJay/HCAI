@@ -19,8 +19,7 @@ PREVIEW_ROWS = 4
 def _session_id(request):
     """A short, stable per-session id for naming generated plot files.
 
-    Under signed-cookie sessions the session key is the whole encoded payload,
-    which is far too long to put in a filename.
+    The session key is hashed to a short, stable id suitable for a filename.
     """
     if not request.session.session_key:
         request.session.save()

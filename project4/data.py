@@ -1,7 +1,6 @@
 """IMDB 5000 Movie Dataset: loading, cleaning and the study sampling pool.
 
-The CSV is vendored in project4/data/ and committed, so a fresh clone works
-offline and the app deploys to a read-only filesystem without a build step.
+The CSV is vendored in project4/data/ and committed, so the app works offline.
 
 The raw file has several well-known defects that every consumer must not have
 to think about, so they are fixed exactly once, here:

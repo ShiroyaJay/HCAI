@@ -2,14 +2,9 @@
 
 The protocol is linear: a tuple of steps and an index. No state machine.
 
-Everything a participant produces is held in the Django session, which is a
-SIGNED COOKIE (~4093 bytes) so the app behaves identically on a serverless host
-with no database. That budget is the reason for the terse encoding below:
-records are lists of integers, never dicts of titles, and the "already seen"
-exclusion set is derived from the response log rather than stored. A populated
-end-of-study session encodes to roughly 2.5 KB; tests.py asserts it stays under
-3.5 KB. The obvious readable encoding measures 7.3 KB and would silently exceed
-the limit -- Django's failure mode is a logged warning and a dropped cookie.
+Everything a participant produces is held in the Django session. The encoding is
+deliberately terse: records are lists of integers, never dicts of titles, and the
+"already seen" exclusion set is derived from the response log rather than stored.
 """
 
 import random
@@ -53,8 +48,7 @@ STEPS = (
     "reveal", "debrief",
 )
 
-# The one unbounded field in the whole protocol, and therefore the one that
-# could overflow the session cookie.
+# The one field in the protocol with no natural bound.
 MAX_FREE_TEXT = 300
 
 LIKERT_7 = ["1 - not at all", "2", "3", "4", "5", "6", "7 - very much"]
@@ -274,9 +268,8 @@ def record_pairwise(state, chosen):
     """Store [movie_a, movie_b, chosen, deciseconds].
 
     Deciseconds rather than milliseconds, and per-task rather than elapsed into
-    the block, purely to keep the integers short: the whole session has to fit
-    in a signed cookie. Timing at this resolution is descriptive only -- the
-    primary measure is block wall-clock.
+    the block, purely to keep the integers short. Timing at this resolution is
+    descriptive only -- the primary measure is block wall-clock.
     """
     a, b = state["cur"]
     state["p"].append([a, b, int(chosen), _task_ds(state)])
@@ -333,7 +326,7 @@ def recs_first_slot(state):
     """Which block's recommendations are shown as 'List 1'.
 
     Derived from the participant's own seed rather than stored: the masking has
-    to be stable across a refresh, and the session has no room to spare.
+    to be stable across a refresh.
     """
     return "a" if _rng(state, "recmask").random() < 0.5 else "b"
 

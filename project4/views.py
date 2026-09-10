@@ -1,9 +1,8 @@
 """Views for Project 4: landing page, the user-study protocol, and a demo of
 adaptive question selection.
 
-Participant state lives entirely in the session (a signed cookie), so nothing is
-written to disk at request time and the app behaves the same on a serverless
-host. Every step is POST-redirect-GET, so refreshing never double-records.
+Participant state lives entirely in the session, so no request writes to disk.
+Every step is POST-redirect-GET, so refreshing never double-records.
 """
 
 import json
@@ -15,9 +14,8 @@ from django.shortcuts import redirect, render
 from . import data, features, preference, selection, study
 from .study import SESSION_KEY
 
-# How many of the learned weights get a slider above the fold. The rest are
-# still editable, behind a disclosure -- "you are in control" of a model the
-# user can only reach half of would be a weaker claim than it sounds.
+# How many of the learned weights get a slider above the fold. The rest stay
+# editable behind a disclosure.
 SLIDERS_VISIBLE = 12
 
 # The range the sliders span. Enforced on the way in as well as on the way out,
