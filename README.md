@@ -2,13 +2,13 @@
 
 > Course project repository — TUHH, Semester 2
 
-This repository holds my coursework for **Human-Centric Artificial Intelligence**. The course is about the human-centric aspects of machine learning, so every project is articulated around **interaction with humans**: each one is a small application meant to be *used* by real users, not just a model script.
+This repository holds my coursework for **Human-Centric Artificial Intelligence**. The course is about the human-centric aspects of machine learning, so every project is articulated around **interaction with humans**: each one is a small application meant to be *used* by real users.
 
 ---
 
 ## Final Goal
 
-One single **Django website** that bundles all sub-projects (4 small projects) behind a shared **launch page** (`home` app). Each sub-project is a Django app inside this one project, reachable from links on the home page.
+One single **Django website** with all sub-projects (4 small projects) behind a shared **launch page** (`home` app). Each sub-project is a Django app inside this one project, reachable from links on the home page.
 
 **Requirements (from the course):**
 
@@ -16,27 +16,7 @@ One single **Django website** that bundles all sub-projects (4 small projects) b
 - **One Django project:** All sub-projects are grouped in one single Django project.
 - **Launch page:** The apps are accessed from a home/launch page showing group info (names + matriculation numbers) and links to each project.
 - **Official submission:** The project is submitted **as a Git repository**.
-- Group work allowed (up to 5 students); expectations scale with group size.
-
-In short: **4 small HCAI apps → 1 Django project → Git repo (official submission).**
-
----
-
-## What is Human-Centric AI?
-
-Human-Centric AI (HCAI) is an approach to building intelligent systems where the goal is not just to maximize accuracy or automation, but to **amplify, augment, and respect human agency**. It sits at the intersection of machine learning, human-computer interaction, and ethics.
-
-Core principles that guide the work in this repository:
-
-- **Human control & oversight** — people stay in the loop and can understand, override, or correct the system.
-- **Transparency & explainability** — decisions made by AI should be interpretable, not black boxes.
-- **Fairness & non-discrimination** — actively detect and mitigate bias across groups.
-- **Privacy & trust** — handle data responsibly; earn and keep user trust.
-- **Usability & collaboration** — AI as a partner that supports human goals, not a replacement that sidelines them.
-- **Accountability** — clear responsibility for outcomes and decisions.
-
-A recurring design question across all projects (straight from the course): **what should the user be in control of, and what should be automated?**
-
+  
 ---
 
 ## Architecture (defined by the course skeleton)
@@ -70,9 +50,8 @@ The project **starts from the official course skeleton**: <https://github.com/pp
 
 - Templates live at `templates/[APP_NAME]/[FILE_NAME].html` inside each app.
 - Global CSS lives in the root `static/` directory (shared by all projects); each app gets its own stylesheet under `static/[app_name]/` (same pattern as `static/home`).
-- Home page content (group members, project links) is driven **from Python (views), not hardcoded in HTML**.
+- Home page content (group members, project links) is driven **from Python (views).
 - Matplotlib plots can't render directly in Django: generate the figure → save to `media/` → load as image (see `demos` app). Alternative: JS chart libraries (Chart.js).
-- Style matters but is not the point: *"reasonable style, not too much effort"* — the course is not about UX design.
 
 ---
 
@@ -147,27 +126,4 @@ python manage.py runserver
 
 All four datasets are vendored, so nothing is downloaded at request time.
 
-### Project 3 — optional extras
-
-The dashboard, its plots and the PDF report all work with no extra steps. Two
-things are deliberately **not** committed, because of their size:
-
-| Not committed | Size | Consequence |
-|---|---|---|
-| `project3/data/` (AG News) | ~30 MB | needed only to re-run the experiments |
-| `project3/artifacts/models/` | 39 MB | the interactive "be the expert" mode is unavailable |
-
-To restore either, run the offline experiment pipeline (needs network, and takes
-a while — it trains on 110,000 documents):
-
-```bash
-python -m project3.experiments.run_all              # everything
-python -m project3.experiments.run_all --stages figures   # just redraw the plots, offline, ~1s
-```
-
 ---
-
-## Author
-
-**Jay Shiroya** — TUHH, Semester 2
-Subject: Human-Centric Artificial Intelligence
