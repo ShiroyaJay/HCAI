@@ -126,4 +126,20 @@ python manage.py runserver
 
 All four datasets are vendored, so nothing is downloaded at request time.
 
+### Project 3 extras
+
+The dashboard, its plots and the PDF report all work with no extra steps. Two
+things are too large to commit: the AG News data in `project3/data/` at 19 MB,
+and the trained models in `project3/artifacts/models/` at 41 MB. Without the
+models, the optional interactive "be the expert" mode is unavailable;
+everything else in project 3 works from the stored metrics and figures.
+
+To restore either, run the offline pipeline. It needs network access and takes
+a while, since it trains on 110,000 documents.
+
+```bash
+python -m project3.experiments.run_all
+python -m project3.experiments.run_all --stages figures
+```
+
 ---
