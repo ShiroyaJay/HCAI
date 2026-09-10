@@ -217,8 +217,7 @@ def _reveal(request, state, ctx):
 
     # Order the sliders by the model's weights, never by the overridden ones:
     # ordering by the live values makes a slider you have just dragged reshuffle
-    # the panel, and controls that move while you use them read as the system
-    # arguing back.
+    # the panel, which is disorienting to use.
     table = preference.weight_table(w, order_by=combined)
     pool = data.recommend_pool_index()
     unseen = [int(i) for i in pool if int(i) not in study.seen(state)]

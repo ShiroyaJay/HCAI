@@ -67,7 +67,7 @@
     color: #555;
 }
 
-/* "Step 2 of 3" orientation pill — reassures the user where they are */
+/* "Step 2 of 3" orientation pill: shows the user where they are */
 .p1-step {
     display: block;
     width: fit-content;
@@ -117,7 +117,7 @@
     text-align: center;
 }
 
-/* A kind, calm error message — never alarming red codes */
+/* Error message styling: muted, not an alarming red */
 .p1-error {
     max-width: 640px;
     margin: 0 auto 24px;
@@ -202,7 +202,7 @@
     text-decoration: underline;
 }
 
-/* A "not ready yet" button — looks present but clearly inactive */
+/* A "not ready yet" button: present but clearly inactive */
 .p1-button-disabled {
     background: #c9c9c9;
     color: #ffffff;
@@ -210,7 +210,7 @@
     pointer-events: none;
 }
 
-/* Step 3 — the "what to guess" dropdown */
+/* Step 3: the "what to guess" dropdown */
 .p1-select {
     font-size: 18px;
     padding: 12px 16px;
@@ -268,7 +268,7 @@
 .p1-quality-okay-bg   { background: #8a6d00; }
 .p1-quality-tricky-bg { background: #8a4b13; }
 
-/* The optional technical details — hidden by default */
+/* The optional technical details, hidden by default */
 .p1-more {
     max-width: 640px;
     margin: 0 auto 24px;
@@ -365,7 +365,7 @@
     margin: 8px 0;
 }
 
-/* Optional "have a say" controls on Step 2 — present but never in the way */
+/* Optional extra controls on Step 2, collapsed by default */
 .p1-options {
     width: 100%;
     text-align: left;
