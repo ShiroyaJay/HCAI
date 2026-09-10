@@ -1,0 +1,98 @@
+{
+  "class_conditional": {
+    "description": "Class-conditional expert: 97% correct on [Business, Sci/Tech], 55% on the other topics",
+    "accuracy": 0.7588157894736842,
+    "per_class": [
+      {
+        "class": "World",
+        "accuracy": 0.5447368421052632,
+        "n": 1900
+      },
+      {
+        "class": "Sports",
+        "accuracy": 0.5526315789473685,
+        "n": 1900
+      },
+      {
+        "class": "Business",
+        "accuracy": 0.9715789473684211,
+        "n": 1900
+      },
+      {
+        "class": "Sci/Tech",
+        "accuracy": 0.9663157894736842,
+        "n": 1900
+      }
+    ],
+    "by_length": [
+      {
+        "bin": "0-150 chars",
+        "accuracy": 0.7711864406779662,
+        "n": 472
+      },
+      {
+        "bin": "150-250 chars",
+        "accuracy": 0.7535901527239571,
+        "n": 4387
+      },
+      {
+        "bin": "250-400 chars",
+        "accuracy": 0.7615176151761518,
+        "n": 2583
+      },
+      {
+        "bin": "400-+ chars",
+        "accuracy": 0.8227848101265823,
+        "n": 158
+      }
+    ]
+  },
+  "length_conditional": {
+    "description": "Length-conditional expert: 93% correct on articles >= 215 chars, 62% on shorter ones",
+    "accuracy": 0.8192105263157895,
+    "per_class": [
+      {
+        "class": "World",
+        "accuracy": 0.8326315789473684,
+        "n": 1900
+      },
+      {
+        "class": "Sports",
+        "accuracy": 0.8005263157894736,
+        "n": 1900
+      },
+      {
+        "class": "Business",
+        "accuracy": 0.8363157894736842,
+        "n": 1900
+      },
+      {
+        "class": "Sci/Tech",
+        "accuracy": 0.8073684210526316,
+        "n": 1900
+      }
+    ],
+    "by_length": [
+      {
+        "bin": "0-150 chars",
+        "accuracy": 0.6483050847457628,
+        "n": 472
+      },
+      {
+        "bin": "150-250 chars",
+        "accuracy": 0.7656713015728288,
+        "n": 4387
+      },
+      {
+        "bin": "250-400 chars",
+        "accuracy": 0.9357336430507163,
+        "n": 2583
+      },
+      {
+        "bin": "400-+ chars",
+        "accuracy": 0.9113924050632911,
+        "n": 158
+      }
+    ]
+  }
+}

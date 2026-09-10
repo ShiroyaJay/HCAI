@@ -1,0 +1,632 @@
+{
+  "pool_size": 30000,
+  "budgets": [
+    25,
+    50,
+    100,
+    250,
+    500,
+    1000,
+    2000,
+    5000
+  ],
+  "batch": 100,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "expert": "Class-conditional expert: 97% correct on [Business, Sci/Tech], 55% on the other topics",
+  "references": {
+    "classifier_alone_val": 0.9277,
+    "full_info_team_accuracy_val": 0.9555
+  },
+  "strategies": {
+    "random": {
+      "runs": [
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.9472,
+            "coverage": 0.8481,
+            "deferral_precision": 0.24753127057274524,
+            "deferral_recall": 0.6427350427350428,
+            "agreement_with_full_info": 0.8589
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.9473,
+            "coverage": 0.8359,
+            "deferral_precision": 0.23826934795856186,
+            "deferral_recall": 0.6683760683760683,
+            "agreement_with_full_info": 0.8623
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9472,
+            "coverage": 0.8359,
+            "deferral_precision": 0.23826934795856186,
+            "deferral_recall": 0.6683760683760683,
+            "agreement_with_full_info": 0.8633
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9474,
+            "coverage": 0.8326,
+            "deferral_precision": 0.23715651135005975,
+            "deferral_recall": 0.6786324786324787,
+            "agreement_with_full_info": 0.8654
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9483,
+            "coverage": 0.8407,
+            "deferral_precision": 0.24419334588826114,
+            "deferral_recall": 0.6649572649572649,
+            "agreement_with_full_info": 0.8655
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9496,
+            "coverage": 0.842,
+            "deferral_precision": 0.2481012658227848,
+            "deferral_recall": 0.67008547008547,
+            "agreement_with_full_info": 0.8678
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.9497,
+            "coverage": 0.8323,
+            "deferral_precision": 0.23971377459749552,
+            "deferral_recall": 0.6871794871794872,
+            "agreement_with_full_info": 0.8773
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9531,
+            "coverage": 0.8215,
+            "deferral_precision": 0.23697478991596638,
+            "deferral_recall": 0.7230769230769231,
+            "agreement_with_full_info": 0.8955
+          }
+        ],
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.9433,
+            "coverage": 0.7822,
+            "deferral_precision": 0.20202020202020202,
+            "deferral_recall": 0.7521367521367521,
+            "agreement_with_full_info": 0.873
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.9449,
+            "coverage": 0.803,
+            "deferral_precision": 0.216243654822335,
+            "deferral_recall": 0.7282051282051282,
+            "agreement_with_full_info": 0.8726
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9423,
+            "coverage": 0.7712,
+            "deferral_precision": 0.1971153846153846,
+            "deferral_recall": 0.770940170940171,
+            "agreement_with_full_info": 0.8736
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9452,
+            "coverage": 0.8022,
+            "deferral_precision": 0.21486349848331648,
+            "deferral_recall": 0.7264957264957265,
+            "agreement_with_full_info": 0.8752
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9463,
+            "coverage": 0.8084,
+            "deferral_precision": 0.2197286012526096,
+            "deferral_recall": 0.7196581196581197,
+            "agreement_with_full_info": 0.876
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9483,
+            "coverage": 0.8169,
+            "deferral_precision": 0.227198252321136,
+            "deferral_recall": 0.7111111111111111,
+            "agreement_with_full_info": 0.8791
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.9497,
+            "coverage": 0.8288,
+            "deferral_precision": 0.23539719626168223,
+            "deferral_recall": 0.6888888888888889,
+            "agreement_with_full_info": 0.8802
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9523,
+            "coverage": 0.8193,
+            "deferral_precision": 0.23132263420033206,
+            "deferral_recall": 0.7145299145299145,
+            "agreement_with_full_info": 0.8961
+          }
+        ],
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.9477,
+            "coverage": 0.8915,
+            "deferral_precision": 0.2903225806451613,
+            "deferral_recall": 0.5384615384615384,
+            "agreement_with_full_info": 0.8335
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.948,
+            "coverage": 0.8912,
+            "deferral_precision": 0.2913602941176471,
+            "deferral_recall": 0.5418803418803418,
+            "agreement_with_full_info": 0.834
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9477,
+            "coverage": 0.8542,
+            "deferral_precision": 0.252400548696845,
+            "deferral_recall": 0.629059829059829,
+            "agreement_with_full_info": 0.8566
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9479,
+            "coverage": 0.8496,
+            "deferral_precision": 0.25,
+            "deferral_recall": 0.6427350427350428,
+            "agreement_with_full_info": 0.8598
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9485,
+            "coverage": 0.8354,
+            "deferral_precision": 0.24058323207776428,
+            "deferral_recall": 0.676923076923077,
+            "agreement_with_full_info": 0.868
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9497,
+            "coverage": 0.8428,
+            "deferral_precision": 0.2474554707379135,
+            "deferral_recall": 0.6649572649572649,
+            "agreement_with_full_info": 0.868
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.9506,
+            "coverage": 0.8329,
+            "deferral_precision": 0.23997606223818074,
+            "deferral_recall": 0.6854700854700855,
+            "agreement_with_full_info": 0.8791
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9528,
+            "coverage": 0.8186,
+            "deferral_precision": 0.23373759647188533,
+            "deferral_recall": 0.7247863247863248,
+            "agreement_with_full_info": 0.895
+          }
+        ]
+      ]
+    },
+    "clf_uncertainty": {
+      "runs": [
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.947,
+            "coverage": 0.8481,
+            "deferral_precision": 0.2468729427254773,
+            "deferral_recall": 0.6410256410256411,
+            "agreement_with_full_info": 0.8589
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.9476,
+            "coverage": 0.8808,
+            "deferral_precision": 0.27684563758389263,
+            "deferral_recall": 0.5641025641025641,
+            "agreement_with_full_info": 0.8412
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9475,
+            "coverage": 0.8807,
+            "deferral_precision": 0.2766135792120704,
+            "deferral_recall": 0.5641025641025641,
+            "agreement_with_full_info": 0.8411
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9469,
+            "coverage": 0.8444,
+            "deferral_precision": 0.243573264781491,
+            "deferral_recall": 0.6478632478632479,
+            "agreement_with_full_info": 0.8604
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9465,
+            "coverage": 0.8293,
+            "deferral_precision": 0.23081429408318688,
+            "deferral_recall": 0.6735042735042736,
+            "agreement_with_full_info": 0.8651
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9456,
+            "coverage": 0.805,
+            "deferral_precision": 0.21794871794871795,
+            "deferral_recall": 0.7264957264957265,
+            "agreement_with_full_info": 0.8756
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.9464,
+            "coverage": 0.7999,
+            "deferral_precision": 0.2158920539730135,
+            "deferral_recall": 0.7384615384615385,
+            "agreement_with_full_info": 0.8799
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9495,
+            "coverage": 0.7966,
+            "deferral_precision": 0.21583087512291052,
+            "deferral_recall": 0.7504273504273504,
+            "agreement_with_full_info": 0.8952
+          }
+        ],
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.947,
+            "coverage": 0.8481,
+            "deferral_precision": 0.2468729427254773,
+            "deferral_recall": 0.6410256410256411,
+            "agreement_with_full_info": 0.8589
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.9476,
+            "coverage": 0.8808,
+            "deferral_precision": 0.27684563758389263,
+            "deferral_recall": 0.5641025641025641,
+            "agreement_with_full_info": 0.8412
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9475,
+            "coverage": 0.8807,
+            "deferral_precision": 0.2766135792120704,
+            "deferral_recall": 0.5641025641025641,
+            "agreement_with_full_info": 0.8411
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9469,
+            "coverage": 0.8444,
+            "deferral_precision": 0.243573264781491,
+            "deferral_recall": 0.6478632478632479,
+            "agreement_with_full_info": 0.8604
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9465,
+            "coverage": 0.8293,
+            "deferral_precision": 0.23081429408318688,
+            "deferral_recall": 0.6735042735042736,
+            "agreement_with_full_info": 0.8651
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9456,
+            "coverage": 0.805,
+            "deferral_precision": 0.21794871794871795,
+            "deferral_recall": 0.7264957264957265,
+            "agreement_with_full_info": 0.8756
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.9464,
+            "coverage": 0.7999,
+            "deferral_precision": 0.2158920539730135,
+            "deferral_recall": 0.7384615384615385,
+            "agreement_with_full_info": 0.8799
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9495,
+            "coverage": 0.7966,
+            "deferral_precision": 0.21583087512291052,
+            "deferral_recall": 0.7504273504273504,
+            "agreement_with_full_info": 0.8952
+          }
+        ],
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.947,
+            "coverage": 0.8481,
+            "deferral_precision": 0.2468729427254773,
+            "deferral_recall": 0.6410256410256411,
+            "agreement_with_full_info": 0.8589
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.9476,
+            "coverage": 0.8808,
+            "deferral_precision": 0.27684563758389263,
+            "deferral_recall": 0.5641025641025641,
+            "agreement_with_full_info": 0.8412
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9475,
+            "coverage": 0.8807,
+            "deferral_precision": 0.2766135792120704,
+            "deferral_recall": 0.5641025641025641,
+            "agreement_with_full_info": 0.8411
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9469,
+            "coverage": 0.8444,
+            "deferral_precision": 0.243573264781491,
+            "deferral_recall": 0.6478632478632479,
+            "agreement_with_full_info": 0.8604
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9465,
+            "coverage": 0.8293,
+            "deferral_precision": 0.23081429408318688,
+            "deferral_recall": 0.6735042735042736,
+            "agreement_with_full_info": 0.8651
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9456,
+            "coverage": 0.805,
+            "deferral_precision": 0.21794871794871795,
+            "deferral_recall": 0.7264957264957265,
+            "agreement_with_full_info": 0.8756
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.9464,
+            "coverage": 0.7999,
+            "deferral_precision": 0.2158920539730135,
+            "deferral_recall": 0.7384615384615385,
+            "agreement_with_full_info": 0.8799
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9495,
+            "coverage": 0.7966,
+            "deferral_precision": 0.21583087512291052,
+            "deferral_recall": 0.7504273504273504,
+            "agreement_with_full_info": 0.8952
+          }
+        ]
+      ]
+    },
+    "deferral_boundary": {
+      "runs": [
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.9472,
+            "coverage": 0.8481,
+            "deferral_precision": 0.24753127057274524,
+            "deferral_recall": 0.6427350427350428,
+            "agreement_with_full_info": 0.8589
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.9472,
+            "coverage": 0.8476,
+            "deferral_precision": 0.24606299212598426,
+            "deferral_recall": 0.6410256410256411,
+            "agreement_with_full_info": 0.8594
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9469,
+            "coverage": 0.8279,
+            "deferral_precision": 0.23242300987797793,
+            "deferral_recall": 0.6837606837606838,
+            "agreement_with_full_info": 0.8647
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9477,
+            "coverage": 0.8386,
+            "deferral_precision": 0.241635687732342,
+            "deferral_recall": 0.6666666666666666,
+            "agreement_with_full_info": 0.8634
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9468,
+            "coverage": 0.8172,
+            "deferral_precision": 0.22428884026258206,
+            "deferral_recall": 0.7008547008547008,
+            "agreement_with_full_info": 0.8714
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9471,
+            "coverage": 0.8097,
+            "deferral_precision": 0.2207041513399895,
+            "deferral_recall": 0.717948717948718,
+            "agreement_with_full_info": 0.8769
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.947,
+            "coverage": 0.7789,
+            "deferral_precision": 0.2062415196743555,
+            "deferral_recall": 0.7794871794871795,
+            "agreement_with_full_info": 0.8913
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9497,
+            "coverage": 0.7653,
+            "deferral_precision": 0.20068172134639967,
+            "deferral_recall": 0.8051282051282052,
+            "agreement_with_full_info": 0.9093
+          }
+        ],
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.9433,
+            "coverage": 0.7822,
+            "deferral_precision": 0.20202020202020202,
+            "deferral_recall": 0.7521367521367521,
+            "agreement_with_full_info": 0.873
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.9454,
+            "coverage": 0.8031,
+            "deferral_precision": 0.21686135093956324,
+            "deferral_recall": 0.7299145299145299,
+            "agreement_with_full_info": 0.8733
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9459,
+            "coverage": 0.8188,
+            "deferral_precision": 0.2251655629139073,
+            "deferral_recall": 0.6974358974358974,
+            "agreement_with_full_info": 0.8664
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9459,
+            "coverage": 0.8094,
+            "deferral_precision": 0.21983210912906612,
+            "deferral_recall": 0.7162393162393162,
+            "agreement_with_full_info": 0.8732
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9461,
+            "coverage": 0.8075,
+            "deferral_precision": 0.2187012987012987,
+            "deferral_recall": 0.7196581196581197,
+            "agreement_with_full_info": 0.8753
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9462,
+            "coverage": 0.7953,
+            "deferral_precision": 0.21299462628236443,
+            "deferral_recall": 0.7452991452991453,
+            "agreement_with_full_info": 0.8841
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.9472,
+            "coverage": 0.7762,
+            "deferral_precision": 0.2033065236818588,
+            "deferral_recall": 0.7777777777777778,
+            "agreement_with_full_info": 0.8954
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9495,
+            "coverage": 0.7682,
+            "deferral_precision": 0.20319240724762727,
+            "deferral_recall": 0.8051282051282052,
+            "agreement_with_full_info": 0.91
+          }
+        ],
+        [
+          {
+            "n_queries": 25,
+            "team_accuracy": 0.9477,
+            "coverage": 0.8915,
+            "deferral_precision": 0.2903225806451613,
+            "deferral_recall": 0.5384615384615384,
+            "agreement_with_full_info": 0.8335
+          },
+          {
+            "n_queries": 50,
+            "team_accuracy": 0.9479,
+            "coverage": 0.8721,
+            "deferral_precision": 0.26817826426896013,
+            "deferral_recall": 0.5863247863247864,
+            "agreement_with_full_info": 0.8469
+          },
+          {
+            "n_queries": 100,
+            "team_accuracy": 0.9448,
+            "coverage": 0.8024,
+            "deferral_precision": 0.2145748987854251,
+            "deferral_recall": 0.7247863247863248,
+            "agreement_with_full_info": 0.8734
+          },
+          {
+            "n_queries": 250,
+            "team_accuracy": 0.9457,
+            "coverage": 0.802,
+            "deferral_precision": 0.21666666666666667,
+            "deferral_recall": 0.7333333333333333,
+            "agreement_with_full_info": 0.8748
+          },
+          {
+            "n_queries": 500,
+            "team_accuracy": 0.9452,
+            "coverage": 0.7938,
+            "deferral_precision": 0.20999030067895247,
+            "deferral_recall": 0.7401709401709402,
+            "agreement_with_full_info": 0.8782
+          },
+          {
+            "n_queries": 1000,
+            "team_accuracy": 0.9458,
+            "coverage": 0.7918,
+            "deferral_precision": 0.20941402497598463,
+            "deferral_recall": 0.7452991452991453,
+            "agreement_with_full_info": 0.8842
+          },
+          {
+            "n_queries": 2000,
+            "team_accuracy": 0.9463,
+            "coverage": 0.7664,
+            "deferral_precision": 0.19863013698630136,
+            "deferral_recall": 0.7931623931623931,
+            "agreement_with_full_info": 0.8932
+          },
+          {
+            "n_queries": 5000,
+            "team_accuracy": 0.9492,
+            "coverage": 0.7643,
+            "deferral_precision": 0.19940602460755197,
+            "deferral_recall": 0.8034188034188035,
+            "agreement_with_full_info": 0.9113
+          }
+        ]
+      ]
+    }
+  }
+}
