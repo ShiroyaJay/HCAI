@@ -3,6 +3,7 @@ report download, and the interactive human-as-expert mode (Task 5)."""
 
 import json
 import os
+import shutil
 
 from django.conf import settings
 from django.http import FileResponse, Http404
@@ -11,9 +12,16 @@ from django.shortcuts import redirect, render
 ARTIFACTS_DIR = os.path.join(os.path.dirname(__file__), "artifacts")
 METRICS_DIR = os.path.join(ARTIFACTS_DIR, "metrics")
 MODELS_DIR = os.path.join(ARTIFACTS_DIR, "models")
+FIGURES_DIR = os.path.join(ARTIFACTS_DIR, "figures")
 REPORT_PATH = os.path.join(ARTIFACTS_DIR, "report.pdf")
 
 SESSION_KEY = "p3_interactive"
+
+FIGURE_NAMES = [
+    "task1_confusion", "task2_expert_profile",
+    "task3_coverage_accuracy", "task3_deferral",
+    "task4_learning_curves",
+]
 
 
 def _load_metrics(name):
@@ -26,10 +34,22 @@ def _load_metrics(name):
 
 
 def _figure_url(name):
+    """URL for one stored figure, publishing it into MEDIA_ROOT on first use.
+
+    The figures are committed under artifacts/figures/, but the page serves them
+    from MEDIA_ROOT. run_all's ``publish_to_media`` normally does that copy; doing
+    it lazily here too is what lets the page show its plots without the pipeline
+    having been run.
+    """
     filename = f"project3_{name}.png"
-    if os.path.exists(os.path.join(settings.MEDIA_ROOT, filename)):
-        return settings.MEDIA_URL + filename
-    return None
+    published = os.path.join(settings.MEDIA_ROOT, filename)
+    if not os.path.exists(published):
+        source = os.path.join(FIGURES_DIR, f"{name}.png")
+        if not os.path.exists(source):
+            return None
+        os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
+        shutil.copy(source, published)
+    return settings.MEDIA_URL + filename
 
 
 def _operating_point(task3, requested):
@@ -75,6 +95,7 @@ def _task4_summary(task4):
 def index(request):
     task3 = _load_metrics("task3")
     task4 = _load_metrics("task4")
+    figures = {name: _figure_url(name) for name in FIGURE_NAMES}
     context = {
         "task1": _load_metrics("task1"),
         "task2": _load_metrics("task2"),
@@ -82,11 +103,11 @@ def index(request):
         "task3_op": _operating_point(task3, request.GET.get("defer_rate")),
         "task4": task4,
         "task4_summary": _task4_summary(task4),
-        "figures": {name: _figure_url(name) for name in [
-            "task1_confusion", "task2_expert_profile",
-            "task3_coverage_accuracy", "task3_deferral",
-            "task4_learning_curves",
-        ]},
+        "figures": figures,
+        # The metrics are vendored but the plots are drawn from them, so the
+        # tables can be complete while every figure is absent. Say so rather
+        # than leaving unexplained gaps between the tables.
+        "figures_missing": [n for n, url in figures.items() if url is None],
         "report_available": os.path.exists(REPORT_PATH),
     }
     return render(request, "project3/index.html", context)

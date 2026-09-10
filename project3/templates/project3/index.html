@@ -30,6 +30,14 @@
         <code>python -m project3.experiments.run_all</code>
         to download the dataset, run all experiments, and generate the report.
     </p>
+    {% elif figures_missing %}
+    <p class="p3-notice">
+        The results below are complete, but {{ figures_missing|length }} of their
+        plots are not on this machine. They are drawn from the same stored
+        metrics, so
+        <code>python -m project3.experiments.run_all --stages figures</code>
+        regenerates them in about a second, offline.
+    </p>
     {% endif %}
 
     {% if task1 %}
