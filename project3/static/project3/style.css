@@ -98,6 +98,19 @@
 .p3-side-table { font-size: 13px; margin: 10px 0; }
 .p3-hint { font-size: 13px; color: #6b7a90; }
 
+/* ---- operating-point chooser (task 3) ---- */
+.p3-op {
+    margin: 18px 0 6px;
+    padding: 16px 18px;
+    background: rgba(199, 218, 248, 0.2);
+    border: 1px solid #e3e9f3;
+    border-radius: 8px;
+}
+.p3-op-title { color: #275CB2; font-size: 18px; margin-bottom: 10px; }
+.p3-op-form { margin: 10px 0 16px; }
+.p3-op-form label { display: block; font-weight: 700; margin-bottom: 8px; }
+.p3-op-slider { width: 100%; max-width: 420px; }
+
 /* ---- tables ---- */
 .p3-table { width: 100%; border-collapse: collapse; font-size: 15px; }
 .p3-table th, .p3-table td { padding: 8px 10px; border-bottom: 1px solid #e3e9f3; text-align: left; }
