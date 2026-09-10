@@ -1,12 +1,12 @@
 """The machine-learning engine for Project 1.
 
 Kept separate from the views so the web layer stays simple. Nothing here
-talks to the user directly — the views translate these results into plain
+talks to the user directly. The views translate these results into plain
 language.
 """
 
 import matplotlib
-matplotlib.use("Agg")  # no screen on a server — draw straight to a file
+matplotlib.use("Agg")  # no screen on a server, so draw straight to a file
 import matplotlib.pyplot as plt
 from pandas.api.types import is_numeric_dtype
 from sklearn.model_selection import train_test_split
@@ -22,7 +22,7 @@ def detect_problem_type(target):
     """Is the thing to guess a CATEGORY or a NUMBER?
 
     Returns 'category' (a classification problem, e.g. flower species) or
-    'number' (a regression problem, e.g. a price). Plain words on purpose —
+    'number' (a regression problem, e.g. a price). Plain words on purpose:
     the user never sees the textbook terms.
     """
     if not is_numeric_dtype(target):
@@ -39,7 +39,7 @@ def drop_id_column(df):
 
     The brief allows filtering out a row-identifier column. We only drop a
     column literally named 'id' (any capitalisation), and never the last
-    column — that's always the thing to guess.
+    column, which is always the thing to guess.
     """
     last = len(df.columns) - 1
     keep = [c for i, c in enumerate(df.columns)
@@ -54,7 +54,7 @@ def numeric_feature_columns(df):
 
 
 def make_picture(df, save_path):
-    """Draw a friendly scatter plot of the data and save it.
+    """Draw a scatter plot of the data and save it.
 
     Returns (ok, problem_type, caption):
       ok          – True if a picture was drawn, False if we couldn't.
@@ -147,15 +147,15 @@ def draw_importances(importances, save_path):
 
 
 def _quality(score):
-    """Turn a 0–1 score into a plain word + a warm sentence."""
+    """Turn a 0-1 score into a plain word and a short sentence."""
     if score >= 0.9:
-        return "great", "That's really good! 🎉"
+        return "great", "That's really good."
     if score >= 0.75:
-        return "good", "That's pretty good!"
+        return "good", "That's pretty good."
     if score >= 0.5:
-        return "okay", "That's okay — not bad at all."
-    return "tricky", ("It found this one tricky — that's alright, "
-                      "some things are just hard to guess.")
+        return "okay", "That's okay, not bad at all."
+    return "tricky", ("It found this one tricky. Some things are "
+                      "just hard to guess.")
 
 
 def _round_nicely(value):
@@ -169,7 +169,7 @@ def _round_nicely(value):
 
 
 def _best_over_methods(methods, X_train, y_train, X_val, y_val, scorer):
-    """Quietly try every method and every setting; keep the best on the validation part.
+    """Try every method and every setting; keep the best on the validation part.
 
     The validation part is separate from the final test part, so choosing a
     method/setting here never peeks at the data used to report the final score.
@@ -241,7 +241,7 @@ def _regression_methods(n_train):
 
 
 def _explain_methods(problem):
-    """A single, deliberately shallow decision tree — one a person can follow.
+    """A single, deliberately shallow decision tree that a person can follow.
 
     Used when the user asks the computer to *explain* its guesses: a shallow
     tree stays readable, and we can name the clues it leaned on the most.
@@ -275,9 +275,9 @@ def _tree_importances(model, feature_cols):
 def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
     """Train end-to-end and return plain-language results.
 
-    Does the whole textbook pipeline automatically — split the data, try
-    several methods each over several settings, keep the best, score it —
-    then translates the score into everyday words.
+    Does the whole textbook pipeline automatically: split the data, try
+    several methods each over several settings, keep the best, score it.
+    Then it translates the score into everyday words.
 
     Two optional human choices (both have sensible defaults, so a user who
     just clicks the button never has to touch them):
@@ -311,8 +311,8 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
                 "reason": ("We need at least 5 examples to learn from. Please "
                            "add a few more rows, or use our example.")}
 
-    # Be upfront about which columns the computer could actually learn from —
-    # it can only use numbers, so any text columns are set aside.
+    # Be upfront about which columns the computer could actually learn from.
+    # It can only use numbers, so any text columns are set aside.
     ignored_cols = [str(c) for c in df.columns
                     if c != target_name and c not in feature_cols]
 
@@ -356,11 +356,11 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
         importances = (_tree_importances(best_model, feature_cols)
                        if prefer == "explain" else None)
 
-        # The honest score: computed only on the held-out test part, which
+        # The final score: computed only on the held-out test part, which
         # played no role in picking the method, the setting, or anything else.
         best_score = accuracy_score(y_test, best_model.predict(X_test))
 
-        # A few real guesses on the hidden test part, so the user can SEE it work.
+        # A few real guesses on the hidden test part, so the user can see it work.
         categories = list(target.astype("category").cat.categories)
         samples = []
         for actual_code, pred_code in list(zip(list(y_test), best_model.predict(X_test)))[:4]:
@@ -371,7 +371,7 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
                 "correct": p == a,
             })
 
-        # An honest yardstick: how well "always guess the most common answer"
+        # A yardstick: how well "always guess the most common answer"
         # would do on the same hidden examples, so the score has a comparison.
         counts = y_test.value_counts()
         majority_code = int(counts.idxmax())
@@ -439,7 +439,7 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
     importances = (_tree_importances(best_model, feature_cols)
                    if prefer == "explain" else None)
 
-    # The honest score: computed only on the held-out test part, which played
+    # The final score: computed only on the held-out test part, which played
     # no role in picking the method, the setting, or anything else.
     test_preds = best_model.predict(X_test)
     best_score = r2_score(y_test, test_preds)
@@ -454,7 +454,7 @@ def teach_computer(df, target_name, problem_override=None, prefer="accurate"):
             "off": _round_nicely(abs(float(pred_v) - float(actual_v))),
         })
 
-    # The honest yardstick for numbers: always guessing the average.
+    # The yardstick for numbers: always guessing the average.
     baseline_mae = mean_absolute_error(
         y_test, [float(y_train.mean())] * len(y_test))
     baseline_line = (f"For comparison: just always guessing the average would "

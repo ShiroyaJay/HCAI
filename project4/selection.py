@@ -5,14 +5,14 @@ the two interfaces comparable. Adaptive selection is named in the brief as an
 interesting extension; it lives here and is shown on the demo page, outside the
 study path, so it cannot contaminate the comparison.
 
-The criterion matters. The naive D-optimal instinct -- maximise d'(Sigma)d for
-d = x_a - x_b -- picks the pairs the user finds *easiest*, because a large
+The criterion matters. The plain D-optimal choice, maximising d'(Sigma)d for
+d = x_a - x_b, picks the pairs the user finds *easiest*, because a large
 |w'd| means a near-certain answer, which carries almost no information. The
 expected-information form weights posterior uncertainty by response entropy:
 
     score(a, b) = log(1 + p(1-p) * d' Sigma d),    p = sigmoid(w'd)
 
-so a good question is one that is both uncertain under the posterior AND close
+so a good question is one that is both uncertain under the posterior and close
 to a coin flip for this user. Candidates are subsampled: the catalogue admits
 ~11 million pairs, which cannot be enumerated inside a request.
 """

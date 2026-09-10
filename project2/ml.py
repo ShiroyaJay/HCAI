@@ -7,15 +7,15 @@ maximizing ``acc_test - lambda * Omega(f)``.
   * Decision tree:        Omega(f) = number of leaves   (fit knob: max_leaf_nodes)
   * Logistic regression:  Omega(f) = number of non-zero coefficients (fit knob: C, L1)
 
-Note that ``lambda`` here is the selection meta-parameter and is deliberately distinct
-from the per-model fitting knob (max_leaf_nodes / C).
+``lambda`` here is the selection meta-parameter, deliberately distinct from the
+per-model fitting knob (max_leaf_nodes / C).
 """
 
 from functools import lru_cache
 
 import matplotlib
 
-matplotlib.use("Agg")  # no display on a server — render straight to a file
+matplotlib.use("Agg")  # no display on a server, so render straight to a file
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.compose import ColumnTransformer
@@ -108,7 +108,7 @@ def cached_candidates(model_type):
     """Candidates for ``model_type``, fitted once per process.
 
     The dataset and split are deterministic (fixed seed), so the candidate set is the
-    same on every request — caching avoids refitting every model on each slider move.
+    same on every request, so caching avoids refitting every model on each slider move.
     """
     df = data.load_penguins()
     X_train, X_test, y_train, y_test = data.get_split(df)

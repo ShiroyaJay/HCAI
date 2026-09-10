@@ -12,7 +12,7 @@ Strategies compared (3 seeds each):
 - clf_uncertainty: query where the classifier is least confident (classic AL
   baseline; finds hard inputs but ignores the expert)
 - deferral_boundary: query where |g(x) - max_y p_clf(y|x)| is smallest, i.e.
-  where the defer/keep decision itself is most uncertain — the label there is
+  where the defer/keep decision itself is most uncertain, so the label there is
   exactly the information that improves deferral. First batch random,
   epsilon = 0.1 of each later batch stays random for exploration.
 """

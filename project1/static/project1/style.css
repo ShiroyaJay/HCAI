@@ -240,7 +240,7 @@
 .p1-quality-okay   { color: #9a6700; }
 .p1-quality-tricky { color: #8a5300; }
 
-/* A simple, friendly "how well" bar instead of a confusion matrix */
+/* A simple "how well" bar instead of a confusion matrix */
 .p1-meter {
     max-width: 520px;
     height: 42px;

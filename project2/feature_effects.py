@@ -8,11 +8,12 @@ j is forced to value v. One curve per species.
 ALE = accumulated *local* effects, centered to mean zero. ALE is the integral of the
 partial derivative E[ df/dx_j ] of the prediction with respect to x_j:
 
-  * Logistic regression -> the predicted probability is differentiable, so we use the
-    EXACT analytic derivative (softmax gradient) and accumulate it over a grid.
-  * Decision tree -> the prediction is piecewise-constant (derivative is 0 a.e. with
-    jumps), so the analytic derivative is useless. We DISCRETIZE: within feature bins we
-    take the difference of predictions across the bin edges and accumulate those.
+  * Logistic regression: the predicted probability is differentiable, so we use the
+    exact analytic derivative (softmax gradient) and accumulate it over a grid.
+  * Decision tree: the prediction is piecewise-constant (derivative is 0 a.e. with
+    jumps), so the analytic derivative is unusable. We discretize instead: within
+    feature bins we take the difference of predictions across the bin edges and
+    accumulate those.
 """
 
 import matplotlib
@@ -53,8 +54,8 @@ def ale_exact_logreg(pipe, df, feature, classes):
 
     Unlike the PDP, ALE averages the local effect over the *conditional* distribution:
     within each feature bin we average the analytic derivative over the points that
-    actually fall in that bin, multiply by the bin width, and accumulate. This is what
-    makes ALE differ from a centered PDP when features are correlated. Logistic
+    actually fall in that bin, multiply by the bin width, and accumulate. ALE therefore
+    differs from a centered PDP whenever features are correlated. Logistic
     regression admits an exact derivative because the softmax is differentiable in
     closed form.
     """

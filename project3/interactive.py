@@ -2,8 +2,8 @@
 
 The active-learning loop from Task 4, but the queried "expert" is the person
 in the browser: the system picks an article, the user assigns a topic, and the
-rejector g(x) — now a model of *this user's* competence — is refit on their
-answers. All heavy assets are cached per process; the Django session only
+rejector g(x) is refit on their answers, and is now a model of *this user's*
+competence. All heavy assets are cached per process; the Django session only
 stores queried row indices and the user's labels.
 """
 
@@ -156,7 +156,7 @@ def live_metrics(models_dir, state):
         y = assets["eval_df"]["label"].values
         kept_correct = assets["clf_pred_eval"][~defer] == y[~defer]
         # Kept part is exact (gold known); deferred part uses g-hat as the
-        # expected chance the user would answer correctly — an estimate.
+        # expected chance the user would answer correctly, so it is an estimate.
         est = (kept_correct.sum() + g_eval[defer].sum()) / len(y)
         out["deferral_rate"] = float(defer.mean())
         out["estimated_team_accuracy"] = float(est)

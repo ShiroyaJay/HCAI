@@ -1,10 +1,10 @@
-"""Task 1 -- the movie feature representation.
+"""Task 1: the movie feature representation.
 
 Design constraint that drives everything here: the whole point of the study is
 to estimate w from ~20-60 interactions. For random +/-1 labels on n difference
 vectors in R^d, Cover's counting theorem gives
     P(linearly separable) = 2^-(n-1) * sum_{k<d} C(n-1, k)
-which at d=34, n=50 is 0.995 -- the likelihood is maximised at infinity and the
+which at d=34, n=50 is 0.995. The likelihood is then maximised at infinity and the
 "estimated preference vector" would be a pure regularisation artifact. At d=21
 it is ~0.1. So the representation is deliberately small and every dimension is
 one a person could actually name as a taste.
@@ -14,12 +14,13 @@ Two identifiability rules are enforced rather than assumed:
     all-ones genre direction constant across movies, which is exactly
     unidentified: only utility *differences* within a choice set enter the
     Plackett-Luce likelihood, so a constant direction never appears in the
-    data, yet its Laplace posterior variance is maximal -- an adaptive selector
+    data, yet its Laplace posterior variance is maximal, so an adaptive selector
     would then chase a provably unlearnable direction.
   - the content-rating one-hot drops a reference level, for the same reason.
 
-Rare binary flags are centered but NOT divided by their standard deviation:
-scaling a 4%-prevalence flag by sd ~ 0.2 turns it into a leverage bomb.
+Rare binary flags are centered but not divided by their standard deviation:
+scaling a 4%-prevalence flag by sd ~ 0.2 turns a handful of films into
+high-leverage points that dominate the fit.
 """
 
 from functools import lru_cache
@@ -42,7 +43,7 @@ FEATURE_NAMES = (
        "imdb_score", "popularity", "non_english", "black_and_white"]
 )
 
-# Plain-language labels for the reveal page, phrased so that a POSITIVE weight
+# Plain-language labels for the reveal page, phrased so that a positive weight
 # reads as "likes this".
 LABELS = {
     **{f"genre_{g}": g.lower() + " films" for g in GENRES},
@@ -76,7 +77,7 @@ def build_matrix():
     """The (n_movies, d) feature matrix for the whole catalogue.
 
     This is the extractor Task 1 asks for. The standardisation is fitted once,
-    here, on the full catalogue and frozen -- so a given component of w means
+    here, on the full catalogue and frozen, so a given component of w means
     the same thing for every participant, which is what makes cross-participant
     analysis (and the population baseline) meaningful.
     """
@@ -110,7 +111,7 @@ def build_matrix():
 
     X = np.column_stack(cols)
     # Center every column so weights are comparable and no column is constant.
-    # (Centering cancels inside the likelihood -- only differences matter -- but
+    # (Centering cancels inside the likelihood, since only differences matter, but
     # it makes the rank assertion below meaningful and w readable.)
     X = X - X.mean(axis=0)
 

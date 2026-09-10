@@ -38,7 +38,7 @@ class ExplainabilityLogicTests(TestCase):
 
     def test_ale_is_centered(self):
         # ALE is centered to ~zero mean (tree uses data-weighted centering, so the
-        # unweighted mean over edges is near—but not exactly—zero).
+        # unweighted mean over edges is near zero, but not exactly zero).
         for model_type in ("tree", "logreg"):
             pipe = ml.select_model(ml.get_candidates(model_type, *self.split), 0.0)["pipe"]
             _, curves = fe.ale(pipe, self.df, "flipper_length_mm", self.classes, model_type)
@@ -68,7 +68,7 @@ class ExplainabilityLogicTests(TestCase):
     def test_counterfactuals_can_change_a_categorical_feature(self):
         # Row 0 is a Torgersen Adelie, and Gentoo only occurs on Biscoe in this
         # dataset, so reaching a Gentoo counterfactual should require changing
-        # `island` for at least one of the results — exercising the categorical
+        # `island` for at least one of the results, which exercises the categorical
         # (resample-to-a-different-category) noising path, not just numeric noise.
         pipe = ml.select_model(ml.get_candidates("tree", *self.split), 0.0)["pipe"]
         x = self.df.loc[0, data.FEATURES]

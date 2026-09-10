@@ -1,4 +1,4 @@
-"""Task 4 -- the participant protocol.
+"""Task 4: the participant protocol.
 
 The protocol is linear: a tuple of steps and an index. No state machine.
 
@@ -21,8 +21,8 @@ RANK_SET_SIZE = 10
 #
 # The box is enforced strictly. A rank set handed out at t = 299 s must not be
 # allowed to run to completion, or Design 2 quietly receives up to a further
-# ~40 s of elicitation time -- a first-order confound on the primary dependent
-# variable, which is held-out agreement AT A FIXED TIME BUDGET. Instead the
+# ~40 s of elicitation time, a first-order confound on the primary dependent
+# variable, which is held-out agreement at a fixed time budget. Instead the
 # block is cut where the clock says, and whatever ordering the participant had
 # established by then is kept as a top-K partial ranking (see preference.py).
 BLOCK_SECONDS = 300
@@ -55,17 +55,17 @@ LIKERT_7 = ["1 - not at all", "2", "3", "4", "5", "6", "7 - very much"]
 RTLX_SCALE = ["1 - very low", "2", "3", "4", "5", "6", "7 - very high"]
 
 # Raw NASA-TLX (RTLX): all six subscales, unweighted. The full TLX weighting
-# procedure is 15 pairwise comparisons per condition -- a participant-burden
-# disaster, and a darkly ironic one in a study about the burden of pairwise
+# procedure is 15 pairwise comparisons per condition, which is a serious burden
+# on participants, particularly in a study about the burden of pairwise
 # comparison. Dropping a subscale instead would be worse: RTLX's agreement with
 # the weighted score is a property of the complete six-item set.
 RTLX_ITEMS = [
-    ("mental", "Mental demand -- how mentally demanding was the task?"),
-    ("physical", "Physical demand -- how physically demanding was the task?"),
-    ("pace", "Temporal demand -- how hurried or rushed did you feel?"),
-    ("success", "Performance -- how successful were you at expressing your taste?"),
-    ("effort", "Effort -- how hard did you have to work?"),
-    ("frustration", "Frustration -- how irritated or stressed did you feel?"),
+    ("mental", "Mental demand: how mentally demanding was the task?"),
+    ("physical", "Physical demand: how physically demanding was the task?"),
+    ("pace", "Temporal demand: how hurried or rushed did you feel?"),
+    ("success", "Performance: how successful were you at expressing your taste?"),
+    ("effort", "Effort: how hard did you have to work?"),
+    ("frustration", "Frustration: how irritated or stressed did you feel?"),
 ]
 
 QUESTIONS = {
@@ -84,9 +84,9 @@ QUESTIONS = {
          ["Choosing between two films", "Ranking ten films", "About the same"]),
         ("comments", "Anything else you would like to tell us? (optional)", None),
     ],
-    # Asked on the `recs` step, against two unlabelled recommendation lists --
+    # Asked on the `recs` step, against two unlabelled recommendation lists,
     # one fitted from each block. This is the half of H4 that is about the
-    # OUTPUT rather than the process, and it has to be blind: a participant who
+    # output rather than the process, and it has to be blind: a participant who
     # knows which list came from the ranking task cannot rate it independently
     # of how they felt about ranking.
     "recs": [
@@ -154,10 +154,10 @@ def advance(state):
     return state
 
 
-# Steps a participant may step back FROM. block_*, practice_* and reveal are
+# Steps a participant may step back from. block_*, practice_* and reveal are
 # excluded: the blocks are time-boxed, and reveal is excluded specifically so
 # recs' blind list comparison can't be redone after already having seen, on
-# reveal, which list came from which design -- that would un-blind it after
+# reveal, which list came from which design. That would un-blind it after
 # the fact. rtlx_*/validation_* aren't in the list either (reached only as a
 # Back *target*, from break/final), but resubmitting them is made idempotent
 # below rather than blocked, so that doesn't limit which steps get a button.
@@ -300,9 +300,9 @@ def clear_task(state):
 def skip_pair(state):
     """Decline the pair on screen without recording a choice.
 
-    Forced choice between two unseen or disliked films is a real burden; this
-    is the escape hatch. The pair is burned -- excluded from later draws --
-    so declining doesn't just hand the same pair straight back.
+    Forced choice between two unseen or disliked films is a real burden, so a
+    participant can decline. The pair is burned, excluded from later draws, so
+    declining doesn't just hand the same pair straight back.
     """
     state["sk"] = (state.get("sk") or []) + [int(i) for i in (state.get("cur") or [])]
     return clear_task(state)
@@ -313,7 +313,7 @@ def stop_ranking(state):
     ranking, then let a fresh set be drawn.
 
     Same top-K partial-ranking path the block-time cutoff uses in
-    finish_block -- offered here as something the participant can choose for
+    finish_block, offered here as something the participant can choose for
     themselves, per set, instead of only the clock enforcing it.
     """
     return record_ranking(state, list(state["picked"]), list(state["pd"]),
@@ -325,7 +325,7 @@ def record_pairwise(state, chosen):
 
     Deciseconds rather than milliseconds, and per-task rather than elapsed into
     the block, purely to keep the integers short. Timing at this resolution is
-    descriptive only -- the primary measure is block wall-clock.
+    descriptive only; the primary measure is block wall-clock.
     """
     a, b = state["cur"]
     state["p"].append([a, b, int(chosen), _task_ds(state)])
@@ -341,7 +341,7 @@ def take_ds(state):
     """Deciseconds since the current decision was offered, then restart the clock.
 
     Each pick inside a rank set is one decision, so a ranking task yields a
-    latency per position -- which is what the pre-registered response-time
+    latency per position, which is what the pre-registered response-time
     exclusion and the middle-ranks-are-noisier hypothesis both need.
     """
     ds = _task_ds(state)
@@ -423,7 +423,7 @@ def fitted_weights(state):
 def export(state):
     """The full response record, for the download at debrief.
 
-    Everything the study would analyse, plus everything the system concluded --
+    Everything the study would analyse, plus everything the system concluded,
     including the corrections the participant made to it on the reveal screen,
     which are the only record of where a person disagreed with the model.
     """

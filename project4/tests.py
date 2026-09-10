@@ -25,9 +25,8 @@ class DataTests(TestCase):
         self.assertNotIn(" Black and White", set(df["color"]))
 
     def test_recommendation_pool_is_wider_than_the_study_pool(self):
-        """A recommender that can only propose films already shown is not
-        recommending anything -- but the unfiltered catalogue is worse: a linear
-        utility maximised over it returns films with single-digit vote counts."""
+        """The recommendation pool is wider than the study pool but still bounded
+        by a vote threshold."""
         study_pool = set(int(i) for i in data.study_pool_index())
         rec_pool = set(int(i) for i in data.recommend_pool_index())
         self.assertTrue(study_pool < rec_pool)
@@ -137,8 +136,8 @@ class PreferenceTests(TestCase):
         self.assertFalse(seen & set(recs))
 
     def test_least_recommended_also_excludes_seen_movies(self):
-        """"Probably not for you" listing a film they rated 90 seconds ago is worse
-        than useless -- it looks like the system was not listening."""
+        """The least-recommended list excludes films the participant has already
+        seen."""
         w = self.rng.normal(size=self.X.shape[1])
         pool = [int(i) for i in data.study_pool_index()]
         worst = set(int(i) for i in preference.rank_movies(w, pool, self.X, best_first=False)[:4])
@@ -206,7 +205,7 @@ class StudyTests(TestCase):
     def test_a_block_cut_by_the_clock_keeps_the_partial_ranking(self):
         """The time box is enforced, and the evidence is not thrown away.
 
-        A rank set served at t = 299s must not run to completion -- that would
+        A rank set served at t = 299s must not run to completion, which would
         hand Design 2 up to 40s more elicitation time than Design 1 at the same
         nominal budget, which is a confound on the primary DV. So the block is
         cut where the clock says and the prefix already established is stored
@@ -236,8 +235,7 @@ class StudyTests(TestCase):
         self.assertEqual(items[:3], [3, 1, 7])
 
     def test_every_ranking_pick_is_timed(self):
-        """The pre-registered response-time exclusion needs per-decision latency
-        for ranking too, not only for pairwise clicks."""
+        """Ranking tasks record a latency for every individual pick."""
         state = study.new_state(seed=1)
         state["cur"] = list(range(10))
         study.record_ranking(state, list(range(9)), list(range(10, 19)))
@@ -252,8 +250,7 @@ class StudyTests(TestCase):
         self.assertIn("physical", keys)
 
     def test_rtlx_immediately_follows_its_own_block(self):
-        """Workload is retrospective: asking about block A after block B and two
-        pages of ratings measures recall, not workload."""
+        """Each RTLX is administered immediately after its own block."""
         steps = list(study.STEPS)
         for slot in ("a", "b"):
             self.assertEqual(steps[steps.index(f"block_{slot}") + 1], f"rtlx_{slot}")
@@ -266,7 +263,7 @@ class StudyTests(TestCase):
         self.assertEqual(len(set(page1) | set(page2)), study.VALIDATION_UNIQUE)
 
     def test_validation_set_is_stable_once_page_one_is_answered(self):
-        """Page 2 must re-offer 4 films from page 1, not draw a fresh set."""
+        """Validation page 2 re-offers four films from page 1."""
         state = study.new_state(seed=0)
         page1, _ = study.validation_items(state)
         state["v"] = [[i, 5] for i in page1]          # page 1 submitted
@@ -354,7 +351,7 @@ class ViewTests(TestCase):
         return {}
 
     def test_consent_is_enforced_on_the_server(self):
-        """`required` on the checkbox is a browser hint, not a gate."""
+        """Consent is validated server-side."""
         self.client.post(reverse("project4:study_start"))
         self.client.post(reverse("project4:study_submit"), {})
         self.assertEqual(study.step(self.client.session[study.SESSION_KEY]), "consent")
@@ -393,7 +390,7 @@ class ViewTests(TestCase):
         self.assertEqual({i for i, _r in recorded}, set(page1[1:]))
 
     def test_slider_order_does_not_move_when_a_slider_is_dragged(self):
-        """Controls that reshuffle as you use them read as the system arguing back."""
+        """Slider order follows the model's weights rather than the live overrides."""
         import numpy as np
         w = np.zeros(features.dimension())
         w[0], w[1] = 0.9, 0.4
@@ -409,7 +406,7 @@ class ViewTests(TestCase):
                          features.dimension())
 
     def test_export_records_the_users_corrections(self):
-        """Where a person disagreed with the model is the study's own datum."""
+        """User overrides are recorded in the export."""
         state = study.new_state(seed=0)
         state["w"] = {"year": -2.0}
         export = study.export(state)
@@ -425,4 +422,4 @@ class ViewTests(TestCase):
         for mode in ("random", "adaptive"):
             response = self.client.get(reverse("project4:demo"), {"mode": mode, "n": 6})
             self.assertEqual(response.status_code, 200)
-            self.assertContains(response, "cosine" if False else "Questions asked")
+            self.assertContains(response, "Questions asked")

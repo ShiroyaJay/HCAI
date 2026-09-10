@@ -1,7 +1,7 @@
 """The Task 1-3 report, built on demand as PDF bytes.
 
 Hybrid by design: the figures are pre-rendered PNGs committed under assets/
-(so matplotlib -- a 1-3s cold import -- never touches the request path), while
+(so matplotlib, a 1-3s cold import, never touches the request path), while
 the prose, tables and numbers are assembled here and cached as immutable bytes.
 
 The bytes are returned to an HttpResponse rather than a FileResponse over a
@@ -213,13 +213,14 @@ def _build():
     pdf.formula("P(separable) = 2^-(n-1) * SUM_{k<d} C(n-1, k)")
     pdf.p("Where this probability approaches 1 the responses do not determine a "
           "direction at all: the unpenalised maximum-likelihood estimate runs off to "
-          "infinity, and what a regularised fit returns in the unidentified subspace is "
-          "the prior rather than the participant. At d = 34 and 50 comparisons that "
+          "infinity, and in the unidentified subspace a regularised fit simply returns "
+          "the prior. At d = 34 and 50 comparisons that "
           "probability is 0.995; at d = %d it is 0.13. This bounds how far the "
           "representation could sensibly be pushed." % features.dimension())
     pdf.p("The estimator used here is a MAP fit under a Gaussian prior, which stays "
-          "finite and unique under separation by construction: separability does not "
-          "break it, it means some directions of w are reported at their prior value. "
+          "finite and unique under separation by construction. Separability does not "
+          "break the fit; it means some directions of w are reported at their prior "
+          "value. "
           "This is an argument against representations of the size that was actually "
           "rejected: keyword TF-IDF and cast one-hots, thousands of columns.")
     if m:
@@ -240,7 +241,7 @@ def _build():
           "standardises in one pass, and is cached per process."
           % (features.dimension(), f"{m['assumptions']['n_movies']:,}" if m else "~4,800"))
 
-    pdf.h2("Two identifiability rules, enforced rather than assumed")
+    pdf.h2("Two identifiability rules")
     pdf.bullets([
         "Genres stay raw 0/1 and are never row-normalised. Normalising rows so that the "
         "genre block sums to 1 makes the all-ones genre direction constant across all "
@@ -264,10 +265,9 @@ def _build():
         gap = dim["wide"]["ranking"] - dim["narrow"]["ranking"]
         pdf.p("A wider representation (+ %d rare genres, d = %d) was fitted on the same "
               "synthetic responses and scored against held-out films: held-out rho "
-              "changes by only %.3f, confirming that the chosen, smaller representation "
-              "is not leaving predictive power on the table. It is kept small for the "
-              "interpretability reason above, not because a larger one would perform "
-              "worse."
+              "changes by only %.3f, so the chosen, smaller representation gives up no "
+              "measurable predictive power. It is kept small for the interpretability "
+              "reason above rather than for performance."
               % (len(dim["extra_features"]), dim["wide"]["d"], gap))
 
     # ---------------- Task 2 ----------------
@@ -291,8 +291,8 @@ def _build():
     pdf.h2("Justification")
     pdf.bullets([
         "It reduces exactly to Bradley-Terry at n = 2, so a pairwise choice and a ranking "
-        "are observations of the same model. This matters for the study: both designs are "
-        "fitted with one estimator, so the headline comparison cannot be confounded by two "
+        "are observations of the same model. That is what lets both designs be fitted "
+        "with one estimator, so the headline comparison cannot be confounded by two "
         "different likelihoods or optimisers.",
         "It is the unique model consistent with Luce's choice axiom (independence of "
         "irrelevant alternatives): the relative odds of preferring i over j do not depend "
@@ -305,11 +305,11 @@ def _build():
         "added, so the MAP estimate is unique and computable by Newton's method in well "
         "under ten iterations (fast enough to refit inside a web request).",
         "Truncating the product after K factors gives the top-K partial-ranking "
-        "likelihood. This is not a footnote: a ranking task interrupted by the block's "
-        "time limit yields a partial order, and it is used rather than discarded.",
+        "likelihood. That is what a ranking task interrupted by the block's time limit "
+        "produces, so the partial order is used rather than discarded.",
     ])
 
-    pdf.h2("Honest limitation: IIA")
+    pdf.h2("Limitation: IIA")
     pdf.p("The axiom that makes Plackett-Luce clean is also its main weakness. If a set "
           "contains two near-identical films (two entries in the same superhero franchise), "
           "they are substitutes, and a real person's choice probabilities violate "
@@ -332,9 +332,9 @@ def _build():
     pdf.p("w is estimated by MAP under a Gaussian prior: maximise the sum of ranking "
           "log-likelihoods minus ||w||^2 / 2*sigma^2. The gradient and Hessian are "
           "available in closed form, and the Hessian is bounded below by I/sigma^2, so "
-          "damped Newton converges quickly and without line-search heroics. Inverting the "
-          "same Hessian gives the Laplace posterior covariance, which is used twice over: "
-          "for the uncertainty attached to each learned weight, and for the adaptive "
+          "damped Newton converges quickly with only a simple backtracking guard. Inverting "
+          "the same Hessian gives the Laplace posterior covariance, which is used for "
+          "the uncertainty attached to each learned weight and for the adaptive "
           "question-selection rule described at the end of this report. "
           "sigma = %s is pre-registered and identical in both conditions."
           % (m["assumptions"]["sigma"] if m else "1.0"))
@@ -349,9 +349,9 @@ def _build():
 
     pdf.h2("Research question and hypotheses")
     pdf.p("Which interface recovers more of a user's preferences per unit of their time, "
-          "and which do users prefer to use? Answering both matters: an interface that "
-          "extracts marginally more signal but that people find tedious will not survive "
-          "contact with a real product.")
+          "and which do users prefer to use? Both questions need answering, since an "
+          "interface that extracts marginally more signal but that people find tedious "
+          "is unlikely to be adopted.")
     pdf.bullets([
         "H1 (primary, two-sided): the two designs differ in how well the fitted w predicts "
         "held-out preferences, at an equal elicitation time budget.",
@@ -376,37 +376,38 @@ def _build():
           "The cost is carryover and fatigue, mitigated by counterbalancing, by drawing "
           "each block's films from disjoint pools, and by a short break between blocks.")
 
-    pdf.h2("The measurement problem, and how it is solved")
+    pdf.h2("The measurement problem")
     pdf.p("There is no ground-truth w to compare an estimate against. The protocol "
           "therefore ends with a validation block: 16 held-out films, none of them seen "
           "during either elicitation block, rated on a 7-point 'how much would you want to "
           "watch this' scale. The w fitted from block A and the w fitted from block B are "
           "each scored against those same ratings. The primary dependent variable is "
           "Spearman's rho between predicted utility and stated rating.")
-    pdf.p("Three details make this fair. First, the validation format is neutral: it is "
-          "neither a pairwise choice nor a ranking. A pairwise validation block would "
+    pdf.p("The validation format is neutral, being neither a pairwise choice nor a "
+          "ranking. That keeps the comparison fair: a pairwise validation block would "
           "structurally favour Design 1, whose model is trained and tested in the same "
           "format and so also learns any format-specific response bias, a confound "
-          "plausibly larger than the effect being measured. Second, the elicitation blocks "
-          "are time-boxed at five minutes rather than fixed at a number of tasks, because "
-          "the question is about information per unit of the participant's time. Note "
-          "that once time is fixed by construction, the dependent variable is simply the "
-          "held-out score; dividing by a constant duration would add nothing.")
-    pdf.p("Third, the time box is enforced strictly, which is less obvious than it "
-          "sounds. The naive implementation checks the clock only before handing out the "
-          "next task, so a ten-film ranking served at t = 299 s runs to completion and "
-          "the ranking block quietly receives up to forty seconds more elicitation time "
-          "than the pairwise block at the same nominal budget, a bias of the same order "
-          "as the effect being measured, pointing in the direction of the hypothesis. The "
+          "plausibly larger than the effect being measured. The elicitation blocks are "
+          "then time-boxed at five minutes rather than fixed at a number of tasks, "
+          "because the question is about information per unit of the participant's "
+          "time. Once time is fixed by construction, the dependent variable is simply "
+          "the held-out score, and dividing by a constant duration would add nothing.")
+    pdf.p("The time box is also enforced strictly, which takes more care than it "
+          "appears to. Checking the clock only before handing out the next task lets a "
+          "ten-film ranking served at t = 299 s run to completion, so the ranking "
+          "block receives up to forty seconds more elicitation time than the pairwise "
+          "block at the same nominal budget. That is a bias of the same order as the "
+          "effect being measured, and it points in the direction of the hypothesis. The "
           "interface therefore cuts the block where the clock says, and keeps whatever "
           "ordering the participant had established as a top-K partial ranking. Nothing "
           "the participant did is discarded, and neither condition is given extra time.")
     pdf.p("The 16 films are split over two pages of ten, with four of the first page's "
-          "films repeated, unannounced, on the second: twenty ratings in total. This "
-          "costs about ninety seconds and buys three things: an attention check, an "
-          "estimate of each participant's own self-consistency (the ceiling any model "
-          "could reach for them) and a measure of position bias. Reported effects are "
-          "interpreted against that ceiling, not against 1.0.")
+          "films repeated, unannounced, on the second: twenty ratings in total. The "
+          "repeats cost about ninety seconds and serve as an attention check, an "
+          "estimate of each participant's own self-consistency, and a measure of "
+          "position bias. That self-consistency is the ceiling any model could reach "
+          "for them, and reported effects are interpreted against it rather than "
+          "against 1.0.")
     pdf.p("Two baselines are reported alongside: w = 0 (chance), and a leave-one-"
           "participant-out population-average w. If neither design beats the population "
           "average, personalisation is not doing any work and the comparison is moot.")
@@ -420,7 +421,7 @@ def _build():
               "whose true preference vectors are known, answering according to the "
               "Plackett-Luce model and drawing films from the same familiarity pool the "
               "study uses. Timing is assumed at %.0f s per pairwise click and %.0f s for "
-              "a full ten-film ranking. Each simulated participant completes BOTH designs, "
+              "a full ten-film ranking. Each simulated participant completes both designs, "
               "exactly as in the real within-subjects protocol, so the difference between "
               "them is a paired quantity."
               % (a["sec_per_pair"], a["sec_per_rank_set"]))
@@ -433,9 +434,9 @@ def _build():
                    for i, b in enumerate(r["budgets"])],
                   [20, 27, 21, 22, 22, 22, 22, 22])
         naive = abs(r["diff_mean"][i5]) / r["ranking_sd"][i5]
-        pdf.p("The right-hand columns are the ones that matter. The effect size "
-              "is the mean paired difference over the standard deviation OF THAT "
-              "DIFFERENCE (d_z), never over the between-participant standard deviation of "
+        pdf.p("The effect size in the right-hand columns is the mean paired "
+              "difference over the standard deviation of that "
+              "difference (d_z), never over the between-participant standard deviation of "
               "either condition. Which way the mistake cuts is not fixed: a paired design "
               "helps only to the extent that the two conditions are correlated across "
               "participants, and here they are not correlated enough for the pairing to "
@@ -445,7 +446,7 @@ def _build():
               "sample needed by a third."
               % (r["pairwise_sd"][i5], r["ranking_sd"][i5], r["diff_sd"][i5],
                  naive, _n_for_dz(naive)))
-        pdf.p("This is a property of this study rather than an accident of the "
+        pdf.p("This follows from the study design and is not an artefact of the "
               "simulation. Each block draws its own random films, so two blocks by the "
               "same participant "
               "are two independent noisy measurements of the same taste vector; the "
@@ -463,7 +464,7 @@ def _build():
                           "each design at matched time budgets. Bands are +/- 1 SD across "
                           "synthetic participants.")
 
-    pdf.h2("The assumption the whole comparison rests on")
+    pdf.h2("Sensitivity to the timing assumption")
     if m and "sensitivity" in m:
         sens = m["sensitivity"]
         pdf.p("Nothing in the dataset says how long a person takes to rank ten films. "
@@ -480,13 +481,13 @@ def _build():
                    for row in sens["rows"]],
                   [42, 26, 22, 22, 22, 16, 28])
         flip = [row for row in sens["rows"] if row["dz"] < 0]
-        pdf.p("The predicted effect does not merely shrink as ranking "
-              "gets more expensive: it CHANGES SIGN. If a ten-film ranking costs a "
+        pdf.p("The predicted effect reverses as ranking gets more expensive, rather "
+              "than simply shrinking. If a ten-film ranking costs a "
               "person about a minute, the two designs are indistinguishable; if it costs "
               "ninety seconds, pairwise choice wins by a margin comparable to the one "
-              "ranking wins by at thirty seconds. The honest conclusion is that this "
+              "ranking wins by at thirty seconds. So this "
               "study cannot be powered, or even given a directional hypothesis, until "
-              "that constant is measured. That is precisely what the pilot is for, and "
+              "that constant is measured. That is what the pilot is for, and "
               "it is why H1 is stated as two-sided.")
         if flip:
             pdf.p("Pre-registration therefore commits to the SESOI and the analysis, and "
@@ -499,12 +500,12 @@ def _build():
         p_ = m["power"]
         r = m["recovery"]
         i5 = r["budgets"].index(300) if 300 in r["budgets"] else -1
-        pdf.p("Two numbers bracket the answer. The first is a judgement: a difference "
+        pdf.p("The answer is bracketed by two numbers. One is a judgement: a difference "
               "smaller than d_z = 0.4 in held-out rho would not change which interface a "
               "product should ship, so d_z = 0.4 is adopted as the smallest effect of "
-              "interest. The second is the simulation's own prediction under the assumed "
-              "timings, d_z = %.2f. Powering for the smaller of the two is the "
-              "conservative choice."
+              "interest. The other is the simulation's own prediction under the assumed "
+              "timings, d_z = %.2f. The study powers for whichever is smaller, which is "
+              "the conservative choice."
               % r["dz"][i5])
         pdf.table(["Smallest effect (d_z)"] + [str(e) for e in p_["effects"]],
                   [["Participants required"] + [str(n) for n in p_["n"]]],
@@ -525,7 +526,7 @@ def _build():
         "Compensated at the platform's fair-pay rate for the full expected duration "
         "(about 15 minutes), independent of how they perform.",
         "A pilot of 5 participants runs first. Its primary job is not instruction "
-        "wording but MEASURING the per-task costs, because the sensitivity table above "
+        "wording but actually measuring the per-task costs, because the sensitivity table above "
         "shows the predicted effect changing sign across a plausible range of them. The "
         "final sample size is fixed from the pilot's measured timings before main "
         "recruitment opens; pilot data are not pooled into the main analysis.",
@@ -547,11 +548,11 @@ def _build():
         "first minute of each block measures learning the interface rather than "
         "preference, and in a within-subjects design that cost lands entirely on "
         "whichever interface the participant met first.",
-        "Each RTLX comes IMMEDIATELY after its own block, not at the end. Workload is "
+        "Each RTLX comes right after its own block, not at the end. Workload is "
         "retrospective self-report: asking about block A after block B and two pages of "
         "ratings have intervened measures recall and contrast, not workload, and the "
         "damage would fall asymmetrically on the first block.",
-        "The two recommendation lists are shown UNLABELLED, before the reveal discloses "
+        "The two recommendation lists are shown unlabelled, before the reveal discloses "
         "which came from which interface. A participant who knows which list came from "
         "the ranking task cannot rate it independently of how they felt about ranking. "
         "The process half of H4 is asked on the previous screen, before either list is "
@@ -573,10 +574,10 @@ def _build():
           "which point 'which would you rather watch' degenerates into 'which title sounds "
           "more appealing' and both interfaces measure the same noise. Restricting the "
           "frame is an ecological-validity control and is reported as such.")
-    pdf.p("Recommendations at the end are drawn from a DIFFERENT and wider frame (at "
-          "least 1,000 votes, about 4,450 titles) because a recommender that can only "
-          "propose films the participant was already shown is not recommending anything. "
-          "It is not the whole catalogue either, and the reason is worth recording. "
+    pdf.p("Recommendations at the end are drawn from a separate, wider frame (at "
+          "least 1,000 votes, about 4,450 titles) because a recommender restricted to "
+          "films the participant has already seen has nothing left to recommend. The "
+          "wider frame is still not the whole catalogue, for the following reason. "
           "Utility here is linear, so maximising it over an unfiltered catalogue lands on "
           "whichever corner of the feature space is most extreme; since popularity is "
           "itself one of the features, any participant with a taste for the niche is "
@@ -586,7 +587,7 @@ def _build():
           "additionally de-duplicated by primary genre, for the same reason: an "
           "unconstrained argmax over a fixed catalogue returns five near-identical films.")
 
-    pdf.h2("Exclusion criteria, fixed in advance")
+    pdf.h2("Exclusion criteria")
     pdf.bullets([
         "Disagreement of 3 or more scale points on the repeated validation items, "
         "indicating inattentive responding.",
@@ -669,7 +670,7 @@ def _build():
           "posterior covariance S, a natural score for a candidate pair with difference "
           "vector d = x_a - x_b is:")
     pdf.formula("score(a, b) = log( 1 + p(1-p) * d' S d ),   p = sigmoid(w'd)")
-    pdf.p("Both factors are necessary. The naive D-optimal choice (maximise d'Sd alone) "
+    pdf.p("Both factors are needed. Maximising d'Sd alone, the plain D-optimal choice, "
           "systematically selects the pairs the user finds easiest, because a large "
           "predicted utility gap means a near-certain answer that carries almost no "
           "information. Weighting by the response entropy p(1-p) selects questions that are "

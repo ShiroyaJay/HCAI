@@ -23,8 +23,8 @@
 
   {% if consistency %}
   <p class="p4-note p4-foot">You rated {{ consistency.n }} films twice without knowing it;
-     your ratings differed by {{ consistency.mean_gap }} points on average. That is the
-     ceiling any model could reach for you.</p>
+     your ratings differed by {{ consistency.mean_gap }} points on average. No model
+     could match your own taste more closely than that.</p>
   {% endif %}
 
   <h2 class="p4-region-title">Which list was which</h2>
@@ -47,8 +47,8 @@
   <h2 class="p4-region-title">You are in control</h2>
   <p class="main-text">The two breakdowns above came from each section on its own; from here
      on, everything is one model combining what you did in both. These are the weights it
-     inferred. Disagree with one? Change it and the recommendations update: the model
-     proposes, you decide. Every weight is editable, and your changes are saved with your
+     inferred. If you disagree with one, change it and the recommendations update.
+     Every weight is editable, and your changes are saved with your
      data so we can see where the model got you wrong.</p>
 
   <form action="{% url 'project4:study_submit' %}" method="post" class="p4-sliders">{% csrf_token %}

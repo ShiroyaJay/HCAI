@@ -37,7 +37,7 @@ FAMILIARITY_MIN_VOTES = 10_000
 # point in a recommender that can only suggest films the user was already shown.
 # But it cannot be the whole catalogue either. Utility is linear, so maximising
 # it over an unfiltered catalogue lands on whichever corner of feature space is
-# most extreme -- and because popularity is itself a feature, a user with any
+# most extreme, and because popularity is itself a feature, a user with any
 # taste for the niche is handed films with eight IMDB votes. This threshold
 # removes that tail (343 films) while still leaving ~950 titles the study never
 # showed them.
@@ -87,7 +87,7 @@ def catalogue():
 def study_pool_index():
     """Row positions in catalogue() eligible to be shown to a participant.
 
-    A documented sampling frame, not the full catalogue -- see
+    A documented sampling frame, not the full catalogue; see
     FAMILIARITY_MIN_VOTES. Recommendations use catalogue_index() instead.
     """
     df = catalogue()
@@ -96,7 +96,7 @@ def study_pool_index():
 
 @lru_cache(maxsize=1)
 def recommend_pool_index():
-    """Row positions eligible to be RECOMMENDED -- see RECOMMEND_MIN_VOTES.
+    """Row positions eligible to be recommended; see RECOMMEND_MIN_VOTES.
 
     Wider than study_pool_index(), because a recommender that can only propose
     films already shown during elicitation is not recommending anything.

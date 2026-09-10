@@ -1,4 +1,4 @@
-"""Task 2 -- Plackett-Luce preference model, MAP estimation, recommendations.
+"""Task 2: Plackett-Luce preference model, MAP estimation, recommendations.
 
 Bradley-Terry gives P(i > j) = sigmoid(w'(x_i - x_j)). The extension to a full
 ranking i_1 > i_2 > ... > i_n is Plackett-Luce:
@@ -9,7 +9,7 @@ ranking i_1 > i_2 > ... > i_n is Plackett-Luce:
 
 i.e. "repeatedly pick the best of what is left". Properties that justify it:
   - it is the unique model satisfying Luce's choice axiom (IIA);
-  - it reduces EXACTLY to Bradley-Terry at n = 2;
+  - it reduces exactly to Bradley-Terry at n = 2;
   - it is the random-utility model with i.i.d. Gumbel noise (McFadden). Note
     this is Gumbel, not Thurstonian: Thurstone Case V uses Gaussian noise and
     has no closed form for n > 2, which is a further argument for Plackett-Luce;
@@ -17,10 +17,10 @@ i.e. "repeatedly pick the best of what is left". Properties that justify it:
     so the MAP estimate is unique even when the data are linearly separable.
 
 Truncating the product at k = K gives the top-K partial ranking likelihood,
-which is what a rank task cut off by the time budget produces -- so partial
+which is what a rank task cut off by the time budget produces, so partial
 responses are used rather than discarded.
 
-The SAME estimator serves both study designs: a pairwise choice is just a
+The same estimator serves both study designs: a pairwise choice is just a
 ranking with n = 2. Fitting the two designs with two different optimisers would
 confound the headline comparison.
 """
@@ -81,8 +81,8 @@ def fit_map(groups, X=None, sigma=SIGMA, iters=50, tol=1e-9):
     """MAP estimate of w by damped Newton.
 
     The negative log-posterior is strictly convex with Hessian >= I/sigma^2, so
-    Newton converges in well under 10 iterations and needs no line-search
-    heroics -- a simple backtracking guard is enough.
+    Newton converges in well under 10 iterations and needs no elaborate line
+    search; a simple backtracking guard is enough.
     """
     X = features.build_matrix() if X is None else X
     w = np.zeros(X.shape[1])
@@ -110,7 +110,7 @@ def laplace_cov(w, groups, X=None, sigma=SIGMA):
     """Posterior covariance under the Laplace approximation, (-H)^-1.
 
     Used for the uncertainty bars on the taste profile and for the adaptive
-    selection rule -- one object, two uses.
+    selection rule.
     """
     X = features.build_matrix() if X is None else X
     _, hess = _grad_hess(w, groups, X, sigma)
@@ -170,7 +170,7 @@ def recommend(w, candidates, n=5, exclude=(), diversify=True, X=None):
 def weight_table(w, order_by=None, cov=None):
     """Every weight in plain language, strongest first: {name, label, weight, se}.
 
-    `order_by` decides the ORDER while `w` supplies the values. The reveal page
+    `order_by` decides the order while `w` supplies the values. The reveal page
     needs those separated: the sliders are laid out by what the model inferred,
     but show what the user has since set, so that dragging one control does not
     reshuffle the panel underneath the cursor.

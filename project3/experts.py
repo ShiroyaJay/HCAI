@@ -3,7 +3,7 @@
 Experts are deliberately imperfect, with competence tied to regions of the
 input space. Each expert is deterministic: the randomness for an example is
 derived from ``sha1(f"{seed}:{key}")`` of its stable row key, so repeated
-queries for the same article always return the same answer — Tasks 3, 4 and
+queries for the same article always return the same answer, so Tasks 3, 4 and
 the tests all see one consistent expert.
 """
 

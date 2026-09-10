@@ -2,7 +2,7 @@
 
 > Course project repository — TUHH, Semester 2
 
-This repository holds my coursework for **Human-Centric Artificial Intelligence**. The course is about the human-centric aspects of machine learning, so every project is articulated around **interaction with humans**: each one is a small application meant to be *used* by real users.
+This repository holds my coursework for **Human-Centric Artificial Intelligence**. The course is about the human-centric aspects of machine learning, so every project is articulated around interaction with humans: each one is a small application meant to be used by real users.
 
 ---
 
@@ -50,8 +50,8 @@ The project **starts from the official course skeleton**: <https://github.com/pp
 
 - Templates live at `templates/[APP_NAME]/[FILE_NAME].html` inside each app.
 - Global CSS lives in the root `static/` directory (shared by all projects); each app gets its own stylesheet under `static/[app_name]/` (same pattern as `static/home`).
-- Home page content (group members, project links) is driven **from Python (views).
-- Matplotlib plots can't render directly in Django: generate the figure → save to `media/` → load as image (see `demos` app). Alternative: JS chart libraries (Chart.js).
+- Home page content (group members, project links) is driven from Python (views).
+- Matplotlib plots can't render directly in Django: generate the figure, save it to `media/`, then load it as an image (see `demos` app). Alternative: JS chart libraries (Chart.js).
 
 ---
 
@@ -81,7 +81,7 @@ HCAI/
 └── project2/ … project4/   # same layout, one per sub-project
 ```
 
-> **Whole-project vs. sub-projects:** this README covers the overall structure and how to run everything. What each sub-project does, and why it was built that way, is documented inside the app itself — projects 3 and 4 each ship a written PDF report reachable from their own page.
+> Whole-project vs. sub-projects: this README covers the overall structure and how to run everything. What each sub-project does, and why it was built that way, is documented inside the app itself. Projects 3 and 4 each ship a written PDF report reachable from their own page.
 
 ---
 
@@ -91,7 +91,7 @@ Each sub-project implements one of the course briefs.
 
 | # | App | Topic |
 |---|-----|-------|
-| 1 | `project1` | Automated Machine Learning — supervised learning interface (upload CSV → visualize → train & evaluate sklearn models) |
+| 1 | `project1` | Automated Machine Learning — supervised learning interface (upload a CSV, visualize it, then train and evaluate sklearn models) |
 | 2 | `project2` | Explainability — interpretable models (decision tree / logistic regression with λ regularization), counterfactual explanations, and from-scratch PDP/ALE feature-effect plots on Palmer Penguins |
 | 3 | `project3` | Active Learning for Learning-to-Defer — AG News classifier that defers to a (simulated or human) expert, learns the expert's competence profile via active learning, and generates a downloadable PDF report from the experiment artifacts |
 | 4 | `project4` | Preference elicitation — a movie recommender that learns a user's taste vector from a handful of choices (Plackett–Luce over 21 interpretable features), plus the full design and running interface for a user study comparing pairwise choice against ranking |
@@ -118,7 +118,7 @@ Needs **Python 3.9+**. From the repo root (the directory holding `manage.py`):
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python manage.py migrate            # required, not optional — projects 1, 3 and 4
+python manage.py migrate            # required: projects 1, 3 and 4
                                     # use sessions and will 500 without it
 python manage.py runserver
 # → http://127.0.0.1:8000/  (root redirects to the /home/ launch page)

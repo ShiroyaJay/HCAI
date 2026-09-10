@@ -23,7 +23,7 @@ OUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets")
 # Timing assumptions, stated openly in the report: a pairwise click takes ~4s,
 # and one sequential pick inside a rank-10 task about the same, so a full
 # ten-film ranking costs ~40s. These two numbers decide which design wins, and
-# nothing in the dataset pins them down -- hence sensitivity(), which reports
+# nothing in the dataset pins them down, hence sensitivity(), which reports
 # the conclusion at four different costs for the ranking task.
 SEC_PER_PAIR = 4.0
 SEC_PER_RANK_SET = 40.0
@@ -38,7 +38,7 @@ EXTRA_GENRES = ["Animation", "Biography", "Music", "Musical", "War", "Western",
                 "History", "Sport", "Documentary", "Film-Noir"]
 
 # Number of director indicator columns in the third, deliberately over-wide
-# condition -- the regime the separability argument is actually about.
+# condition, the regime the separability argument is actually about.
 N_DIRECTORS = 40
 
 # Estimates of dz below this are indistinguishable from zero at these trial
@@ -77,8 +77,8 @@ def _one_participant(X, pool, rng, n_pairs, n_sets, X_fit=None, n_holdout=16):
     """One synthetic participant through both designs. Returns (rho_1, rho_2).
 
     The same true preference vector answers under both interfaces and is scored
-    against the same held-out films -- which is what makes the difference a
-    WITHIN-participant quantity, exactly as in the real within-subjects design.
+    against the same held-out films, which is what makes the difference a
+    within-participant quantity, exactly as in the real within-subjects design.
     """
     X_fit = X if X_fit is None else X_fit
     w_true = rng.normal(size=X.shape[1]) * 0.8
@@ -97,9 +97,9 @@ def recovery(X, pool, budgets_seconds=(60, 120, 180, 300, 420, 600), trials=TRIA
              seed=0, sec_per_rank_set=SEC_PER_RANK_SET):
     """Held-out agreement for each design at matched *time* budgets.
 
-    Reports the PAIRED difference as well as the two condition means. The paired
+    Reports the paired difference as well as the two condition means. The paired
     standard deviation is the quantity the sample-size calculation needs; using
-    the between-participant SD instead -- the obvious mistake -- would inflate
+    the between-participant SD instead, which is the obvious mistake, would inflate
     the required N several-fold in a design built specifically to remove
     between-participant variance.
     """
@@ -192,9 +192,9 @@ def dimension_study(pool, budget=300, trials=TRIALS, seed=2):
     """Does the small representation actually predict better out of sample?
 
     The separability argument is a claim about the estimator; this is the claim
-    that matters. Synthetic users' true preferences live in the WIDEST space, so
+    that matters. Synthetic users' true preferences live in the widest space, so
     every smaller representation is genuinely misspecified and pays a real bias
-    cost -- then all three are fitted from the same responses and scored on the
+    cost. All three are then fitted from the same responses and scored on the
     same held-out films. Anything else would rig the comparison.
     """
     X_full, names = _sparse_matrix()

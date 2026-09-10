@@ -122,7 +122,7 @@ def _with_answers(questions, answers):
     """Pair each question's choices with whether that was already answered.
 
     A step revisited via Back should show what the participant chose, not a
-    blank form -- so form_step.html renders `checked`/prefilled from this
+    blank form, so form_step.html renders `checked`/prefilled from this
     instead of resubmitting looking like the answers were wiped.
     """
     out = []
@@ -215,7 +215,7 @@ def _reveal(request, state, ctx):
         study.observations(state, study.PAIRWISE) + study.observations(state, study.RANKING), X)
     w = _apply_overrides(state, combined)
 
-    # Order the sliders by the MODEL's weights, never by the overridden ones:
+    # Order the sliders by the model's weights, never by the overridden ones:
     # ordering by the live values makes a slider you have just dragged reshuffle
     # the panel, and controls that move while you use them read as the system
     # arguing back.
@@ -409,7 +409,7 @@ def _rank_click(state, post, record):
 
     This is exactly the Plackett-Luce generative process ("repeatedly pick the
     best of what is left"), so the interface matches the likelihood rather than
-    approximating it -- and it needs no JavaScript, which also means it works
+    approximating it, and it needs no JavaScript, which also means it works
     on touch devices.
 
     Returns True when the set has been fully ordered.

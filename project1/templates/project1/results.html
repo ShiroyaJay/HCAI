@@ -31,7 +31,7 @@
             {% endif %}
 
             {% if result.explanation %}
-                <p class="p1-explain">💡 {{ result.explanation }}</p>
+                <p class="p1-explain">{{ result.explanation }}</p>
             {% endif %}
 
             {% if result.importance_url %}
@@ -44,7 +44,7 @@
             <p class="p1-note">
                 The computer learned from <strong>{{ result.n_train }}</strong> examples,
                 then we tested it on <strong>{{ result.n_test }}</strong> it had never seen,
-                to be fair, just like a real exam. It learned to guess
+                just like a real exam. It learned to guess
                 <strong>{{ result.target }}</strong>
                 {% if result.features_used %}
                     by looking at
@@ -107,7 +107,7 @@
                        best score on the practice set:</p>
                     <ul>
                         {% for m in result.compared %}
-                            <li>{{ m.name }} (best: {{ m.setting }}) — {{ m.percent }}%{% if m.name == result.model_name %} ← chosen{% endif %}</li>
+                            <li>{{ m.name }} (best: {{ m.setting }}) — {{ m.percent }}%{% if m.name == result.model_name %} (chosen){% endif %}</li>
                         {% endfor %}
                     </ul>
                 {% endif %}
@@ -121,7 +121,7 @@
                     <li>It studied <strong>{{ result.n_train }}</strong> of them to learn a pattern
                         for guessing <strong>{{ result.target }}</strong> from the other columns.</li>
                     <li>We kept <strong>{{ result.n_test }}</strong> examples hidden, so we could test
-                        it fairly, like a surprise exam on questions it never studied.</li>
+                        it on questions it had never studied.</li>
                     {% if result.problem == 'category' %}
                         <li>It guessed <strong>{{ result.target }}</strong> for those
                             {{ result.n_test }} hidden examples, and we counted how many it got right.</li>

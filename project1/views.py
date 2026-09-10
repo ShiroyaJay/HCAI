@@ -9,10 +9,10 @@ from django.shortcuts import redirect, render
 
 from . import ml
 
-# The friendly built-in example: the Iris flowers dataset.
+# The built-in example: the Iris flowers dataset.
 EXAMPLE_CSV = settings.BASE_DIR / "project1" / "data" / "iris.csv"
 
-# How many rows we show as a preview (we don't want to overwhelm anyone).
+# How many rows we show as a preview.
 PREVIEW_ROWS = 4
 
 
@@ -27,7 +27,7 @@ def _session_id(request):
 
 
 def index(request):
-    """Step 1 — the welcome screen: upload a file or use the example."""
+    """Step 1: the welcome screen, where the user uploads a file or picks the example."""
     return render(request, "project1/index.html")
 
 
@@ -40,7 +40,7 @@ def _load_df(csv_text):
 def _remember_table(request, csv_text, source):
     """Check the CSV makes sense and keep it for the next steps.
 
-    Returns a friendly error message (str) if something's wrong, else None.
+    Returns an error message (str) if something's wrong, else None.
     """
     try:
         df = pd.read_csv(io.StringIO(csv_text))
@@ -64,9 +64,8 @@ def upload(request):
             csv_text = request.FILES["file"].read().decode("utf-8")
         except Exception:
             return render(request, "project1/index.html", {
-                "error": ("We couldn't open that file. Please choose a .csv file "
-                          "— if your table is in Excel, use File → Save As → "
-                          "CSV, then try again.")
+                "error": ("We couldn't open that file. Please choose a .csv file. "
+                          "In Excel, use File → Save As, then pick CSV.")
             })
 
         error = _remember_table(request, csv_text, "your file")
@@ -74,7 +73,7 @@ def upload(request):
             return render(request, "project1/index.html", {"error": error})
         return redirect("project1:data")
 
-    # No file chosen — gently send them back.
+    # No file chosen, so send them back.
     return render(request, "project1/index.html", {
         "error": "Please choose a file first, or use our example below."
     })
@@ -88,10 +87,10 @@ def example(request):
 
 
 def data(request):
-    """Step 2 — show the information as a friendly table."""
+    """Step 2: show the information as a table."""
     csv_text = request.session.get("p1_csv")
     if not csv_text:
-        # Nothing loaded yet — start at the beginning.
+        # Nothing loaded yet, so start at the beginning.
         return redirect("project1:index")
 
     df = _load_df(csv_text)
@@ -129,7 +128,7 @@ def data(request):
 
 
 def choose(request):
-    """Step 3 — the one human decision: what should the computer guess?"""
+    """Step 3: the one human decision, what the computer should guess."""
     csv_text = request.session.get("p1_csv")
     if not csv_text:
         return redirect("project1:index")
@@ -151,7 +150,7 @@ def train(request):
     df = _load_df(csv_text)
     columns = list(df.columns)
 
-    # The user's choices (all default to a sensible value — one click is enough).
+    # The user's choices. All default to a sensible value, so one click is enough.
     target = request.POST.get("target") if request.method == "POST" else None
     if target not in columns:
         target = columns[-1]

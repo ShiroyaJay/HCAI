@@ -1,7 +1,7 @@
 """Tests for the Project 1 supervised-learning interface.
 
 Covers the ML engine (ml.py) on its own and the full guided flow through the
-views, including the friendly error cases the app promises never to crash on.
+views, including the error cases the app promises never to crash on.
 """
 
 import io
@@ -65,7 +65,7 @@ class MlEngineTests(TestCase):
         self.assertEqual(result["problem"], "category")
 
     def test_number_override_on_text_target_falls_back_safely(self):
-        # You can't predict a *number* when the answers are words — handled, no crash.
+        # You can't predict a *number* when the answers are words. Handled, no crash.
         result = ml.teach_computer(_category_df(), "group", problem_override="number")
         self.assertEqual(result["problem"], "category")
 
@@ -77,7 +77,7 @@ class MlEngineTests(TestCase):
         self.assertIn("group", clean.columns)  # the target is kept
 
     def test_id_named_target_is_not_dropped(self):
-        # A last column literally named 'id' is the thing to guess — keep it.
+        # A last column literally named 'id' is the thing to guess, so keep it.
         df = pd.DataFrame({"x": [1, 2], "id": ["a", "b"]})
         self.assertIn("id", ml.drop_id_column(df).columns)
 
@@ -113,7 +113,7 @@ class FlowViewTests(TestCase):
                              reverse("project1:data"))
         self.assertEqual(self.client.get(reverse("project1:data")).status_code, 200)
         self.assertEqual(self.client.get(reverse("project1:choose")).status_code, 200)
-        # Train on the example's target and read the friendly headline.
+        # Train on the example's target and read the headline.
         self.client.post(reverse("project1:train"), {"target": "variety"})
         page = self.client.get(reverse("project1:results"))
         self.assertEqual(page.status_code, 200)

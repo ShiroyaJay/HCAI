@@ -127,10 +127,10 @@ def build_report(metrics_dir, figures_dir, out_path):
         "and 7,600 test news articles, evenly distributed over four topics (World, "
         "Sports, Business, Sci/Tech). The official training set is split once, "
         "stratified with a fixed seed, into 110,000 training and 10,000 validation "
-        "articles. Every design decision that needs tuning - the deferral threshold in "
-        "Task 3 and all monitoring during active learning in Task 4 - uses only the "
-        "validation split. The official test set is reserved for final evaluation, so "
-        "each reported test number is computed exactly once."
+        "articles. Every design decision that needs tuning uses only the validation "
+        "split: the deferral threshold in Task 3, and all monitoring during active "
+        "learning in Task 4. The official test set is reserved for final evaluation, "
+        "so each reported test number is computed once."
     )
     pdf.p(
         "The code is organised as an offline pipeline (python -m "
@@ -147,21 +147,22 @@ def build_report(metrics_dir, figures_dir, out_path):
     pdf.p(
         "The baseline is a linear classifier over sparse TF-IDF features: word 1-2 "
         "grams, sublinear term frequency, 300k features, followed by multinomial "
-        "logistic regression (C=4). Two considerations drove this choice over a "
-        "fine-tuned transformer. First, practicality: the model trains on 110k "
-        "documents in about half a minute on CPU, which keeps every later experiment "
-        "(rejector training, nine active-learning sweeps, the interactive mode) cheap "
-        "and reproducible. Second, the deferral system needs per-example confidence "
-        "scores: logistic regression's probability estimates are reasonably calibrated "
-        "out of the box, whereas a small accuracy gain from a deep model would not "
-        "change the human-AI comparisons studied here."
+        "logistic regression (C=4). A fine-tuned transformer was the obvious "
+        "alternative and was not used. The linear model trains on 110k documents in "
+        "about half a minute on CPU, which keeps the rejector training, the nine "
+        "active-learning sweeps and the interactive mode cheap enough to re-run. It "
+        "also supplies the per-example confidence scores the deferral system depends "
+        "on, and logistic regression's probability estimates are already reasonably "
+        "calibrated. A deep model might gain a little accuracy, but that gain would "
+        "not change any of the human-AI comparisons studied here."
     )
     pdf.h2("Results")
     pdf.p(
         f"The classifier reaches {_pct(t['accuracy'], 2)} accuracy on the test set "
-        f"(validation: {_pct(m1['val']['accuracy'], 2)}). Performance is not uniform: "
-        "Sports is nearly solved, while Business and Sci/Tech are confused with each "
-        "other most often - exactly the region where a complementary expert can help."
+        f"(validation: {_pct(m1['val']['accuracy'], 2)}). The errors are not spread "
+        "evenly. Sports is almost always right, while Business and Sci/Tech are "
+        "confused with each other more often than any other pair. That is the region "
+        "where a complementary expert could help."
     )
     pdf.table(
         ["Class", "Precision", "Recall", "F1", "Support"],
@@ -178,36 +179,37 @@ def build_report(metrics_dir, figures_dir, out_path):
     pdf.h1("Task 2: Simulated experts")
     pdf.h2("Design")
     pdf.p(
-        "Both experts are imperfect by construction and competent only in a region of "
+        "Both experts are imperfect by construction and competent only in part of "
         "the input space. They are deterministic: each answer is derived "
         "from a hash of the article's row key, so querying the same article twice "
-        "always returns the same answer - important because Tasks 3, 4 and 5 must see "
-        "one consistent expert. When an expert errs, it prefers a plausible confusion "
-        "(e.g. Business vs Sci/Tech) rather than a uniformly random topic."
+        "always returns the same answer. That consistency is needed because Tasks 3, "
+        "4 and 5 all query the same expert. When an expert errs, it prefers a "
+        "plausible confusion (e.g. Business vs Sci/Tech) rather than a uniformly "
+        "random topic."
     )
     pdf.p(
-        f"The primary expert is class-conditional: {cc['description']}. It models a "
-        "business/technology specialist and is deliberately strong exactly where the "
-        "Task 1 classifier is weakest (Business, Sci/Tech), giving the human-AI team "
-        "real complementarity. The second expert is length-conditional: "
-        f"{lc['description']}. It models a reader who judges long articles reliably "
-        "but guesses on short snippets, and shows that competence regions need not "
-        "align with class boundaries."
+        f"The primary expert is class-conditional: {cc['description']}. It stands in "
+        "for a business and technology specialist, and its strong classes (Business, "
+        "Sci/Tech) are the two the Task 1 classifier handles worst, so the two team "
+        "members complement each other. The second expert is length-conditional: "
+        f"{lc['description']}. It stands in for a reader who judges long articles "
+        "reliably but guesses on short snippets, and its competence region does not "
+        "follow class boundaries at all."
     )
     pdf.h2("Results and analysis")
     pdf.p(
         f"On the test set the class-conditional expert reaches {_pct(cc['accuracy'])} "
-        f"overall - far below the classifier's {_pct(t['accuracy'])} - yet on its "
-        f"strong classes it is clearly better: "
+        f"overall, well below the classifier's {_pct(t['accuracy'])}. On its "
+        f"strong classes it does better: "
         f"{_pct(cc['per_class'][2]['accuracy'])} on Business and "
-        f"{_pct(cc['per_class'][3]['accuracy'])} on Sci/Tech versus the classifier's "
+        f"{_pct(cc['per_class'][3]['accuracy'])} on Sci/Tech against the classifier's "
         f"{_pct(t['per_class'][2]['recall'])} and {_pct(t['per_class'][3]['recall'])}. "
         f"Its weakness is everything else ({_pct(cc['per_class'][0]['accuracy'])} on "
         f"World, {_pct(cc['per_class'][1]['accuracy'])} on Sports). The "
-        f"length-conditional expert reaches {_pct(lc['accuracy'])} overall; its "
-        "accuracy rises with article length, and neither expert alone can replace the "
-        "classifier. A deferral policy that knows these profiles, however, can combine "
-        "the best of both team members."
+        f"length-conditional expert reaches {_pct(lc['accuracy'])} overall, with "
+        "accuracy rising as articles get longer. Neither expert could replace the "
+        "classifier on its own, but a deferral policy that knows these profiles can "
+        "route each article to whichever team member handles it better."
     )
     pdf.table(
         ["Expert", "Overall"] + data.CLASS_NAMES,
@@ -236,39 +238,41 @@ def build_report(metrics_dir, figures_dir, out_path):
         f"(selected value: tau = {m3['tau']})."
     )
     pdf.p(
-        "A joint surrogate loss in the style of Mozannar & Sontag (2020) - a (K+1)-way "
-        "classifier with a defer option trained with a specially weighted loss - is "
-        "the main alternative. It cannot be expressed with scikit-learn's estimators "
-        "(no custom per-class loss weighting), and the staged approach has a clear "
-        "advantage for analysis: g(x) is an explicit, inspectable model of the "
-        "expert's competence, which Task 4 then learns actively."
+        "The main alternative is a joint surrogate loss in the style of Mozannar & "
+        "Sontag (2020), a (K+1)-way classifier with a defer option trained under a "
+        "specially weighted loss. It cannot be expressed with scikit-learn's "
+        "estimators, which allow no custom per-class loss weighting. The staged "
+        "approach also suits the analysis better, since g(x) is an explicit model of "
+        "the expert's competence that can be inspected, and Task 4 goes on to learn "
+        "it actively."
     )
     pdf.h2("Results")
     pdf.p(
         f"The team reaches {_pct(t3['team_accuracy'], 2)} test accuracy at "
         f"{_pct(t3['coverage'], 1)} coverage: {t3['n_deferred']:,} of the 7,600 test "
         f"articles ({_pct(1 - t3['coverage'])}) are sent to the expert and the "
-        "classifier answers the rest. That beats the classifier alone "
-        f"({_pct(b['classifier_alone'], 2)}), the expert alone "
-        f"({_pct(b['expert_alone'], 2)}), and random deferral at the same rate "
-        f"({_pct(b['random_deferral_same_rate'], 2)}); the oracle that defers exactly "
-        f"when it helps sits at {_pct(b['oracle_deferral'], 2)}."
+        "classifier answers the rest. That is above the classifier alone at "
+        f"{_pct(b['classifier_alone'], 2)}, the expert alone at "
+        f"{_pct(b['expert_alone'], 2)}, and random deferral at the same rate, "
+        f"{_pct(b['random_deferral_same_rate'], 2)}. The oracle that defers whenever "
+        f"it helps reaches {_pct(b['oracle_deferral'], 2)}."
     )
     pdf.p(
-        "The deferral decisions themselves are sensible on both axes. Quality of the "
-        f"work split: kept articles are classified at {_pct(t3['accuracy_kept'], 2)} "
-        f"and deferred ones answered by the expert at "
-        f"{_pct(t3['expert_accuracy_deferred'], 2)} - both far above what the other "
-        "team member would achieve on that share. Competence discovery: the system "
-        f"defers {_pct(t3['per_class_deferral_rate'][2]['rate'], 0)} of Business and "
-        f"{_pct(t3['per_class_deferral_rate'][3]['rate'], 0)} of Sci/Tech articles "
-        f"but only {_pct(t3['per_class_deferral_rate'][1]['rate'], 0)} of Sports - it "
-        "has located the expert's strong region without being told. Judged against "
-        "the oracle should-defer set (classifier wrong and expert right), deferral "
-        f"recall is {_pct(t3['deferral_recall'], 1)} and precision "
-        f"{_pct(t3['deferral_precision'], 1)}; precision is naturally low at this "
-        "operating point because deferring an article the classifier would also get "
-        "right costs the team nothing when the expert is strong there."
+        "The split of work is a good one in both directions. The classifier gets "
+        f"{_pct(t3['accuracy_kept'], 2)} on the articles it keeps, and the expert "
+        f"gets {_pct(t3['expert_accuracy_deferred'], 2)} on the ones sent over, each "
+        "well above what the other team member manages on that same share. The "
+        "deferral pattern also tracks the expert's competence: "
+        f"{_pct(t3['per_class_deferral_rate'][2]['rate'], 0)} of Business articles "
+        f"and {_pct(t3['per_class_deferral_rate'][3]['rate'], 0)} of Sci/Tech go to "
+        f"the expert against only "
+        f"{_pct(t3['per_class_deferral_rate'][1]['rate'], 0)} of Sports, which is "
+        "the expert's strong region, and nothing in the training signal named it. "
+        "Against the oracle should-defer set (classifier wrong and expert right), "
+        f"deferral recall is {_pct(t3['deferral_recall'], 1)} and precision "
+        f"{_pct(t3['deferral_precision'], 1)}. Low precision is expected at this "
+        "operating point, since deferring an article the classifier would also have "
+        "got right costs the team nothing where the expert is strong."
     )
     pdf.table(
         ["System", "Test accuracy"],
@@ -282,10 +286,10 @@ def build_report(metrics_dir, figures_dir, out_path):
     pdf.figure(figures_dir, "task3_deferral", width=170)
     pdf.figure(figures_dir, "task3_coverage_accuracy", width=130)
     pdf.p(
-        "The coverage-accuracy curve (deferring the top-q fraction by rejector score) "
-        "shows the whole trade-off: team accuracy peaks around 20-30% deferral and "
-        "degrades gracefully toward the expert-alone extreme, so an operator can pick "
-        "any workload split for the human expert without retraining."
+        "The coverage-accuracy curve defers the top-q fraction by rejector score. "
+        "Team accuracy peaks around 20-30% deferral and falls off slowly from there "
+        "toward the expert-alone end, so an operator can pick any workload split for "
+        "the human expert without retraining."
     )
 
     # ---------- task 4 ----------
@@ -313,42 +317,40 @@ def build_report(metrics_dir, figures_dir, out_path):
     pdf.p(
         "Three query strategies are compared. Random sampling is the baseline. "
         "Classifier-uncertainty sampling queries where the classifier is least "
-        "confident - the classic active-learning heuristic, included because deferral "
-        "candidates live exactly in that region. The proposed strategy, "
-        "deferral-boundary sampling, queries where |g(x) - max_y p(y|x)| is smallest: "
-        "the expert's answer there is precisely the information that flips a "
-        "defer/keep decision, which is the quantity we care about (with a first "
-        "random batch and 10% random exploration per batch)."
+        "confident. It is the classic active-learning heuristic, and it is included "
+        "because deferral candidates tend to sit in that region. The proposed "
+        "strategy, deferral-boundary sampling, queries where |g(x) - max_y p(y|x)| "
+        "is smallest, so the expert's answer is most likely to flip a defer/keep "
+        "decision. It uses a first random batch and keeps 10% of each later batch "
+        "random."
     )
     pdf.h2("Results")
     idx100 = budgets.index(100)
     pdf.p(
-        "The headline result is how cheap competence discovery is: with only 25 "
-        f"expert queries every strategy already lifts the team to about "
-        f"{_pct(_mean_acc('random', 0), 1)} on validation, versus "
+        "Competence discovery turns out to be cheap. With 25 expert queries every "
+        f"strategy already lifts the team to about "
+        f"{_pct(_mean_acc('random', 0), 1)} on validation, against "
         f"{_pct(refs['classifier_alone_val'], 2)} for the classifier alone and "
         f"{_pct(refs['full_info_team_accuracy_val'], 2)} for a rejector trained on "
-        "all 110,000 expert labels. Roughly 100 queries recover about "
+        "all 110,000 expert labels. Around 100 queries recover about "
         f"{_pct((_mean_acc('random', idx100) - refs['classifier_alone_val']) / (refs['full_info_team_accuracy_val'] - refs['classifier_alone_val']), 0)} "
-        "of the value of full expert supervision at 0.1% of the labeling cost."
+        "of the value of full expert supervision, at 0.1% of the labelling cost."
     )
     pdf.p(
-        "Between strategies the honest finding is that random sampling is the "
-        f"strongest at large budgets ({_pct(_mean_acc('random', len(budgets) - 1), 2)} "
-        f"at {budgets[-1]:,} queries vs "
+        "Between strategies, random sampling comes out strongest at large budgets "
+        f"({_pct(_mean_acc('random', len(budgets) - 1), 2)} "
+        f"at {budgets[-1]:,} queries against "
         f"{_pct(_mean_acc('deferral_boundary', len(budgets) - 1), 2)} for "
-        "deferral-boundary), and no strategy separates from the others at small "
-        "budgets. The explanation is instructive. This expert's competence is "
-        "class-determined, and class is linearly recoverable from TF-IDF features, "
-        "so a handful of random examples per topic already pins the profile down - "
-        "there is little room for cleverness. Both targeted strategies also collect "
-        "a deliberately biased sample (hard or boundary articles), which "
-        "miscalibrates the rejector's probabilities slightly; the deferral rule "
-        "compares g(x) against classifier confidence directly, so calibration "
-        "matters more than ranking here. Targeted querying should pay off when "
-        "competence varies within classes in subtler ways; for this problem the "
-        "practical recommendation is the simple one - stratified random querying "
-        "with a few hundred labels."
+        "deferral-boundary), and at small budgets nothing separates. "
+        "This expert's competence is class-determined, and class is "
+        "linearly recoverable from TF-IDF features, so a handful of random examples "
+        "per topic already pins the profile down. Both targeted strategies also "
+        "collect a biased sample, of hard or boundary articles, which slightly "
+        "miscalibrates the rejector's probabilities; since the deferral rule "
+        "compares g(x) against classifier confidence directly, calibration counts "
+        "for more here than ranking does. Targeted querying should pay off where "
+        "competence varies within classes in subtler ways. For this problem, "
+        "stratified random querying with a few hundred labels is enough."
     )
     header = ["Strategy"] + [str(bu) for bu in budgets]
     rows = []
@@ -367,24 +369,26 @@ def build_report(metrics_dir, figures_dir, out_path):
         "optional Task 5. The Task 4 loop runs with a person instead of the simulated "
         "expert: the system picks the next article (random warm-up, then "
         "deferral-boundary sampling), the user assigns one of the four topics, and "
-        "the rejector - now a model of that user's competence - is refit after every "
-        "answer. A live panel shows the user's measured accuracy per topic and the "
+        "the rejector is refit after every answer. That rejector is now a model of "
+        "the user's own competence. A live panel shows the user's measured accuracy "
+        "per topic and the "
         "estimated team accuracy if the current rejector were deployed with them as "
         "the expert. Because the queried articles come from the labeled training "
         "set, the user's answers can be scored against gold labels immediately."
     )
     pdf.h1("Limitations")
     pdf.p(
-        "The experts are simulations with conveniently simple competence structure; "
-        "as Task 4 showed, that structure makes competence discovery easy and "
-        "flatters random querying. Real expert competence drifts, depends on effort "
-        "and time, and is not a deterministic function of the article. The rejector "
-        "reuses the classifier's TF-IDF representation, so competence patterns "
-        "invisible in bag-of-words space cannot be learned. Deferral is evaluated "
-        "at zero query cost; a per-query cost would move the operating point along "
-        "the coverage-accuracy curve. Finally, the staged rejector is not jointly "
-        "optimal - the classifier is not retrained to specialise on the region it "
-        "keeps - which is the price paid for an interpretable, sklearn-only design."
+        "The experts are simulations, and their competence has a simple structure. "
+        "As Task 4 showed, that makes competence discovery easy and favours random "
+        "querying. A real expert's competence drifts over time, varies with effort, "
+        "and is not a fixed function of the article. The rejector reuses the "
+        "classifier's TF-IDF representation, so any competence pattern that is "
+        "invisible in bag-of-words space cannot be learned. Deferral is also "
+        "evaluated at zero query cost; charging per query would move the operating "
+        "point along the coverage-accuracy curve. Finally, the staged rejector is "
+        "not jointly optimal, since the classifier is never retrained to specialise "
+        "on the region it keeps. That is the cost of an interpretable, sklearn-only "
+        "design."
     )
 
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
