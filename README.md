@@ -15,7 +15,7 @@ One single **Django website** that bundles all sub-projects (4 small projects) b
 - **Framework:** Django (mandated by the course).
 - **One Django project:** All sub-projects are grouped in one single Django project.
 - **Launch page:** The apps are accessed from a home/launch page showing group info (names + matriculation numbers) and links to each project.
-- **Official submission:** The project is sent to the professors **as a Git repository**.
+- **Official submission:** The project is submitted **as a Git repository**.
 - Group work allowed (up to 5 students); expectations scale with group size.
 
 In short: **4 small HCAI apps → 1 Django project → Git repo (official submission).**
