@@ -26,6 +26,10 @@
                      style="width: {{ result.percent }}%;">{{ result.percent }}%</div>
             </div>
 
+            {% if result.baseline_line %}
+                <p class="p1-note">{{ result.baseline_line }}</p>
+            {% endif %}
+
             {% if result.explanation %}
                 <p class="p1-explain">💡 {{ result.explanation }}</p>
             {% endif %}
@@ -41,7 +45,16 @@
                 The computer learned from <strong>{{ result.n_train }}</strong> examples,
                 then we tested it on <strong>{{ result.n_test }}</strong> it had never seen —
                 to be fair, just like a real exam. It learned to guess
-                <strong>{{ result.target }}</strong>.
+                <strong>{{ result.target }}</strong>
+                {% if result.features_used %}
+                    by looking at
+                    {% for f in result.features_used %}<strong>{{ f }}</strong>{% if not forloop.last %}, {% endif %}{% endfor %}{% endif %}.
+                {% if result.features_ignored %}
+                    We set aside
+                    {% for f in result.features_ignored %}<strong>{{ f }}</strong>{% if not forloop.last %}, {% endif %}{% endfor %}
+                    because {% if result.features_ignored|length == 1 %}it isn't{% else %}they aren't{% endif %} numbers,
+                    and the computer can only learn from numbers.
+                {% endif %}
             </p>
 
             {% if result.samples %}
@@ -85,9 +98,13 @@
                 <p>Winner: {{ result.model_name }} · best setting: {{ result.setting }} ·
                    problem type: {{ result.problem }} · score: {{ result.percent }}%
                    ({% if result.problem == 'category' %}accuracy{% else %}closeness, R²{% endif %}).</p>
+                <p>The method and setting were chosen using a separate practice
+                   set of {{ result.n_val }} examples, then scored for real on
+                   {{ result.n_test }} completely untouched examples — so the
+                   score above isn't just the number that happened to win.</p>
                 {% if result.compared %}
-                    <p>Every method we tried (each over several settings) and the best
-                       score it reached:</p>
+                    <p>Every method we tried (each over several settings) and its
+                       best score on the practice set:</p>
                     <ul>
                         {% for m in result.compared %}
                             <li>{{ m.name }} (best: {{ m.setting }}) — {{ m.percent }}%{% if m.name == result.model_name %} ← chosen{% endif %}</li>
